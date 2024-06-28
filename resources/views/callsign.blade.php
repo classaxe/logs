@@ -8,6 +8,7 @@ window.addEventListener("DOMContentLoaded", function(){
         } else {
             $('tr.b' + band).hide();
         }
+        $(this).blur();
     });
     $('.bandsAll').click(function() {
         $('.band input[type=checkbox][data-band]').prop('checked', $(this).prop('checked'));
