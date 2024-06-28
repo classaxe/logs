@@ -95,8 +95,8 @@ class Log extends Authenticatable
                     'sp' =>         $i['STATE'] ?? '',
                     'itu' =>        $i['COUNTRY'],
                     'continent' =>  $i['CONT'] ?? '',
-                    'gsq' =>        substr($i['GRIDSQUARE'], 0, 4),
-                    'km' =>         $i['DISTANCE'],
+                    'gsq' =>        (isset($i['GRIDSQUARE']) ? substr($i['GRIDSQUARE'], 0, 4) : ''),
+                    'km' =>         $i['DISTANCE'] ?? null,
                     'conf' =>       ($i['APP_QRZLOG_STATUS'] ?? '') === 'C' ? 'Y' : ''
                 ];
             } catch (\Exception $exception) {
@@ -114,8 +114,7 @@ class Log extends Authenticatable
             // QRZ download not working
             return Log::getDBLogsForUserId($user['id']);
         }
-//        print "Refetched";
-        return $items;
+        return Log::getDBLogsForUserId($user['id']);
     }
 
     public static function getDBLogsForUserId($userId): array
