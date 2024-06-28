@@ -13,6 +13,23 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/css/logs.css', 'resources/js/app.js'])
+        <script>
+            window.addEventListener("DOMContentLoaded", function(){
+                $('.band input[type=checkbox]').change(function() {
+                    var band = $(this).data('band');
+                    if ($(this).prop('checked')) {
+                        $('tr.b' + band).show();
+                    } else {
+                        $('tr.b' + band).hide();
+                    }
+                    $(this).blur();
+                });
+                $('.bandsAll').click(function() {
+                    $('.band input[type=checkbox][data-band]').prop('checked', $(this).prop('checked'));
+                    $('.band input[type=checkbox][data-band]').trigger('change');
+                });
+            });
+        </script>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
@@ -20,8 +37,8 @@
             @include('layouts.navigation')
             @endif
 
-            <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-                <header xclass="grid grid-cols-2 items-center gap-2 py-10 lg:grid-cols-3">
+            <div class="flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
+                <header>
                     @if (Route::has('login'))
                         <nav class="-mx-3 flex flex-1 justify-end">
                             <a

@@ -12,11 +12,13 @@ table.list .nowrap { white-space: nowrap; }
 .callsigns {
     color: black;
 }
+h1 a,
 .callsigns a {
     color: blue;
     font-weight: bold;
     text-decoration: underline;
 }
+h1 a:hover,
 .callsigns a:hover {
     color: red;
     font-weight: bold;

@@ -1,21 +1,7 @@
 <x-app-layout>
-<script>
-window.addEventListener("DOMContentLoaded", function(){
-    $('.band input[type=checkbox]').change(function() {
-        var band = $(this).data('band');
-        if ($(this).prop('checked')) {
-            $('tr.b' + band).show();
-        } else {
-            $('tr.b' + band).hide();
-        }
-        $(this).blur();
-    });
-    $('.bandsAll').click(function() {
-        $('.band input[type=checkbox][data-band]').prop('checked', $(this).prop('checked'));
-        $('.band input[type=checkbox][data-band]').trigger('change');
-    });
-});
-</script>
+    <h1>Showing logs for <a href="{{ url('/callsign', ['callsign' => $user['call']]) }}">{{ $user['call'] }}</a></h1>
+    <h2>{{ $user['name'] }}, {{ $user['gsq'] }} {{ $user['sp'] }} {{ $user['itu' ]}} ({{ $user['log_count' ]}} logs)</h2>
+
     <div class="bands">
         @foreach($bands as $n => $b)
             <label class="band band{{ $b }}"><input type="checkbox" data-band="{{ $b }}" checked>{{ $b }}</label>
