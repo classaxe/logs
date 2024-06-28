@@ -16,10 +16,11 @@ class HomeController extends Controller
     {
         $user = User::getUserByCallsign($callsign);
         $logs = Log::getLogsForUser($user);
+        $bands = Log::getBandsForUserId($user['id']);
         $logs = array_reverse($logs);
 
 //        print "<pre>" . print_r($logs[25], true) . "</pre>";
 
-        return view('callsign', ['user' => $user, 'logs' => $logs]);
+        return view('callsign', ['user' => $user, 'logs' => $logs, 'bands' => $bands]);
     }
 }

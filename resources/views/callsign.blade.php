@@ -1,4 +1,26 @@
 <x-app-layout>
+<script>
+window.addEventListener("DOMContentLoaded", function(){
+    $('.band input[type=checkbox]').change(function() {
+        var band = $(this).data('band');
+        if ($(this).prop('checked')) {
+            $('tr.b' + band).show();
+        } else {
+            $('tr.b' + band).hide();
+        }
+    });
+    $('.bandsAll').click(function() {
+        $('.band input[type=checkbox][data-band]').prop('checked', $(this).prop('checked'));
+        $('.band input[type=checkbox][data-band]').trigger('change');
+    });
+});
+</script>
+    <div class="bands">
+        @foreach($bands as $n => $b)
+            <label class="band band{{ $b }}"><input type="checkbox" data-band="{{ $b }}" checked>{{ $b }}</label>
+        @endforeach
+            <label><input type="checkbox" checked class="bandsAll"> All</label>
+    </div>
     <table class="list">
         <thead>
             <tr>
@@ -21,7 +43,7 @@
         </thead>
         <tbody>
             @foreach($logs as $n=>$log)
-                <tr>
+                <tr class="b{{ $log['band'] }} m{{ $log['mode'] }}">
                     <td>{{ $n+1 }}</td>
                     <td class="nowrap">{{ $log['date'] }}</td>
                     <td class="nowrap">{{ $log['time'] }}</td>

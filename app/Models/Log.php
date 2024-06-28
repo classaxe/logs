@@ -117,6 +117,20 @@ class Log extends Authenticatable
         return Log::getDBLogsForUserId($user['id']);
     }
 
+    public static function getBandsForUserId($userId): array
+    {
+        $bands = Log::distinct()->where('userId', $userId)->get(['band'])->toArray();
+        $out = [];
+        foreach ($bands as $band) {
+            $b = $band['band'];
+            $num =      preg_replace('/[^0-9]/', '', $b);
+            $units =    preg_replace('/[^a-zA-Z]/', '', $b);
+            $value =    $num * ($units === 'm' ? 1000 : 1);
+            $out[$value] = $band['band'];
+        }
+        krsort($out);
+        return array_values($out);
+    }
     public static function getDBLogsForUserId($userId): array
     {
         return Log::where('userId', $userId)->get()->toArray();
