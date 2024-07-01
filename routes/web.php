@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\LogsController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,8 +19,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'callsigns']
 )->name('callsigns');
 
-Route::get('/callsign/{callsign}', [HomeController::class, 'callsign']
-)->name('callsign');
+Route::get('/logs/{callsign}', [LogsController::class, 'logs']
+)->name('logs');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
