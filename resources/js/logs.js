@@ -43,7 +43,7 @@ let frm = {
             }
         });
         frm.count();
-        console.log({bands:bands, conf:conf, modes:modes});
+//        console.log({bands:bands, conf:conf, modes:modes});
     }
 }
 window.addEventListener("DOMContentLoaded", function(){
