@@ -13,23 +13,6 @@
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/css/logs.css', 'resources/js/app.js'])
-        <script>
-            window.addEventListener("DOMContentLoaded", function(){
-                $('.band input[type=checkbox]').change(function() {
-                    var band = $(this).data('band');
-                    if ($(this).prop('checked')) {
-                        $('tr.b' + band).show();
-                    } else {
-                        $('tr.b' + band).hide();
-                    }
-                    $(this).blur();
-                });
-                $('.bandsAll').click(function() {
-                    $('.band input[type=checkbox][data-band]').prop('checked', $(this).prop('checked'));
-                    $('.band input[type=checkbox][data-band]').trigger('change');
-                });
-            });
-        </script>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">

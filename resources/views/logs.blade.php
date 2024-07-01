@@ -1,13 +1,21 @@
 <x-app-layout>
-    <h1>Showing logs for <a href="{{ url('/callsign', ['callsign' => $user['call']]) }}">{{ $user['call'] }}</a></h1>
-    <h2>{{ $user['name'] }}, {{ $user['gsq'] }} {{ $user['sp'] }} {{ $user['itu' ]}} ({{ $user['log_count' ]}} logs)</h2>
-
-    <div class="bands">
-        @foreach($bands as $n => $b)
-            <label class="band band{{ $b }}"><input type="checkbox" data-band="{{ $b }}" checked>{{ $b }}</label>
-        @endforeach
-            <label><input type="checkbox" checked class="bandsAll"> All</label>
+    <div class="bands mt-6 text-center">
+        <h1 style="display: inline-block">Showing logs for <a href="{{ url('/logs', ['callsign' => $user['call']]) }}">{{ $user['call'] }}</a></h1>
+        <h2 style="display: inline-block; margin-left: 2em"><strong>{{ $user['name'] }}</strong>, {{ $user['gsq'] }} {{ $user['sp'] }} {{ $user['itu' ]}}</h2>
+        <h3 style="display: inline-block; margin-left: 2em">{{ $user['log_count' ]}} logs (updated: {{ \Carbon\Carbon::parse($user['qrz_last_data_pull'])->diffForHumans() }})</h3>
+        <div>
+            @foreach($bands as $n => $b)
+                <label class="band band{{ $b }}"><input type="checkbox" data-band="{{ $b }}" checked>{{ $b }}</label>
+            @endforeach
+            <label><input type="checkbox" checked class="bandsAll"> All</label><br>
+            <label>Confirmed
+                <label><input type="radio" name="conf" value="Y">Y</label>
+                <label><input type="radio" name="conf" value="N">N</label>
+                <label><input type="radio" name="conf" value="" checked="checked">All</label>
+            </label>
+        </div>
     </div>
+    <p>Showing <span id="logsShown"><strong>{{ count($logs) }}</strong> log{{ count($logs) === 1 ? '' : 's'}}</span></p>
     <table class="list">
         <thead>
             <tr>
@@ -30,7 +38,7 @@
         </thead>
         <tbody>
             @foreach($logs as $n=>$log)
-                <tr class="b{{ $log['band'] }} m{{ $log['mode'] }}">
+                <tr class="b{{ $log['band'] }} m{{ $log['mode'] }} c{{ $log['conf'] ? 'Y' : 'N' }}">
                     <td>{{ $n+1 }}</td>
                     <td class="nowrap">{{ $log['date'] }}</td>
                     <td class="nowrap">{{ $log['time'] }}</td>

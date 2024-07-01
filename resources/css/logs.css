@@ -1,4 +1,4 @@
-table.list { border-collapse: collapse; font-size: 80% }
+table.list { border-collapse: collapse; font-size: 80%; min-width: 800px; }
 table.list tbody tr:nth-child(odd) {
     background-color: #f0f8ff;
 }
