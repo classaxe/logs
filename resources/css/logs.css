@@ -74,6 +74,6 @@ h1 a:hover,
     line-height: 1em;
 }
 .mode.mFM{background-color:rgba(64,128,64,0.6)}
-.mode.mSSB{background-color:rgba(64,255,64,0.6)}
+.mode.mSSB{background-color:rgba(255,64,64,0.6)}
 .mode.mFT4{background-color:rgba(64,64,128,0.6)}
 .mode.mFT8{background-color:rgba(64,64,255,0.6)}
