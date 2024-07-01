@@ -24,6 +24,17 @@ h1 a:hover,
     font-weight: bold;
     text-decoration: underline;
 }
+fieldset {
+    margin: 0.5em;
+    padding: 0.5em;
+    display: inline-block;
+    border: 1px dashed #000;
+    border-radius: 0.5em;
+    background-color: #ddd;
+}
+label.b {
+    font-weight: bold;
+}
 .bands {
     margin: 0.25em 0;
 }
