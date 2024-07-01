@@ -12,10 +12,11 @@ class LogsController extends Controller
         $user = User::getUserByCallsign($callsign);
         $logs = Log::getLogsForUser($user);
         $bands = Log::getBandsForUserId($user['id']);
+        $modes = Log::getModesForUserId($user['id']);
         $logs = array_reverse($logs);
-
+//        dd($modes);
 //        print "<pre>" . print_r($logs[25], true) . "</pre>";
 
-        return view('logs', ['user' => $user, 'logs' => $logs, 'bands' => $bands]);
+        return view('logs', ['user' => $user, 'logs' => $logs, 'bands' => $bands, 'modes' => $modes]);
     }
 }

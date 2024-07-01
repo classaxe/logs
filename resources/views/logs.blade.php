@@ -8,6 +8,12 @@
                 <label class="band band{{ $b }}"><input type="checkbox" data-band="{{ $b }}" checked>{{ $b }}</label>
             @endforeach
             <label><input type="checkbox" checked class="bandsAll"> All</label><br>
+            <label>Mode
+                @foreach($modes as $m)
+                <label class="mode m{{ $m }}"><input type="checkbox" data-mode="{{ $m }}" checked>{{ $m }}</label>
+                @endforeach
+                <label><input type="checkbox" checked class="modesAll"> All</label><br>
+            </label>
             <label>Confirmed
                 <label><input type="radio" name="conf" value="Y">Y</label>
                 <label><input type="radio" name="conf" value="N">N</label>
@@ -19,7 +25,7 @@
     <table class="list">
         <thead>
             <tr>
-                <td>&nbsp;</td>
+                <th class="az">&nbsp;</th>
                 <th>Date</th>
                 <th>UTC</th>
                 <th>Call</th>
@@ -38,13 +44,13 @@
         </thead>
         <tbody>
             @foreach($logs as $n=>$log)
-                <tr class="b{{ $log['band'] }} m{{ $log['mode'] }} c{{ $log['conf'] ? 'Y' : 'N' }}">
+                <tr class="b{{ $log['band'] }} m{{ $log['mode'] }} c{{ $log['conf'] ? 'Y' : 'N' }} i{{ str_replace(' ', '', $log['itu']) }} s{{ $log['sp'] }}">
                     <td>{{ $n+1 }}</td>
                     <td class="nowrap">{{ $log['date'] }}</td>
                     <td class="nowrap">{{ $log['time'] }}</td>
                     <td>{{ $log['call'] }}</td>
                     <td><span class="band band{{ $log['band'] }}">{{ $log['band'] }}</span></td>
-                    <td>{{ $log['mode'] }}</td>
+                    <td><span class="mode m{{ $log['mode'] }}">{{ $log['mode'] }}</span></td>
                     <td class="num">{{ $log['rx'] }}</td>
                     <td class="num">{{ $log['tx'] }}</td>
                     <td class="num">{{ $log['pwr'] }}</td>

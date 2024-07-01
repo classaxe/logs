@@ -131,6 +131,18 @@ class Log extends Authenticatable
         krsort($out);
         return array_values($out);
     }
+
+    public static function getModesForUserId($userId): array
+    {
+        $modes = Log::distinct()->where('userId', $userId)->get(['mode'])->toArray();
+        $out = [];
+        foreach($modes as $mode) {
+            $out[] = $mode['mode'];
+        }
+        sort($out);
+        return $out;
+    }
+
     public static function getDBLogsForUserId($userId): array
     {
         return Log::where('userId', $userId)->get()->toArray();

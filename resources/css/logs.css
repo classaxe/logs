@@ -62,3 +62,18 @@ h1 a:hover,
 .bandSpare{background-color:rgba(153, 0, 102, 0.6);color:black;}
 .banduhf{background-color:rgba(255, 147, 147, 0.6);color:black;}
 .bandvlf{background-color:rgba(255, 131, 0, 0.6);color:black;}
+
+.mode {
+    border: 1px solid gray;
+    background-color: grey;
+    border-radius: 0;
+    padding: 0.1em 0.2em 0.2em 0.2em;
+    color: white;
+    font-size: 0.9em;
+    font-family: Arial, Helvetica, sans-serif;
+    line-height: 1em;
+}
+.mode.mFM{background-color:rgba(64,128,64,0.6)}
+.mode.mSSB{background-color:rgba(64,255,64,0.6)}
+.mode.mFT4{background-color:rgba(64,64,128,0.6)}
+.mode.mFT8{background-color:rgba(64,64,255,0.6)}
