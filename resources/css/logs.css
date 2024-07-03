@@ -1,4 +1,7 @@
-table.list { border-collapse: collapse; font-size: 80%; min-width: 800px; }
+div.group {
+    display: inline-block; white-space: nowrap;
+}
+table.list { border-collapse: collapse; font-size: 80%; }
 table.list tbody tr:nth-child(odd) {
     background-color: #f0f8ff;
 }
@@ -10,7 +13,10 @@ table.list .num,
 table.list .r { text-align: right; }
 table.list .nowrap { white-space: nowrap; }
 .callsigns {
+    font-size: 80%;
     color: black;
+    width: auto;
+    margin: auto;
 }
 h1 a,
 .callsigns a {
@@ -34,6 +40,9 @@ fieldset {
 }
 label.b {
     font-weight: bold;
+}
+label.band {
+    white-space: nowrap;
 }
 .bands {
     margin: 0.25em 0;

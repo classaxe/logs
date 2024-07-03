@@ -56,13 +56,13 @@
                     @endif
                 </header>
                 <!-- Page Content -->
-                <main style="white-space: nowrap">
+            </div>
+                <main style="margin: 0.5em">
                     {{ $slot }}
                 </main>
                 <div class="mt-6 text-center text-sm text-gray-500 sm:text-right sm:ml-0">
                     Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
                 </div>
-            </div>
         </div>
     </body>
 </html>

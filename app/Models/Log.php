@@ -80,6 +80,12 @@ class Log extends Authenticatable
                 continue;
             }
             try {
+                $itu = $i['COUNTRY'];
+                switch ($itu) {
+                    case 'United States':
+                        $itu = 'USA';
+                        break;
+                }
                 $items[] = [
                     'userId' =>     $user['id'],
                     'qrzId' =>      $i['APP_QRZLOG_LOGID'],
@@ -93,7 +99,7 @@ class Log extends Authenticatable
                     'pwr' =>        $i['TX_PWR'] ?? '',
                     'qth' =>        $i['QTH'] ?? '',
                     'sp' =>         $i['STATE'] ?? '',
-                    'itu' =>        $i['COUNTRY'],
+                    'itu' =>        $itu,
                     'continent' =>  $i['CONT'] ?? '',
                     'gsq' =>        (isset($i['GRIDSQUARE']) ? substr($i['GRIDSQUARE'], 0, 4) : ''),
                     'km' =>         $i['DISTANCE'] ?? null,

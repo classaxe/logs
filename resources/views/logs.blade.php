@@ -1,28 +1,31 @@
 <x-app-layout>
-    <div class="bands mt-6 text-center">
-        <h1 style="display: inline-block">Showing logs for <a href="{{ url('/logs', ['callsign' => $user['call']]) }}">{{ $user['call'] }}</a></h1>
-        <h2 style="display: inline-block; margin-left: 2em"><strong>{{ $user['name'] }}</strong>, {{ $user['gsq'] }} {{ $user['sp'] }} {{ $user['itu' ]}}</h2>
-        <h3 style="display: inline-block; margin-left: 2em">{{ $user['log_count' ]}} logs (updated: {{ \Carbon\Carbon::parse($user['qrz_last_data_pull'])->diffForHumans() }})</h3>
-        <br>
-        <fieldset>
-            <label class="b">Bands</label>
-            @foreach($bands as $n => $b)
-                <label class="band band{{ $b }}"><input type="checkbox" data-band="{{ $b }}" checked>{{ $b }}</label>
-            @endforeach
-            <label><input type="checkbox" checked class="bandsAll"> All</label><br>
-            <div style="height: 0.5em">&nbsp;</div>
+    <div class="flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
 
-            <label class="b">Mode</label>
-            @foreach($modes as $m)
-                <label class="mode m{{ $m }}"><input type="checkbox" data-mode="{{ $m }}" checked>{{ $m }}</label>
-            @endforeach
-            <label><input type="checkbox" checked class="modesAll"> All</label>
+        <div class="bands mt-6 text-center">
+            <h1 style="display: inline-block">Showing logs for <a href="{{ url('/logs', ['callsign' => $user['call']]) }}">{{ $user['call'] }}</a></h1>
+            <h2 style="display: inline-block; margin-left: 2em"><strong>{{ $user['name'] }}</strong>, {{ $user['gsq'] }} {{ $user['sp'] }} {{ $user['itu' ]}}</h2>
+            <h3 style="display: inline-block; margin-left: 2em">{{ $user['log_count' ]}} logs (updated: {{ \Carbon\Carbon::parse($user['qrz_last_data_pull'])->diffForHumans() }})</h3>
+            <br>
+            <fieldset>
+                <label class="b">Bands</label>
+                @foreach($bands as $n => $b)
+                    <label class="band band{{ $b }}"><input type="checkbox" data-band="{{ $b }}" checked>{{ $b }}</label>
+                @endforeach
+                <label><input type="checkbox" checked class="bandsAll"> All</label><br>
+                <div style="height: 0.5em">&nbsp;</div>
 
-            <label class="b" style="margin-left: 2em">Confirmed</label>
-            <label><input type="radio" name="conf" value="Y">Y</label>
-            <label><input type="radio" name="conf" value="N">N</label>
-            <label><input type="radio" name="conf" value="" checked="checked">All</label>
-        </fieldset>
+                <label class="b">Mode</label>
+                @foreach($modes as $m)
+                    <label class="mode m{{ $m }}"><input type="checkbox" data-mode="{{ $m }}" checked>{{ $m }}</label>
+                @endforeach
+                <label><input type="checkbox" checked class="modesAll"> All</label>
+
+                <label class="b" style="margin-left: 2em">Confirmed</label>
+                <label><input type="radio" name="conf" value="Y">Y</label>
+                <label><input type="radio" name="conf" value="N">N</label>
+                <label><input type="radio" name="conf" value="" checked="checked">All</label>
+            </fieldset>
+        </div>
     </div>
     <p>Showing <span id="logsShown"><strong>{{ count($logs) }}</strong> log{{ count($logs) === 1 ? '' : 's'}}</span></p>
     <table class="list">
