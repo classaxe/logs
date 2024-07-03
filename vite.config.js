@@ -1,4 +1,5 @@
 import { defineConfig } from 'vite';
+import { resolve } from 'path';
 import laravel from 'laravel-vite-plugin';
 
 export default defineConfig({
@@ -15,7 +16,8 @@ export default defineConfig({
     ],
     resolve: {
         alias: {
-            '$': 'jQuery'
+            '$': 'jQuery',
+            $images: resolve('./public/images')
         }
     }
 });

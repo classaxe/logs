@@ -1,9 +1,23 @@
 let frm = {
     count: function() {
-        let logs = $('tbody tr:visible').length;
-        $('#logsShown').html('<strong>' + logs + '</strong> log' + (logs ===1 ? '' : 's'));
+        let logs =      $('.list tbody tr:visible').length;
+        let total =     $('.list tbody tr').length;
+        $('#logsShown').html((logs === total ? 'All ' : '') + '<strong>' + logs + '</strong> log' + (logs ===1 ? '' : 's'));
+    },
+    reset: function() {
+        $('body').addClass('loading');
+        $(window).resize();
+        window.setTimeout(function() { frm.reset_doit()}, 0);
+    },
+    reset_doit: function() {
+        frm.count();
+        $("body").removeClass("loading");
     },
     update: function() {
+        $('body').addClass('loading');
+        window.setTimeout(function() { frm.update_doit()}, 0);
+    },
+    update_doit: function() {
         let bands = [], conf, modes = [];
         $('.band input:checked').each(function(){
             bands.push($(this).data('band'));
@@ -15,7 +29,11 @@ let frm = {
         $('.modesAll').prop('checked', (modes.length === $('.mode input').length ? 'checked' : false));
         conf = $('input[name=conf]:checked').val();
         $('.list tbody tr').each(function() {
-            let b, i;
+            let b, i, call, sp, itu, gsq;
+            call =  $('input[name=call]').val();
+            sp =    $('input[name=sp]').val();
+            itu =   $('input[name=itu]').val();
+            gsq =   $('input[name=gsq]').val();
             var show = false;
             if (
                 (conf === '') || (conf === 'N' && $(this).hasClass('cN')) || (conf === 'Y' && $(this).hasClass('cY'))
@@ -36,6 +54,30 @@ let frm = {
                     }
                 }
             }
+            if (show && call !== '') {
+                show = false;
+                if ($(this).hasClass('cs' + call)) {
+                    show = true;
+                }
+            }
+            if (show && sp !== '') {
+                show = false;
+                if ($(this).hasClass('s' + sp)) {
+                    show = true;
+                }
+            }
+            if (show && itu !== '') {
+                show = false;
+                if ($(this).hasClass('i' + itu)) {
+                    show = true;
+                }
+            }
+            if (show && gsq !== '') {
+                show = false;
+                if ($(this).hasClass('g' + gsq)) {
+                    show = true;
+                }
+            }
             if (show) {
                 $(this).show();
             } else {
@@ -43,8 +85,15 @@ let frm = {
             }
         });
         frm.count();
-//        console.log({bands:bands, conf:conf, modes:modes});
-    }
+        $("body").removeClass("loading");
+    },
+}
+
+
+window.setVal = function(source, value) {
+    $('input[name=' + source + ']').val(value);
+    frm.update();
+    return false;
 }
 window.addEventListener("DOMContentLoaded", function(){
     $('.band input[type=checkbox]').change(function() {
@@ -67,4 +116,33 @@ window.addEventListener("DOMContentLoaded", function(){
         frm.update();
         $(this).blur();
     });
+    $('input[name=call]').change(function() {
+        frm.update();
+        $(this).blur();
+    });
+    $('input[name=sp]').change(function() {
+        frm.update();
+        $(this).blur();
+    });
+    $('input[name=itu]').change(function() {
+        frm.update();
+        $(this).blur();
+    });
+    $('input[name=gsq]').change(function() {
+        frm.update();
+        $(this).blur();
+    });
+    $('button#reset').click(function() {
+        $('input[name=call]').val('');
+        $('input[name=sp]').val('');
+        $('input[name=itu]').val('');
+        $('input[name=gsq]').val('');
+        frm.update();
+        $(this).blur();
+    });
+    $('td[data-link]').each(function() {
+        var link = $(this).attr('data-link');
+//        console.log(link);
+        $(this).html("<a href=\"#\" onclick=\"return setVal('" + link + "\', \'" + $(this).text() +"\')\">" + $(this).html() + "</a>");
+    })
 });

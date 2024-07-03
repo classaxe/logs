@@ -58,13 +58,14 @@
                 </header>
                 <!-- Page Content -->
             </div>
-                <main style="margin: 0.5em">
-                    {{ $slot }}
-                </main>
-                <footer class="text-center text-sm text-gray-500">
-                    Logs <a href="https://github.com/classaxe/logs" target="_blank">v{{ $gitTag }}</a> |
-                    Laravel v{{ Illuminate\Foundation\Application::VERSION }} | PHP v{{ PHP_VERSION }}
-                </footer>
+            <main style="margin: 0.5em">
+                {{ $slot }}
+            </main>
+            <footer class="text-center text-sm text-gray-500">
+                Logs <a href="https://github.com/classaxe/logs" target="_blank">v{{ $gitTag }}</a> |
+                Laravel v{{ Illuminate\Foundation\Application::VERSION }} | PHP v{{ PHP_VERSION }}
+            </footer>
         </div>
+        <div class="overlay"></div>
     </body>
 </html>
