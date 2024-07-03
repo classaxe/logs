@@ -7,27 +7,34 @@
             <h3 style="display: inline-block; margin-left: 2em">{{ $user['log_count' ]}} logs (updated: {{ \Carbon\Carbon::parse($user['qrz_last_data_pull'])->diffForHumans() }})</h3>
             <br>
             <fieldset>
+                <div class="group">
                 <label class="b">Bands</label>
                 @foreach($bands as $n => $b)
+                    @if ($n % 4 === 0 && $n > 0)
+                        </div>
+                        <div class="group">
+                    @endif
                     <label class="band band{{ $b }}"><input type="checkbox" data-band="{{ $b }}" checked>{{ $b }}</label>
                 @endforeach
-                <label><input type="checkbox" checked class="bandsAll"> All</label><br>
-                <div style="height: 0.5em">&nbsp;</div>
-
-                <label class="b">Mode</label>
-                @foreach($modes as $m)
-                    <label class="mode m{{ $m }}"><input type="checkbox" data-mode="{{ $m }}" checked>{{ $m }}</label>
-                @endforeach
-                <label><input type="checkbox" checked class="modesAll"> All</label>
-
-                <label class="b" style="margin-left: 2em">Confirmed</label>
-                <label><input type="radio" name="conf" value="Y">Y</label>
-                <label><input type="radio" name="conf" value="N">N</label>
-                <label><input type="radio" name="conf" value="" checked="checked">All</label>
+                    <label><input type="checkbox" checked class="bandsAll"> All</label>
+                </div><br>
+                <div class="group">
+                    <label class="b">Mode</label>
+                    @foreach($modes as $m)
+                        <label class="mode m{{ $m }}"><input type="checkbox" data-mode="{{ $m }}" checked>{{ $m }}</label>
+                    @endforeach
+                    <label><input type="checkbox" checked class="modesAll"> All</label>
+                </div>
+                <div class="group">
+                    <label class="b" style="margin-left: 2em">Confirmed</label>
+                    <label><input type="radio" name="conf" value="Y">Y</label>
+                    <label><input type="radio" name="conf" value="N">N</label>
+                    <label><input type="radio" name="conf" value="" checked="checked">All</label>
+                </div>
             </fieldset>
         </div>
     </div>
-    <p>Showing <span id="logsShown"><strong>{{ count($logs) }}</strong> log{{ count($logs) === 1 ? '' : 's'}}</span></p>
+    <p style="text-align: center">Showing <span id="logsShown"><strong>{{ count($logs) }}</strong> log{{ count($logs) === 1 ? '' : 's'}}</span></p>
     <table class="list">
         <thead>
             <tr>

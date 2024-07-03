@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+@php $gitTag = exec('git describe --tags') @endphp
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
@@ -60,9 +61,10 @@
                 <main style="margin: 0.5em">
                     {{ $slot }}
                 </main>
-                <div class="mt-6 text-center text-sm text-gray-500 sm:text-right sm:ml-0">
-                    Laravel v{{ Illuminate\Foundation\Application::VERSION }} (PHP v{{ PHP_VERSION }})
-                </div>
+                <footer class="text-center text-sm text-gray-500">
+                    Logs <a href="https://github.com/classaxe/logs" target="_blank">v{{ $gitTag }}</a> |
+                    Laravel v{{ Illuminate\Foundation\Application::VERSION }} | PHP v{{ PHP_VERSION }}
+                </footer>
         </div>
     </body>
 </html>

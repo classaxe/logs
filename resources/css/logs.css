@@ -1,7 +1,7 @@
 div.group {
-    display: inline-block; white-space: nowrap;
+    display: inline-block; white-space: nowrap; margin-bottom: 0.25em;
 }
-table.list { border-collapse: collapse; font-size: 80%; }
+table.list { border-collapse: collapse; font-size: 80%; margin: 0 auto; }
 table.list tbody tr:nth-child(odd) {
     background-color: #f0f8ff;
 }
@@ -97,3 +97,10 @@ label.band {
 .mode.mSSB{background-color:rgba(255,64,64,0.6)}
 .mode.mFT4{background-color:rgba(64,64,128,0.6)}
 .mode.mFT8{background-color:rgba(64,64,255,0.6)}
+footer {
+    margin: 0;
+    padding: 1em 0;
+}
+footer a {
+    color: blue;
+}
