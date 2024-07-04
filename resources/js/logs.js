@@ -2,12 +2,11 @@ let frm = {
     count: function() {
         let logs =      $('.list tbody tr:visible').length;
         let total =     $('.list tbody tr').length;
-        $('#logsShown').html((logs === total ? 'All ' : '') + '<strong>' + logs + '</strong> log' + (logs ===1 ? '' : 's'));
+        $('#logsShown').html((logs === total ? 'all ' : '') + '<strong>' + logs + '</strong> log' + (logs ===1 ? '' : 's'));
     },
     reset: function() {
         $('body').addClass('loading');
-        $(window).resize();
-        window.setTimeout(function() { frm.reset_doit()}, 0);
+        window.setTimeout(function() { frm.reset_doit()}, 1);
     },
     reset_doit: function() {
         frm.count();
@@ -15,7 +14,8 @@ let frm = {
     },
     update: function() {
         $('body').addClass('loading');
-        window.setTimeout(function() { frm.update_doit()}, 0);
+        console.log('Updating...');
+        window.setTimeout(function() { frm.update_doit()}, 1);
     },
     update_doit: function() {
         let bands = [], conf, modes = [];
@@ -137,7 +137,7 @@ window.addEventListener("DOMContentLoaded", function(){
         $('input[name=sp]').val('');
         $('input[name=itu]').val('');
         $('input[name=gsq]').val('');
-        frm.update();
+        frm.reset();
         $(this).blur();
     });
     $('td[data-link]').each(function() {

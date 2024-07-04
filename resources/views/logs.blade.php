@@ -47,7 +47,7 @@
             </fieldset>
         </div>
     </div>
-    <p style="text-align: center">Showing <span id="logsShown"><strong>{{ count($logs) }}</strong> log{{ count($logs) === 1 ? '' : 's'}}</span></p>
+    <p style="text-align: center">Showing <span id="logsShown">all <strong>{{ count($logs) }}</strong> log{{ count($logs) === 1 ? '' : 's'}}</span></p>
     <table class="list">
         <thead>
             <tr>
