@@ -14,22 +14,22 @@
                         </div>
                         <div class="group">
                     @endif
-                    <label class="band band{{ $b }}"><input type="checkbox" data-band="{{ $b }}" checked>{{ $b }}</label>
+                    <label class="band band{{ $b }}"><input type="checkbox" name="bands" data-band="{{ $b }}" checked>{{ $b }}</label>
                 @endforeach
-                    <label><input type="checkbox" checked class="bandsAll"> All</label>
+                    <label><input type="checkbox" name="bands" checked class="bandsAll"> All</label>
                 </div><br>
                 <div class="group">
                     <label class="b">Modes:</label>
                     @foreach($modes as $m)
-                        <label class="mode m{{ $m }}"><input type="checkbox" data-mode="{{ $m }}" checked>{{ $m }}</label>
+                        <label class="mode m{{ $m }}"><input type="checkbox" name="mode" data-mode="{{ $m }}" checked>{{ $m }}</label>
                     @endforeach
-                    <label><input type="checkbox" checked class="modesAll"> All</label>
+                    <label><input type="checkbox" name="mode" checked class="modesAll"> All</label>
                 </div>
                 <div class="group">
                     <label class="b" style="margin-left: 2em">Confirmed:</label>
-                    <label><input type="radio" name="conf" value="Y">Y</label>
-                    <label><input type="radio" name="conf" value="N">N</label>
-                    <label><input type="radio" name="conf" value="" checked="checked">All</label>
+                    <label><input type="radio" id="conf_Y" name="conf" value="Y">Y</label>
+                    <label><input type="radio" id="conf_N" name="conf" value="N">N</label>
+                    <label><input type="radio" id="conf_All" name="conf" value="" checked="checked">All</label>
                 </div><br>
                 <label class="b">Call:
                     <input type="text" name="call" size="8">

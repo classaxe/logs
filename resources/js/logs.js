@@ -4,14 +4,6 @@ let frm = {
         let total =     $('.list tbody tr').length;
         $('#logsShown').html((logs === total ? 'all ' : '') + '<strong>' + logs + '</strong> log' + (logs ===1 ? '' : 's'));
     },
-    reset: function() {
-        $('body').addClass('loading');
-        window.setTimeout(function() { frm.reset_doit()}, 1);
-    },
-    reset_doit: function() {
-        frm.count();
-        $("body").removeClass("loading");
-    },
     update: function() {
         $('body').addClass('loading');
         console.log('Updating...');
@@ -133,11 +125,14 @@ window.addEventListener("DOMContentLoaded", function(){
         $(this).blur();
     });
     $('button#reset').click(function() {
+        $('input[name=bands]').prop('checked','checked');
+        $('input[name=mode]').prop('checked','checked');
+        $('input#conf_All').prop('checked','checked');
         $('input[name=call]').val('');
         $('input[name=sp]').val('');
         $('input[name=itu]').val('');
         $('input[name=gsq]').val('');
-        frm.reset();
+        frm.update();
         $(this).blur();
     });
     $('td[data-link]').each(function() {
