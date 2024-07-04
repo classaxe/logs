@@ -32,7 +32,7 @@ let frm = {
             let b, i, call, sp, itu, gsq;
             call =  $('input[name=call]').val();
             sp =    $('input[name=sp]').val();
-            itu =   $('input[name=itu]').val();
+            itu =   $('input[name=itu]').val().replace(' ','');
             gsq =   $('input[name=gsq]').val();
             var show = false;
             if (
