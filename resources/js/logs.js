@@ -79,7 +79,7 @@ let frm = {
         });
         frm.count();
         $("body").removeClass("loading");
-        console.log('Updated in ' + (Date.now() - frm.start).toLocaleString() + ' seconds');
+        console.log('Updated in ' + ((Date.now() - frm.start)/1000) + ' seconds');
     },
 }
 
