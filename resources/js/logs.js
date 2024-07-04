@@ -1,10 +1,12 @@
 let frm = {
+    start: null,
     count: function() {
         let logs =      $('.list tbody tr:visible').length;
         let total =     $('.list tbody tr').length;
         $('#logsShown').html((logs === total ? 'all ' : '') + '<strong>' + logs + '</strong> log' + (logs ===1 ? '' : 's'));
     },
     update: function() {
+        frm.start = Date.now();
         $('body').addClass('loading');
         console.log('Updating...');
         window.setTimeout(function() { frm.update_doit()}, 1);
@@ -78,6 +80,7 @@ let frm = {
         });
         frm.count();
         $("body").removeClass("loading");
+        console.log('Time Taken: ' + (Date.now() - frm.start).toLocaleString());
     },
 }
 
