@@ -8,7 +8,6 @@ let frm = {
     update: function() {
         frm.start = Date.now();
         $('body').addClass('loading');
-        console.log('Updating...');
         window.setTimeout(function() { frm.update_doit()}, 1);
     },
     update_doit: function() {
@@ -80,7 +79,7 @@ let frm = {
         });
         frm.count();
         $("body").removeClass("loading");
-        console.log('Time Taken: ' + (Date.now() - frm.start).toLocaleString());
+        console.log('Updated in ' + (Date.now() - frm.start).toLocaleString() + ' seconds');
     },
 }
 
