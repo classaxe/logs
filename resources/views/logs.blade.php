@@ -46,15 +46,19 @@
                 <button id='reset' class="bg-white hover:bg-gray-100 text-gray-800 font-semibold px-2 border border-gray-400 rounded shadow">Reset</button>
             </fieldset>
         </div>
+        <p class="text-sm bg-blue-100 border border-gray-500 px-1 py-0.5">
+            <strong>Tip:</strong>
+            Click on a listed Callsign, Band, Mode, State / Province (SP), Country (ITU) or Gridsquare (GSQ) to filter on that value.
+        </p>
     </div>
-    <p style="text-align: center">Showing <span id="logsShown">all <strong>{{ count($logs) }}</strong> log{{ count($logs) === 1 ? '' : 's'}}</span></p>
+    <p class="mt-2 text-center">Showing <span id="logsShown">all <strong>{{ count($logs) }}</strong> log{{ count($logs) === 1 ? '' : 's'}}</span></p>
     <table class="list">
         <thead>
             <tr>
                 <th class="az">&nbsp;</th>
                 <th>Date</th>
                 <th>UTC</th>
-                <th>Call</th>
+                <th>Callsign</th>
                 <th>Band</th>
                 <th>Mode</th>
                 <th class="num">RX</th>
@@ -89,8 +93,8 @@
                     <td class="nowrap">{{ $log['date'] }}</td>
                     <td class="nowrap">{{ $log['time'] }}</td>
                     <td data-link="call">{{ $log['call'] }}</td>
-                    <td><span class="band band{{ $log['band'] }}">{{ $log['band'] }}</span></td>
-                    <td><span class="mode m{{ $log['mode'] }}">{{ $log['mode'] }}</span></td>
+                    <td data-link="band"><span class="band band{{ $log['band'] }}">{{ $log['band'] }}</span></td>
+                    <td data-link="mode"><span class="mode m{{ $log['mode'] }}">{{ $log['mode'] }}</span></td>
                     <td class="num">{{ $log['rx'] }}</td>
                     <td class="num">{{ $log['tx'] }}</td>
                     <td class="num">{{ $log['pwr'] }}</td>

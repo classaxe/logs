@@ -85,7 +85,19 @@ let frm = {
 
 
 window.setVal = function(source, value) {
-    $('input[name=' + source + ']').val(value);
+    switch(source) {
+        case 'band':
+            $('input[name=' + source + ']').prop('checked', false);
+            $('input[data-band=' + value + ']').prop('checked', true);
+            break;
+        case 'mode':
+            $('input[name=' + source + ']').prop('checked', false);
+            $('input[data-mode=' + value + ']').prop('checked', true);
+            break;
+        default:
+            $('input[name=' + source + ']').val(value);
+            break;
+    }
     frm.update();
     return false;
 }

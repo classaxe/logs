@@ -94,7 +94,7 @@ label.band {
 .band20m{background-color:rgba(242, 196, 12, 0.6);color:black;}
 .band17m{background-color:rgba(242, 242, 97, 0.6);color:black;}
 .band15m{background-color:rgba(204, 161, 102, 0.6);color:black;}
-.band12m{background-color:rgba(178, 34, 34, 0.6);color:black;}
+.band12m{background-color:rgba(178, 34, 34, 0.6);color:white;}
 .band11m{background-color:rgba(0, 255, 0, 0.6);color:black;}
 .band10m{background-color:rgba(255, 105, 180, 0.6);color:black;}
 .band8m{background-color:rgba(127, 0, 241, 0.6);color:black;}
