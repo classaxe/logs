@@ -14,9 +14,9 @@
                         </div>
                         <div class="group">
                     @endif
-                    <label class="band band{{ $b }}"><input type="checkbox" name="bands" data-band="{{ $b }}" checked>{{ $b }}</label>
+                    <label class="band band{{ $b }}"><input type="checkbox" name="band" data-band="{{ $b }}" checked>{{ $b }}</label>
                 @endforeach
-                    <label><input type="checkbox" name="bands" checked class="bandsAll"> All</label>
+                    <label><input type="checkbox" name="band" checked class="bandsAll"> All</label>
                 </div><br>
                 <div class="group">
                     <label class="b">Modes:</label>

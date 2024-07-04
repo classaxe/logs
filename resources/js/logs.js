@@ -88,21 +88,21 @@ window.setVal = function(source, value) {
     return false;
 }
 window.addEventListener("DOMContentLoaded", function(){
-    $('.band input[type=checkbox]').change(function() {
+    $('input[name=band]').change(function() {
         frm.update();
         $(this).blur();
     });
     $('.bandsAll').click(function() {
-        $('.band input[type=checkbox][data-band]').prop('checked', $(this).prop('checked'));
-        $('.band input[type=checkbox][data-band]').trigger('change');
+        $('input[name=band]').prop('checked', $(this).prop('checked'));
+        $('input[name=band]').trigger('change');
     });
-    $('.mode input[type=checkbox]').change(function() {
+    $('input[name=mode]').change(function() {
         frm.update();
         $(this).blur();
     });
     $('.modesAll').click(function() {
-        $('.mode input[type=checkbox][data-mode]').prop('checked', $(this).prop('checked'));
-        $('.mode input[type=checkbox][data-mode]').trigger('change');
+        $('input[name=mode]').prop('checked', $(this).prop('checked'));
+        $('input[name=mode]').trigger('change');
     });
     $('input[name=conf]').change(function() {
         frm.update();
@@ -125,7 +125,7 @@ window.addEventListener("DOMContentLoaded", function(){
         $(this).blur();
     });
     $('button#reset').click(function() {
-        $('input[name=bands]').prop('checked','checked');
+        $('input[name=band]').prop('checked','checked');
         $('input[name=mode]').prop('checked','checked');
         $('input#conf_All').prop('checked','checked');
         $('input[name=call]').val('');
@@ -137,7 +137,6 @@ window.addEventListener("DOMContentLoaded", function(){
     });
     $('td[data-link]').each(function() {
         var link = $(this).attr('data-link');
-//        console.log(link);
         $(this).html("<a href=\"#\" onclick=\"return setVal('" + link + "\', \'" + $(this).text() +"\')\">" + $(this).html() + "</a>");
     })
 });
