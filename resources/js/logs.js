@@ -71,16 +71,16 @@ var frm = {
         if (filters.conf === 'Y' && log.conf !== 'Y') {
             return false;
         }
-        if (filters.call.length && filters.call !== log.call) {
+        if (filters.call.length && filters.call.toLowerCase() !== log.call.toLowerCase()) {
             return false;
         }
-        if (filters.sp.length && filters.sp !== log.sp) {
+        if (filters.sp.length && filters.sp.toLowerCase() !== log.sp.toLowerCase()) {
             return false;
         }
-        if (filters.itu.length && filters.itu !== log.itu) {
+        if (filters.itu.length && filters.itu.toLowerCase() !== log.itu.toLowerCase()) {
             return false;
         }
-        if (filters.gsq.length && filters.gsq !== itu.gsq) {
+        if (filters.gsq.length && filters.gsq.toLowerCase() !== itu.gsq.toLowerCase()) {
             return false;
         }
         return true;
@@ -185,6 +185,10 @@ window.addEventListener("DOMContentLoaded", function(){
         $('input[name=sp]').val('');
         $('input[name=itu]').val('');
         $('input[name=gsq]').val('');
+        frm.update();
+        $(this).blur();
+    });
+    $('button#submit').click(function() {
         frm.update();
         $(this).blur();
     });
