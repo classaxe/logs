@@ -101,7 +101,7 @@ class Log extends Authenticatable
                     'sp' =>         $i['STATE'] ?? '',
                     'itu' =>        $itu,
                     'continent' =>  $i['CONT'] ?? '',
-                    'gsq' =>        (isset($i['GRIDSQUARE']) ? substr($i['GRIDSQUARE'], 0, 4) : ''),
+                    'gsq' =>        (isset($i['GRIDSQUARE']) ? strtoupper(substr($i['GRIDSQUARE'], 0, 4)) : ''),
                     'km' =>         $i['DISTANCE'] ?? null,
                     'conf' =>       ($i['APP_QRZLOG_STATUS'] ?? '') === 'C' ? 'Y' : ''
                 ];

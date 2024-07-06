@@ -71,16 +71,16 @@ var frm = {
         if (filters.conf === 'Y' && log.conf !== 'Y') {
             return false;
         }
-        if (filters.call.length && filters.call.toLowerCase() !== log.call.toLowerCase()) {
+        if (filters.call.length && filters.call.toLowerCase() !== log.call.toLowerCase().substring(0, filters.call.length)) {
             return false;
         }
         if (filters.sp.length && filters.sp.toLowerCase() !== log.sp.toLowerCase()) {
             return false;
         }
-        if (filters.itu.length && filters.itu.toLowerCase() !== log.itu.toLowerCase()) {
+        if (filters.itu.length && filters.itu.toLowerCase() !== log.itu.toLowerCase().substring(0, filters.itu.length)) {
             return false;
         }
-        if (filters.gsq.length && filters.gsq.toLowerCase() !== itu.gsq.toLowerCase()) {
+        if (filters.gsq.length && filters.gsq.toLowerCase() !== log.gsq.toLowerCase().substring(0, filters.gsq.length)) {
             return false;
         }
         return true;
@@ -177,6 +177,9 @@ window.addEventListener("DOMContentLoaded", function(){
         frm.update();
         $(this).blur();
     });
+    $('button#reload').click(function() {
+        window.location.reload();
+    });
     $('button#reset').click(function() {
         $('input[name=band]').prop('checked','checked');
         $('input[name=mode]').prop('checked','checked');
@@ -185,10 +188,6 @@ window.addEventListener("DOMContentLoaded", function(){
         $('input[name=sp]').val('');
         $('input[name=itu]').val('');
         $('input[name=gsq]').val('');
-        frm.update();
-        $(this).blur();
-    });
-    $('button#submit').click(function() {
         frm.update();
         $(this).blur();
     });

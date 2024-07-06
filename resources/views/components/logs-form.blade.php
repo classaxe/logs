@@ -40,8 +40,8 @@
             <label class="b">GSQ:
                 <input type="text" name="gsq" size="4">
             </label>
-            <button id='reset' title="Clears form and shows all logs" class="ml-5 bg-red-200 hover:bg-gray-100 text-gray-800 font-semibold px-2 border border-gray-400 rounded shadow">Reset</button>
-            <button id='submit' title="Filters on form criteria" class="bg-green-200 hover:bg-gray-100 text-green-800 font-semibold px-2 border border-gray-400 rounded shadow">Submit</button>
+            <button id='reload' title="Fetches fresh records from QRZ.com" class="ml-5 bg-red-200 hover:bg-red-400 text-red-800 font-semibold px-2 border border-gray-400 rounded shadow">Reload</button>
+            <button id='reset' title="Clears form filters and shows all available logs" class="bg-yellow-200 hover:bg-yellow-400 text-yellow-800 font-semibold px-2 border border-gray-400 rounded shadow">Reset</button>
         </fieldset>
     </div>
     <p class="text-sm bg-blue-100 border border-gray-500 px-1 py-0.5">
