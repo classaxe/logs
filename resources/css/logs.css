@@ -44,9 +44,14 @@ table.list a:hover {
     color: red;
     text-decoration: underline;
 }
-h1 a,
+h1 a {
+    color: blue;
+    font-weight: bold;
+    text-decoration: underline;
+}
+
 .callsigns a span.band:not {
-    color: blue !important;
+    color: blue;
     font-weight: bold;
     text-decoration: underline;
 }
