@@ -10,13 +10,19 @@ class LogsController extends Controller
     public static function logs(string $callsign)
     {
         $user = User::getUserByCallsign($callsign);
-        $logs = Log::getLogsForUser($user);
-        $bands = Log::getBandsForUserId($user['id']);
-        $modes = Log::getModesForUserId($user['id']);
-        $logs = array_reverse($logs);
-//        dd($modes);
-//        print "<pre>" . print_r($logs[25], true) . "</pre>";
+        return response()->json([
+            'status' => 200,
+            'logs' => Log::getLogsForUser($user)
+        ]);
+    }
 
-        return view('logs', ['user' => $user, 'logs' => $logs, 'bands' => $bands, 'modes' => $modes]);
+    public static function logsPage(string $callsign)
+    {
+        $data = User::getUserDataByCallsign($callsign);
+        return view('logs', [
+            'user' =>   $data['user'],
+            'bands' =>  $data['bands'],
+            'modes' =>  $data['modes']
+        ]);
     }
 }

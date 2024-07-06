@@ -19,7 +19,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', [HomeController::class, 'callsigns']
 )->name('callsigns');
 
-Route::get('/logs/{callsign}', [LogsController::class, 'logs']
+Route::get('/logs/{callsign}', [LogsController::class, 'logsPage']
+)->name('logsPage');
+
+Route::get('/logs/{callsign}/logs', [LogsController::class, 'logs']
 )->name('logs');
 
 Route::get('/dashboard', function () {

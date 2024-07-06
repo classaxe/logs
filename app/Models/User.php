@@ -69,4 +69,15 @@ class User extends Authenticatable
     {
         return User::where('call', '=', $callsign)->firstOrFail();
     }
+
+    public static function getUserDataByCallsign(string $callsign): Array|Exception
+    {
+        $user = static::getUserByCallsign($callsign);
+        return [
+            'bands' =>  Log::getBandsForUserId($user['id']),
+            'modes' =>  Log::getModesForUserId($user['id']),
+            'user' =>   $user
+        ];
+    }
+
 }

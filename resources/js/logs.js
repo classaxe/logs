@@ -1,9 +1,110 @@
-let frm = {
+var logs = [];
+var filters = {
+    bands: [],
+    modes: [],
+    conf: '',
+    call: '',
+    sp: '',
+    itu: '',
+    gsq: ''
+}
+
+var frm = {
     start: null,
+    getFilters: function () {
+        filters.bands = [];
+        filters.modes = [];
+        $('.band input:checked').each(function () {
+            filters.bands.push($(this).data('band'));
+        });
+        $('.mode input:checked').each(function () {
+            filters.modes.push($(this).data('mode'));
+        });
+        filters.conf =  $('input[name=conf]:checked').val();
+        filters.call =  $('input[name=call]').val();
+        filters.sp =    $('input[name=sp]').val();
+        filters.itu =   $('input[name=itu]').val().replace(' ','');
+        filters.gsq =   $('input[name=gsq]').val();
+    },
+    parseLogs: function() {
+        let html = [];
+        $.each(logs, function(idx, log) {
+            if (frm.isVisible(log)){
+                html.push(
+                    '<tr>' +
+                    '<td>' + (idx + 1)+ '</td>' +
+                    '<td class="nowrap">' + log.date + '</td>' +
+                    '<td class="nowrap">' + log.time + '</td>' +
+                    '<td data-link="call">' + log.call + '</td>' +
+                    '<td data-link="band"><span class="band band' + log.band + '">' + log.band + '</span></td>' +
+                    '<td data-link="mode"><span class="mode m' + log.mode + '">' + log.mode + '</span></td>' +
+                    '<td class="num">' + log.rx + '</td>' +
+                    '<td class="num">' + log.tx + '</td>' +
+                    '<td class="num">' + log.pwr + '</td>' +
+                    '<td>' + log.qth + '</td>' +
+                    '<td data-link="sp">' + log.sp + '</td>' +
+                    '<td data-link="itu">' + log.itu + '</td>' +
+                    '<td data-link="gsq">' + log.gsq + '</td>' +
+                    '<td class="num">' + log.km + '</td>' +
+                    '<td class="r">' + log.conf + '</td>'
+                )
+            }
+        });
+        return html.join('\n');
+    },
+    addLinks: function() {
+        $('td[data-link]').each(function() {
+            let link = $(this).attr('data-link');
+            $(this).html("<a href=\"#\" onclick=\"return setVal('" + link + "\', \'" + $(this).text() +"\')\">" + $(this).html() + "</a>");
+        })
+    },
+    isVisible: function(log) {
+        if (!filters.bands.length || $.inArray(log.band, filters.bands) < 0) {
+            return false;
+        }
+        if (!log.mode.length || $.inArray(log.mode, filters.modes) < 0) {
+            return false;
+        }
+        if (filters.conf === 'N' && log.conf !== '') {
+            return false;
+        }
+        if (filters.conf === 'Y' && log.conf !== 'Y') {
+            return false;
+        }
+        if (filters.call.length && filters.call !== log.call) {
+            return false;
+        }
+        if (filters.sp.length && filters.sp !== log.sp) {
+            return false;
+        }
+        if (filters.itu.length && filters.itu !== log.itu) {
+            return false;
+        }
+        if (filters.gsq.length && filters.gsq !== itu.gsq) {
+            return false;
+        }
+        return true;
+    },
     count: function() {
-        let logs =      $('.list tbody tr:visible').length;
-        let total =     $('.list tbody tr').length;
-        $('#logsShown').html((logs === total ? 'all ' : '') + '<strong>' + logs + '</strong> log' + (logs ===1 ? '' : 's'));
+        let all = logs.length;
+        let shown =     $('.list tbody tr').length;
+        $('#logsShown').html((all === shown ? 'all ' : '') + '<strong>' + shown + '</strong> log' + (shown ===1 ? '' : 's'));
+    },
+    load: function(callsign) {
+        $.ajax({
+            type: 'GET',
+            url: '/logs/' + callsign + '/logs',
+            dataType: 'json',
+            success: function (data) {
+                logs = data.logs;
+                frm.getFilters();
+                // console.log(logs);
+                // console.log(filters);
+                $('table.list tbody').html(frm.parseLogs());
+                frm.count();
+                frm.addLinks();
+            }
+        })
     },
     update: function() {
         frm.start = Date.now();
@@ -11,73 +112,11 @@ let frm = {
         window.setTimeout(function() { frm.update_doit()}, 1);
     },
     update_doit: function() {
-        let bands = [], conf, modes = [];
-        $('.band input:checked').each(function(){
-            bands.push($(this).data('band'));
-        });
-        $('.bandsAll').prop('checked', (bands.length === $('.band input').length ? 'checked' : false));
-        $('.mode input:checked').each(function(){
-            modes.push($(this).data('mode'));
-        });
-        $('.modesAll').prop('checked', (modes.length === $('.mode input').length ? 'checked' : false));
-        conf = $('input[name=conf]:checked').val();
-        $('.list tbody tr').each(function() {
-            let b, i, call, sp, itu, gsq;
-            call =  $('input[name=call]').val();
-            sp =    $('input[name=sp]').val();
-            itu =   $('input[name=itu]').val().replace(' ','');
-            gsq =   $('input[name=gsq]').val();
-            var show = false;
-            if (
-                (conf === '') || (conf === 'N' && $(this).hasClass('cN')) || (conf === 'Y' && $(this).hasClass('cY'))
-            ){
-                for (i=0; i<bands.length; i++) {
-                    if ($(this).hasClass('b' + bands[i])) {
-                        show = true;
-                        break;
-                    }
-                }
-            }
-            if (show) {
-                show = false;
-                for (i=0; i<modes.length; i++) {
-                    if ($(this).hasClass('m' + modes[i])) {
-                        show = true;
-                        break;
-                    }
-                }
-            }
-            if (show && call !== '') {
-                show = false;
-                if ($(this).hasClass('cs' + call)) {
-                    show = true;
-                }
-            }
-            if (show && sp !== '') {
-                show = false;
-                if ($(this).hasClass('s' + sp)) {
-                    show = true;
-                }
-            }
-            if (show && itu !== '') {
-                show = false;
-                if ($(this).hasClass('i' + itu)) {
-                    show = true;
-                }
-            }
-            if (show && gsq !== '') {
-                show = false;
-                if ($(this).hasClass('g' + gsq)) {
-                    show = true;
-                }
-            }
-            if (show) {
-                $(this).show();
-            } else {
-                $(this).hide();
-            }
-        });
+        frm.getFilters();
+        console.log(filters);
+        $('table.list tbody').html(frm.parseLogs());
         frm.count();
+        frm.addLinks();
         $("body").removeClass("loading");
         console.log('Updated in ' + ((Date.now() - frm.start)/1000) + ' seconds');
     },
@@ -149,8 +188,6 @@ window.addEventListener("DOMContentLoaded", function(){
         frm.update();
         $(this).blur();
     });
-    $('td[data-link]').each(function() {
-        var link = $(this).attr('data-link');
-        $(this).html("<a href=\"#\" onclick=\"return setVal('" + link + "\', \'" + $(this).text() +"\')\">" + $(this).html() + "</a>");
-    })
+    frm.load(callsign)
 });
+
