@@ -26,13 +26,32 @@ var frm = {
         filters.itu =   $('input[name=itu]').val().replace(' ','');
         filters.gsq =   $('input[name=gsq]').val();
     },
+    sortLogs: function(field, az) {
+        if (az) {
+            logs.sort(function(a,b){
+                let aVal = (typeof a[field] === 'string' ? a[field].toLowerCase() : a[field]);
+                let bVal = (typeof b[field] === 'string' ? b[field].toLowerCase() : b[field]);
+                return ((aVal < bVal) ? -1 : ((aVal > bVal) ? 1 : 0));
+            });
+        }
+        logs.sort(function(a,b){
+            let aVal = (typeof a[field] === 'string' ? a[field].toLowerCase() : a[field]);
+            let bVal = (typeof b[field] === 'string' ? b[field].toLowerCase() : b[field]);
+            return ((bVal < aVal) ? -1 : ((bVal > aVal) ? 1 : 0));
+        });
+    },
     parseLogs: function() {
         let html = [];
+        let sortField = $('input[name=sortField]').val();
+        let sortAz =    $('input[name=sortAz]').val() ? true : false;
+        if (sortField) {
+            frm.sortLogs(sortField, sortAz);
+        }
         $.each(logs, function(idx, log) {
             if (frm.isVisible(log)){
                 html.push(
                     '<tr>' +
-                    '<td>' + (idx + 1)+ '</td>' +
+                    '<td>' + (log.logNum)+ '</td>' +
                     '<td class="nowrap">' + log.date + '</td>' +
                     '<td class="nowrap">' + log.time + '</td>' +
                     '<td data-link="call">' + log.call + '</td>' +
@@ -98,11 +117,10 @@ var frm = {
             success: function (data) {
                 logs = data.logs;
                 frm.getFilters();
-                // console.log(logs);
-                // console.log(filters);
                 $('table.list tbody').html(frm.parseLogs());
                 frm.count();
                 frm.addLinks();
+                $("body").removeClass("loading");
             }
         })
     },

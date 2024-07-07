@@ -75,18 +75,27 @@ class Log extends Authenticatable
         $adif = new adif(trim('<EOH>' . $data));
         $qrzItems = $adif->parser();
         $items = [];
+        $logNum = 1;
         foreach ($qrzItems as $i) {
             if (!isset($i['APP_QRZLOG_LOGID'])) {
                 continue;
             }
             try {
-                $itu = $i['COUNTRY'];
+                $itu =  $i['COUNTRY'];
+                $sp =   $i['STATE'] ?? '';
                 switch ($itu) {
+                    case 'Australia':
+                    case 'Canada':
+                        break;
                     case 'United States':
                         $itu = 'USA';
                         break;
+                    default:
+                        $sp = '';
+                        break;
                 }
                 $items[] = [
+                    'logNum' =>     $logNum,
                     'userId' =>     $user['id'],
                     'qrzId' =>      $i['APP_QRZLOG_LOGID'],
                     'date' =>       substr($i['QSO_DATE'], 0, 4) . '-' . substr($i['QSO_DATE'], 4, 2) . '-' . substr($i['QSO_DATE'], 6, 2),
@@ -98,13 +107,14 @@ class Log extends Authenticatable
                     'tx' =>         $i['RST_SENT'] ?? '',
                     'pwr' =>        $i['TX_PWR'] ?? '',
                     'qth' =>        $i['QTH'] ?? '',
-                    'sp' =>         $i['STATE'] ?? '',
+                    'sp' =>         $sp,
                     'itu' =>        $itu,
                     'continent' =>  $i['CONT'] ?? '',
                     'gsq' =>        (isset($i['GRIDSQUARE']) ? strtoupper(substr($i['GRIDSQUARE'], 0, 4)) : ''),
                     'km' =>         $i['DISTANCE'] ?? null,
                     'conf' =>       ($i['APP_QRZLOG_STATUS'] ?? '') === 'C' ? 'Y' : ''
                 ];
+                $logNum++;
             } catch (\Exception $exception) {
                 print $exception->getMessage();
                 dd($i);

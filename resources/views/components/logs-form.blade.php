@@ -4,6 +4,8 @@
         <h2 style="display: inline-block; margin-left: 2em"><strong>{{ $user['name'] }}</strong>, {{ $user['gsq'] }} {{ $user['sp'] }} {{ $user['itu' ]}}</h2>
         <h3 style="display: inline-block; margin-left: 2em">{{ $user['log_count' ]}} logs (updated: {{ \Carbon\Carbon::parse($user['qrz_last_data_pull'])->diffForHumans() }})</h3><br>
         <fieldset class="logs">
+            <input type="hidden" name="sortField" id="sortField" value="logNum">
+            <input type="hidden" name="sortAz" id="sortAz" value="0">
             <div class="group">
                 <label class="b">Bands:</label>
                 @foreach($bands as $n => $b)
