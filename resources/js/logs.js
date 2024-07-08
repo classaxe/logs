@@ -47,6 +47,9 @@ var frm = {
     parseLogs: function() {
         let html = [];
         let sortField = $('select[name=sortField]').val();
+        if (sortField === 'date') {
+            sortField = 'datetime';
+        }
         let sortZa = $('input[name=sortZA]').prop('checked') ? false : true;
         if (sortField) {
             frm.sortLogs(sortField, sortZa);
@@ -126,6 +129,9 @@ var frm = {
             dataType: 'json',
             success: function (data) {
                 logs = data.logs;
+                $(logs).each(function(idx, log) {
+                    logs[idx].datetime = log.date + log.time;
+                });
                 frm.getFilters();
                 $('table.list tbody').html(frm.parseLogs());
                 $('#logUpdated').text(data.lastPulled);
@@ -229,10 +235,27 @@ window.addEventListener("DOMContentLoaded", function(){
         $('input[name=itu]').val('');
         $('input[name=cont]').val('');
         $('input[name=gsq]').val('');
-        $('select[name=sortField]').val('logNum')
-        $('input[name=sortZA]').prop('checked', 'checked')
+        $('select[name=sortField]').val('logNum');
+        $('input[name=sortZA]').prop('checked', 'checked');
         frm.update();
         $(this).blur();
+    });
+    var $sortable = $('.sortable');
+    $sortable.on('click', function(){
+        var $this = $(this);
+        var asc = $this.hasClass('asc');
+        var desc = $this.hasClass('desc');
+        $sortable.removeClass('asc').removeClass('desc');
+
+        if (desc || (!asc && !desc)) {
+            $this.addClass('asc');
+            $('input[name=sortZA]').prop('checked', false);
+        } else {
+            $this.addClass('desc');
+            $('input[name=sortZA]').prop('checked', 'checked');
+        }
+        $('select[name=sortField]').val($this.data('field'));
+        frm.update();
     });
     frm.load(callsign)
 });

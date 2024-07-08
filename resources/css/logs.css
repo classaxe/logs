@@ -24,11 +24,10 @@ table.list { border-collapse: collapse; font-size: 80%; margin: 0 auto; }
 table.list tbody tr:nth-child(odd) {
     background-color: #f0f8ff;
 }
-table.list thead { background: #9ca3af; color: #fff; text-align: left }
-table.list thead th.sorted {
-    padding-left: 1em;
-    color: #FFFF00;
-    font-weight: bold;
+table.list thead {
+    background: #9ca3af;
+    color: #fff;
+    text-align: left
 }
 table tbody td { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
 table.list th,
@@ -149,4 +148,31 @@ footer a {
     font-size: 80%;
     padding: 0.125em 0.5em;
     border-radius: 0.25em;
+}
+/* Table sort indicators */
+
+th.sortable {
+    position: relative;
+    cursor: pointer;
+}
+
+th.sortable::after {
+    font-family: FontAwesome;
+    content: "\f0dc";
+    position: absolute;
+    left: 8px;
+    color: #fff;
+}
+
+th.sortable.asc::after {
+    content: "\f0d8";
+}
+
+th.sortable.desc::after {
+    content: "\f0d7";
+}
+
+th.sortable:hover,
+th.sortable:hover::after {
+    color: #ff0;
 }
