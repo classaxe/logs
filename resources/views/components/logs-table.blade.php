@@ -2,21 +2,10 @@
 <table class="list">
     <thead>
     <tr>
-        <th class="az">Log</th>
-        <th>Date</th>
-        <th>UTC</th>
-        <th>Callsign</th>
-        <th>Band</th>
-        <th>Mode</th>
-        <th class="num">RX</th>
-        <th class="num">TX</th>
-        <th class="num">Pwr</th>
-        <th>QTH</th>
-        <th>S/P</th>
-        <th>ITU</th>
-        <th>GSQ</th>
-        <th class="num">Km</th>
-        <th>Conf</th>
+        @foreach($columns as $val => $col)
+        @php $class = ' ' . $col['class']; if ($val === 'logNum') $class .= ' asc' @endphp
+        <th class="sortable{{ $class }}">{{ $col['lbl'] }}</th>
+        @endforeach
     </tr>
     </thead>
     <tbody>

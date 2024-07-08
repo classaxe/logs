@@ -13,6 +13,25 @@ class Log extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    const columns = [
+        'logNum' => ['lbl' =>   'Log',      'class' => ''],
+        'date' =>   ['lbl' =>   'Date',     'class' => ''],
+        'time' =>   ['lbl' =>   'UTC',      'class' => ''],
+        'call' =>   ['lbl' =>   'Callsign', 'class' => ''],
+        'band' =>   ['lbl' =>   'Band',     'class' => ''],
+        'mode' =>   ['lbl' =>   'Mode',     'class' => ''],
+        'rx' =>     ['lbl' =>   'RX',       'class' => 'r'],
+        'tx' =>     ['lbl' =>   'TX',       'class' => 'r'],
+        'pwr' =>    ['lbl' =>   'Pwr',      'class' => 'r'],
+        'qth' =>    ['lbl' =>   'Location', 'class' => ''],
+        'sp' =>     ['lbl' =>   'S/P',      'class' => ''],
+        'itu' =>    ['lbl' =>   'Country',  'class' => ''],
+        'cont' =>   ['lbl' =>   'Cont',     'class' => ''],
+        'gsq' =>    ['lbl' =>   'GSQ',      'class' => ''],
+        'km' =>     ['lbl' =>   'Km',       'class' => 'r'],
+        'conf' =>   ['lbl' =>   'Conf',     'class' => 'r']
+    ];
+
     /**
      * The attributes that are mass assignable.
      *
@@ -109,7 +128,7 @@ class Log extends Authenticatable
                     'qth' =>        $i['QTH'] ?? '',
                     'sp' =>         $sp,
                     'itu' =>        $itu,
-                    'continent' =>  $i['CONT'] ?? '',
+                    'continent' =>  strtoupper($i['CONT'] ?? ''),
                     'gsq' =>        (isset($i['GRIDSQUARE']) ? strtoupper(substr($i['GRIDSQUARE'], 0, 4)) : ''),
                     'km' =>         $i['DISTANCE'] ?? null,
                     'conf' =>       ($i['APP_QRZLOG_STATUS'] ?? '') === 'C' ? 'Y' : ''

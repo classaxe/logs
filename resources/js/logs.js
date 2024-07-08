@@ -3,6 +3,7 @@ var filters = {
     bands: [],
     modes: [],
     conf: '',
+    cont: '',
     call: '',
     sp: '',
     itu: '',
@@ -24,47 +25,51 @@ var frm = {
         filters.call =  $('input[name=call]').val();
         filters.sp =    $('input[name=sp]').val();
         filters.itu =   $('input[name=itu]').val().replace(' ','');
+        filters.cont =  $('input[name=cont]').val();
         filters.gsq =   $('input[name=gsq]').val();
     },
-    sortLogs: function(field, az) {
-        if (az) {
+    sortLogs: function(sortField, sortZa) {
+        console.log([sortField, sortZa]);
+        if (sortZa) {
             logs.sort(function(a,b){
-                let aVal = (typeof a[field] === 'string' ? a[field].toLowerCase() : a[field]);
-                let bVal = (typeof b[field] === 'string' ? b[field].toLowerCase() : b[field]);
+                let aVal = (typeof a[sortField] === 'string' ? a[sortField].toLowerCase() : a[sortField]);
+                let bVal = (typeof b[sortField] === 'string' ? b[sortField].toLowerCase() : b[sortField]);
                 return ((aVal < bVal) ? -1 : ((aVal > bVal) ? 1 : 0));
             });
+        } else {
+            logs.sort(function(a,b){
+                let aVal = (typeof a[sortField] === 'string' ? a[sortField].toLowerCase() : a[sortField]);
+                let bVal = (typeof b[sortField] === 'string' ? b[sortField].toLowerCase() : b[sortField]);
+                return ((bVal < aVal) ? -1 : ((bVal > aVal) ? 1 : 0));
+            });
         }
-        logs.sort(function(a,b){
-            let aVal = (typeof a[field] === 'string' ? a[field].toLowerCase() : a[field]);
-            let bVal = (typeof b[field] === 'string' ? b[field].toLowerCase() : b[field]);
-            return ((bVal < aVal) ? -1 : ((bVal > aVal) ? 1 : 0));
-        });
     },
     parseLogs: function() {
         let html = [];
-        let sortField = $('input[name=sortField]').val();
-        let sortAz =    $('input[name=sortAz]').val() ? true : false;
+        let sortField = $('select[name=sortField]').val();
+        let sortZa = $('input[name=sortZA]').prop('checked') ? false : true;
         if (sortField) {
-            frm.sortLogs(sortField, sortAz);
+            frm.sortLogs(sortField, sortZa);
         }
         $.each(logs, function(idx, log) {
             if (frm.isVisible(log)){
                 html.push(
                     '<tr>' +
-                    '<td>' + (log.logNum)+ '</td>' +
+                    '<td class="r">' + (log.logNum)+ '</td>' +
                     '<td class="nowrap">' + log.date + '</td>' +
                     '<td class="nowrap">' + log.time + '</td>' +
                     '<td data-link="call">' + log.call + '</td>' +
                     '<td data-link="band"><span class="band band' + log.band + '">' + log.band + '</span></td>' +
                     '<td data-link="mode"><span class="mode m' + log.mode + '">' + log.mode + '</span></td>' +
-                    '<td class="num">' + log.rx + '</td>' +
-                    '<td class="num">' + log.tx + '</td>' +
-                    '<td class="num">' + log.pwr + '</td>' +
+                    '<td class="r">' + log.rx + '</td>' +
+                    '<td class="r">' + log.tx + '</td>' +
+                    '<td class="r">' + log.pwr + '</td>' +
                     '<td>' + log.qth + '</td>' +
                     '<td data-link="sp">' + log.sp + '</td>' +
                     '<td data-link="itu">' + log.itu + '</td>' +
+                    '<td data-link="cont">' + log.continent + '</td>' +
                     '<td data-link="gsq">' + log.gsq + '</td>' +
-                    '<td class="num">' + log.km + '</td>' +
+                    '<td class="r">' + log.km + '</td>' +
                     '<td class="r">' + log.conf + '</td>'
                 )
             }
@@ -99,6 +104,9 @@ var frm = {
         if (filters.itu.length && filters.itu.toLowerCase() !== log.itu.toLowerCase().substring(0, filters.itu.length)) {
             return false;
         }
+        if (filters.cont.length && filters.cont.toLowerCase() !== log.continent.toLowerCase().substring(0, filters.cont.length)) {
+            return false;
+        }
         if (filters.gsq.length && filters.gsq.toLowerCase() !== log.gsq.toLowerCase().substring(0, filters.gsq.length)) {
             return false;
         }
@@ -108,6 +116,8 @@ var frm = {
         let all = logs.length;
         let shown =     $('.list tbody tr').length;
         $('#logsShown').html((all === shown ? 'all ' : '') + '<strong>' + shown + '</strong> log' + (shown ===1 ? '' : 's'));
+        $('#logCount').text(all);
+        $('#logUpdated').text()
     },
     load: function(callsign) {
         $.ajax({
@@ -118,6 +128,7 @@ var frm = {
                 logs = data.logs;
                 frm.getFilters();
                 $('table.list tbody').html(frm.parseLogs());
+                $('#logUpdated').text(data.lastPulled);
                 frm.count();
                 frm.addLinks();
                 $("body").removeClass("loading");
@@ -179,9 +190,8 @@ window.addEventListener("DOMContentLoaded", function(){
         frm.update();
         $(this).blur();
     });
-    $('input[name=call]').change(function() {
+    $('input[name=call]').keyup(function() {
         frm.update();
-        $(this).blur();
     });
     $('input[name=sp]').change(function() {
         frm.update();
@@ -191,7 +201,19 @@ window.addEventListener("DOMContentLoaded", function(){
         frm.update();
         $(this).blur();
     });
+    $('input[name=cont]').change(function() {
+        frm.update();
+        $(this).blur();
+    });
     $('input[name=gsq]').change(function() {
+        frm.update();
+        $(this).blur();
+    });
+    $('select[name=sortField]').change(function() {
+        frm.update();
+        $(this).blur();
+    });
+    $('input[name=sortZA]').change(function() {
         frm.update();
         $(this).blur();
     });
@@ -205,7 +227,10 @@ window.addEventListener("DOMContentLoaded", function(){
         $('input[name=call]').val('');
         $('input[name=sp]').val('');
         $('input[name=itu]').val('');
+        $('input[name=cont]').val('');
         $('input[name=gsq]').val('');
+        $('select[name=sortField]').val('logNum')
+        $('input[name=sortZA]').prop('checked', 'checked')
         frm.update();
         $(this).blur();
     });

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Log;
 use App\Models\User;
+use Carbon\Carbon;
 
 class LogsController extends Controller
 {
@@ -20,9 +21,11 @@ class LogsController extends Controller
     {
         $data = User::getUserDataByCallsign($callsign);
         return view('logs', [
-            'user' =>   $data['user'],
-            'bands' =>  $data['bands'],
-            'modes' =>  $data['modes']
+            'bands' =>      $data['bands'],
+            'columns' =>    Log::columns,
+            'lastPulled' => Carbon::parse($data['user']['qrz_last_data_pull'])->diffForHumans(),
+            'modes' =>      $data['modes'],
+            'user' =>       $data['user']
         ]);
     }
 }
