@@ -77,19 +77,11 @@ class Log extends Authenticatable
         ];
     }
 
-    public static function getLogsForUser(User $user): array
+    public static function getQRZDataForUser(User $user)
     {
-        /* Idea from Maksym
-        return Cache::remember('', 3600, function () {
-            return [];
-        });
-        */
-        if ($user['qrz_last_data_pull'] && $user['qrz_last_data_pull']->addMinutes(30)->isFuture()) {
-            return Log::getDBLogsForUserId($user['id']);
-        }
         $url = 'https://logbook.qrz.com/api?KEY=' . $user['qrz_api_key'] . '&ACTION=FETCH&OPTION=ALL';
         $raw = file_get_contents($url);
-        $data = str_replace(['&lt;','&gt;'],['<','>'],$raw);
+        $data = str_replace(['&lt;', '&gt;'], ['<', '>'], $raw);
 
         $adif = new adif(trim('<EOH>' . $data));
         $qrzItems = $adif->parser();
@@ -100,8 +92,8 @@ class Log extends Authenticatable
                 continue;
             }
             try {
-                $itu =  $i['COUNTRY'];
-                $sp =   $i['STATE'] ?? '';
+                $itu = $i['COUNTRY'];
+                $sp = $i['STATE'] ?? '';
                 switch ($itu) {
                     case 'Australia':
                     case 'Canada':
@@ -114,24 +106,24 @@ class Log extends Authenticatable
                         break;
                 }
                 $items[] = [
-                    'logNum' =>     $logNum,
-                    'userId' =>     $user['id'],
-                    'qrzId' =>      $i['APP_QRZLOG_LOGID'],
-                    'date' =>       substr($i['QSO_DATE'], 0, 4) . '-' . substr($i['QSO_DATE'], 4, 2) . '-' . substr($i['QSO_DATE'], 6, 2),
-                    'time' =>       substr($i['TIME_ON'], 0, 2) . ':' . substr($i['TIME_ON'], 2, 2),
-                    'call' =>       $i['CALL'],
-                    'band' =>       $i['BAND'],
-                    'mode' =>       $i['MODE'] ?? '',
-                    'rx' =>         $i['RST_RCVD'] ?? '',
-                    'tx' =>         $i['RST_SENT'] ?? '',
-                    'pwr' =>        $i['TX_PWR'] ?? '',
-                    'qth' =>        $i['QTH'] ?? '',
-                    'sp' =>         $sp,
-                    'itu' =>        $itu,
-                    'continent' =>  strtoupper($i['CONT'] ?? ''),
-                    'gsq' =>        (isset($i['GRIDSQUARE']) ? strtoupper(substr($i['GRIDSQUARE'], 0, 4)) : ''),
-                    'km' =>         $i['DISTANCE'] ?? null,
-                    'conf' =>       ($i['APP_QRZLOG_STATUS'] ?? '') === 'C' ? 'Y' : ''
+                    'logNum' => $logNum,
+                    'userId' => $user['id'],
+                    'qrzId' => $i['APP_QRZLOG_LOGID'],
+                    'date' => substr($i['QSO_DATE'], 0, 4) . '-' . substr($i['QSO_DATE'], 4, 2) . '-' . substr($i['QSO_DATE'], 6, 2),
+                    'time' => substr($i['TIME_ON'], 0, 2) . ':' . substr($i['TIME_ON'], 2, 2),
+                    'call' => $i['CALL'],
+                    'band' => $i['BAND'],
+                    'mode' => $i['MODE'] ?? '',
+                    'rx' => $i['RST_RCVD'] ?? '',
+                    'tx' => $i['RST_SENT'] ?? '',
+                    'pwr' => $i['TX_PWR'] ?? '',
+                    'qth' => $i['QTH'] ?? '',
+                    'sp' => $sp,
+                    'itu' => $itu,
+                    'continent' => strtoupper($i['CONT'] ?? ''),
+                    'gsq' => (isset($i['GRIDSQUARE']) ? strtoupper(substr($i['GRIDSQUARE'], 0, 4)) : ''),
+                    'km' => $i['DISTANCE'] ?? null,
+                    'conf' => ($i['APP_QRZLOG_STATUS'] ?? '') === 'C' ? 'Y' : ''
                 ];
                 $logNum++;
             } catch (\Exception $exception) {
@@ -140,16 +132,22 @@ class Log extends Authenticatable
             }
         }
         if ($items) {
-            Log::deleteLogsForUserId($user['id']);
+            Log::deleteLogsForUserId($user->id);
             Log::insert($items);
             $user->setAttribute('qrz_last_data_pull', time());
             $user->setAttribute('log_count', count($items));
             $user->save();
-        } else {
-            // QRZ download not working
-            return Log::getDBLogsForUserId($user['id']);
+            return true;
         }
-        return Log::getDBLogsForUserId($user['id']);
+        return false;
+    }
+
+    public static function getLogsForUser(User $user): array
+    {
+        if (!$user->qrz_last_data_pull || $user->qrz_last_data_pull->addMinutes(60)->isPast()) {
+            $fresh = static::getQRZDataForUser($user);
+        }
+        return Log::getDBLogsForUserId($user->id);
     }
 
     public static function getBandsForUserId($userId): array
