@@ -47,8 +47,13 @@ var frm = {
     parseLogs: function() {
         let html = [];
         let sortField = $('select[name=sortField]').val();
-        if (sortField === 'date') {
-            sortField = 'datetime';
+        switch(sortField) {
+            case 'date':
+                sortField = 'datetime';
+                break;
+            case 'itu':
+                sortField = 'itusp';
+                break;
         }
         let sortZa = $('input[name=sortZA]').prop('checked') ? false : true;
         if (sortField) {
@@ -131,6 +136,7 @@ var frm = {
                 logs = data.logs;
                 $(logs).each(function(idx, log) {
                     logs[idx].datetime = log.date + log.time;
+                    logs[idx].itusp = log.itu + log.sp;
                 });
                 frm.getFilters();
                 $('table.list tbody').html(frm.parseLogs());
