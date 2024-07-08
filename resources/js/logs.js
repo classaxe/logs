@@ -1,4 +1,3 @@
-var logs = [];
 var filters = {
     bands: [],
     modes: [],
@@ -9,6 +8,8 @@ var filters = {
     itu: '',
     gsq: ''
 }
+var logs = [];
+var logsFiltered = [];
 
 var frm = {
     start: null,
@@ -59,28 +60,32 @@ var frm = {
         if (sortField) {
             frm.sortLogs(sortField, sortZa);
         }
+        logsFiltered = [];
         $.each(logs, function(idx, log) {
             if (frm.isVisible(log)){
-                html.push(
-                    '<tr>' +
-                    '<td class="r">' + (log.logNum)+ '</td>' +
-                    '<td class="nowrap">' + log.date + '</td>' +
-                    '<td class="nowrap">' + log.time + '</td>' +
-                    '<td data-link="call">' + log.call + '</td>' +
-                    '<td data-link="band"><span class="band band' + log.band + '">' + log.band + '</span></td>' +
-                    '<td data-link="mode"><span class="mode m' + log.mode + '">' + log.mode + '</span></td>' +
-                    '<td class="r">' + log.rx + '</td>' +
-                    '<td class="r">' + log.tx + '</td>' +
-                    '<td class="r">' + log.pwr + '</td>' +
-                    '<td>' + log.qth + '</td>' +
-                    '<td data-link="sp">' + log.sp + '</td>' +
-                    '<td data-link="itu">' + log.itu + '</td>' +
-                    '<td data-link="cont">' + log.continent + '</td>' +
-                    '<td data-link="gsq">' + log.gsq + '</td>' +
-                    '<td class="r">' + log.km + '</td>' +
-                    '<td class="r">' + log.conf + '</td>'
-                )
+                logsFiltered.push(log)
             }
+        });
+        $.each(logsFiltered, function(idx, log){
+            html.push(
+                '<tr>' +
+                '<td class="r">' + (log.logNum)+ '</td>' +
+                '<td class="nowrap">' + log.date + '</td>' +
+                '<td class="nowrap">' + log.time + '</td>' +
+                '<td data-link="call">' + log.call + '</td>' +
+                '<td data-link="band"><span class="band band' + log.band + '">' + log.band + '</span></td>' +
+                '<td data-link="mode"><span class="mode m' + log.mode + '">' + log.mode + '</span></td>' +
+                '<td class="r">' + log.rx + '</td>' +
+                '<td class="r">' + log.tx + '</td>' +
+                '<td class="r">' + log.pwr + '</td>' +
+                '<td>' + log.qth + '</td>' +
+                '<td data-link="sp">' + log.sp + '</td>' +
+                '<td data-link="itu">' + log.itu + '</td>' +
+                '<td data-link="cont">' + log.continent + '</td>' +
+                '<td data-link="gsq">' + log.gsq + '</td>' +
+                '<td class="r">' + log.km + '</td>' +
+                '<td class="r">' + log.conf + '</td>'
+            )
         });
         return html.join('\n');
     },
@@ -122,12 +127,43 @@ var frm = {
     },
     count: function() {
         let all = logs.length;
-        let shown =     $('.list tbody tr').length;
-        $('#logsShown').html((all === shown ? 'all ' : '') + '<strong>' + shown + '</strong> log' + (shown ===1 ? '' : 's'));
+        let shown = logsFiltered.length;
+        let tmp = [];
+        let itus = 0;
+        let sps = 0;
+        tmp = [];
+        $(logsFiltered).each(function(idx,log){
+            if (log.itu !== '') {
+                tmp[log.itu.toUpperCase()] = 1;
+            }
+        });
+        for (var index in tmp) {
+            if (tmp.hasOwnProperty(index)) {
+                itus++;
+            }
+        }
+        tmp = [];
+        $(logsFiltered).each(function(idx,log){
+            if (log.sp !== '') {
+                tmp[log.sp.toUpperCase()] = 1;
+            }
+        });
+        console.log(tmp);
+        for (var index in tmp) {
+            if (tmp.hasOwnProperty(index)) {
+                sps++;
+            }
+        }
         $('#logCount').text(all);
         $('#logUpdated').text()
+        $('#logsShown').html(
+            (all === shown ? 'all ' : '') + '<strong>' + shown + '</strong> log' + (shown ===1 ? '' : 's') +
+            ' from <strong>' + itus + '</strong> countries' +
+            (sps ? ' and <strong>' + sps + '</strong> states / provinces' : '')
+        );
     },
     load: function(callsign) {
+        frm.start = Date.now();
         $.ajax({
             type: 'GET',
             url: '/logs/' + callsign + '/logs',
@@ -144,6 +180,8 @@ var frm = {
                 frm.count();
                 frm.addLinks();
                 $("body").removeClass("loading");
+                console.log('Updated in ' + ((Date.now() - frm.start)/1000) + ' seconds');
+
             }
         })
     },
