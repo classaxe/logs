@@ -48,6 +48,31 @@ table.list a:hover {
     color: red;
     text-decoration: underline;
 }
+.stats {
+    margin: 0 auto 0.75em;
+}
+.stats table {
+    border: 1px solid #282;
+    border-collapse: collapse;
+}
+.stats table tbody {
+    text-align: right;
+    color: #040;
+    background: #cfc;
+}
+.stats table thead {
+    color: #fff;
+    background: #6a6;
+}
+.stats table th,
+.stats table td {
+    width: 8em;
+    padding: 0.25em 0.5em;
+    border: 1px solid #080;
+    font-size: 80%;
+    margin: 0 auto;
+}
+
 h1 a {
     color: blue;
     font-weight: bold;

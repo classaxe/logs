@@ -30,7 +30,6 @@ var frm = {
         filters.gsq =   $('input[name=gsq]').val();
     },
     sortLogs: function(sortField, sortZa) {
-        console.log([sortField, sortZa]);
         if (sortZa) {
             logs.sort(function(a,b){
                 let aVal = (typeof a[sortField] === 'string' ? a[sortField].toLowerCase() : a[sortField]);
@@ -128,39 +127,35 @@ var frm = {
     count: function() {
         let all = logs.length;
         let shown = logsFiltered.length;
-        let tmp = [];
-        let itus = 0;
-        let sps = 0;
-        tmp = [];
-        $(logsFiltered).each(function(idx,log){
-            if (log.itu !== '') {
-                tmp[log.itu.toUpperCase()] = 1;
-            }
-        });
-        for (var index in tmp) {
-            if (tmp.hasOwnProperty(index)) {
-                itus++;
-            }
-        }
-        tmp = [];
-        $(logsFiltered).each(function(idx,log){
-            if (log.sp !== '') {
-                tmp[log.sp.toUpperCase()] = 1;
-            }
-        });
-        console.log(tmp);
-        for (var index in tmp) {
-            if (tmp.hasOwnProperty(index)) {
-                sps++;
-            }
-        }
         $('#logCount').text(all);
         $('#logUpdated').text()
         $('#logsShown').html(
-            (all === shown ? 'all ' : '') + '<strong>' + shown + '</strong> log' + (shown ===1 ? '' : 's') +
-            ' from <strong>' + itus + '</strong> countries' +
-            (sps ? ' and <strong>' + sps + '</strong> states / provinces' : '')
+            (all === shown ? 'all ' : '') + '<strong>' + shown + '</strong> log' + (shown ===1 ? '' : 's')
         );
+    },
+    getUniqueValues: function(field) {
+        let idx;
+        let tmp = [];
+        let count = 0;
+        $(logsFiltered).each(function(idx,log){
+            if (log[field] !== '') {
+                tmp[log[field].toUpperCase()] = 1;
+            }
+        });
+        for (idx in tmp) {
+            if (tmp.hasOwnProperty(idx)) {
+                count++;
+            }
+        }
+        return count;
+    },
+    stats: function() {
+        console.log(logsFiltered[0]);
+        $('#statsSps').text(frm.getUniqueValues('sp'));
+        $('#statsItus').text(frm.getUniqueValues('itu'));
+        $('#statsContinents').text(frm.getUniqueValues('continent'));
+        $('#statsCalls').text(frm.getUniqueValues('call'));
+        $('#statsGsqs').text(frm.getUniqueValues('gsq'));
     },
     load: function(callsign) {
         frm.start = Date.now();
@@ -178,6 +173,7 @@ var frm = {
                 $('table.list tbody').html(frm.parseLogs());
                 $('#logUpdated').text(data.lastPulled);
                 frm.count();
+                frm.stats();
                 frm.addLinks();
                 $("body").removeClass("loading");
                 console.log('Updated in ' + ((Date.now() - frm.start)/1000) + ' seconds');
@@ -192,9 +188,9 @@ var frm = {
     },
     update_doit: function() {
         frm.getFilters();
-        console.log(filters);
         $('table.list tbody').html(frm.parseLogs());
         frm.count();
+        frm.stats();
         frm.addLinks();
         $("body").removeClass("loading");
         console.log('Updated in ' + ((Date.now() - frm.start)/1000) + ' seconds');
