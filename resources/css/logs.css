@@ -27,7 +27,8 @@ table.list tbody tr:nth-child(odd) {
 table.list thead {
     background: #9ca3af;
     color: #fff;
-    text-align: left
+    text-align: left;
+    white-space: nowrap;
 }
 table tbody td { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
 table.list th,
@@ -166,12 +167,17 @@ th.sortable::after {
 
 th.sortable.asc::after {
     content: "\f0d8";
+    color: #0f0;
 }
 
 th.sortable.desc::after {
     content: "\f0d7";
+    color: #0f0;
 }
-
+th.sortable.asc,
+th.sortable.desc {
+    color: #0f0;
+}
 th.sortable:hover,
 th.sortable:hover::after {
     color: #ff0;

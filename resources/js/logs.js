@@ -243,21 +243,17 @@ window.addEventListener("DOMContentLoaded", function(){
     $('input[name=call]').keyup(function() {
         frm.update();
     });
-    $('input[name=sp]').change(function() {
+    $('input[name=sp]').keyup(function() {
         frm.update();
-        $(this).blur();
     });
-    $('input[name=itu]').change(function() {
+    $('input[name=itu]').keyup(function() {
         frm.update();
-        $(this).blur();
     });
-    $('input[name=cont]').change(function() {
+    $('input[name=cont]').keyup(function() {
         frm.update();
-        $(this).blur();
     });
-    $('input[name=gsq]').change(function() {
+    $('input[name=gsq]').keyup(function() {
         frm.update();
-        $(this).blur();
     });
     $('select[name=sortField]').change(function() {
         frm.update();
@@ -281,6 +277,8 @@ window.addEventListener("DOMContentLoaded", function(){
         $('input[name=gsq]').val('');
         $('select[name=sortField]').val('logNum');
         $('input[name=sortZA]').prop('checked', 'checked');
+        $('.sortable').removeClass('asc').removeClass('desc');
+        $('th[data-field=logNum]').addClass('desc');
         frm.update();
         $(this).blur();
     });
