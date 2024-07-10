@@ -216,17 +216,29 @@ window.setVal = function(source, value) {
     return false;
 }
 window.addEventListener("DOMContentLoaded", function(){
-    $('input[name=band]').change(function() {
-        frm.update();
+    $('input[name=band]').click(function(e) {
+        if (e.shiftKey) {
+            $('input[name=band]').prop('checked', false);
+            $('.bandsAll').prop('checked', false);
+            $(this).prop('checked', 'checked');
+        }
         $(this).blur();
+        $('#logUpdated').focus();
+        frm.update();
     });
     $('.bandsAll').click(function() {
         $('input[name=band]').prop('checked', $(this).prop('checked'));
         $('input[name=band]').trigger('change');
     });
-    $('input[name=mode]').change(function() {
-        frm.update();
+    $('input[name=mode]').click(function(e) {
+        if (e.shiftKey) {
+            $('input[name=mode]').prop('checked', false);
+            $('.modesAll').prop('checked', false);
+            $(this).prop('checked', 'checked');
+        }
         $(this).blur();
+        $('#logUpdated').focus();
+        frm.update();
     });
     $('.modesAll').click(function() {
         $('input[name=mode]').prop('checked', $(this).prop('checked'));
