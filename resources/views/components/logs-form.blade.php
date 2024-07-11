@@ -5,8 +5,10 @@
         <h3 style="display: inline-block; margin-left: 2em"><span id="logCount">{{ $user['log_count' ]}}</span> logs (updated: <span id="logUpdated">{{ \Carbon\Carbon::parse($user['qrz_last_data_pull'])->diffForHumans() }})</span></h3><br>
         <fieldset class="logs">
             <div class="group">
-                <label class="b" title="Hold the SHIFT key while you click to select just that one band">
-                    <span style="cursor: help">&#9432;</span>Bands:</label>
+                <label class="b" title="Hold the SHIFT key while you click to select just that one band" style="cursor: help">
+                    <span>&#9432;</span>
+                    Bands:
+                </label>
                 @foreach($bands as $n => $b)
                     @if ($n % 4 === 0 && $n > 0)
             </div>
@@ -17,8 +19,10 @@
                 <label><input type="checkbox" name="band" checked class="bandsAll"> All</label>
             </div><br>
             <div class="group">
-                <label class="b" title="Hold the SHIFT key while you click to select just that one mode">
-                    <span style="cursor: help">&#9432;</span>Modes:</label>
+                <label class="b" title="Hold the SHIFT key while you click to select just that one mode" style="cursor: help">
+                    <span>&#9432;</span>
+                    Modes:
+                </label>
                 @foreach($modes as $m)
                     <label class="mode m{{ $m }}"><input type="checkbox" name="mode" data-mode="{{ $m }}" checked>{{ $m }}</label>
                 @endforeach
@@ -41,7 +45,15 @@
                     <input type="text" name="itu" size="20">
                 </label>
                 <label class="b">Cont:
-                    <input type="text" name="cont" size="2">
+                    <select name="cont">
+                        <option value=""></option>
+                        <option value="AF">Africa</option>
+                        <option value="AS">Asia</option>
+                        <option value="EU">Europe</option>
+                        <option value="NA">N America</option>
+                        <option value="OC">Oceania</option>
+                        <option value="SA">S America</option>
+                    </select>
                 </label>
                 <label class="b">GSQ:
                     <input type="text" name="gsq" size="4">

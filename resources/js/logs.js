@@ -26,7 +26,7 @@ var frm = {
         filters.call =  $('input[name=call]').val();
         filters.sp =    $('input[name=sp]').val();
         filters.itu =   $('input[name=itu]').val().replace(' ','');
-        filters.cont =  $('input[name=cont]').val();
+        filters.cont =  $('select[name=cont]').val();
         filters.gsq =   $('input[name=gsq]').val();
     },
     sortLogs: function(sortField, sortZa) {
@@ -249,8 +249,8 @@ window.addEventListener("DOMContentLoaded", function(){
         $('input[name=mode]').trigger('change');
     });
     $('input[name=conf]').change(function() {
-        frm.update();
         $(this).blur();
+        frm.update();
     });
     $('input[name=call]').keyup(function() {
         frm.update();
@@ -261,7 +261,8 @@ window.addEventListener("DOMContentLoaded", function(){
     $('input[name=itu]').keyup(function() {
         frm.update();
     });
-    $('input[name=cont]').keyup(function() {
+    $('select[name=cont]').change(function() {
+        $(this).blur();
         frm.update();
     });
     $('input[name=gsq]').keyup(function() {
@@ -285,7 +286,7 @@ window.addEventListener("DOMContentLoaded", function(){
         $('input[name=call]').val('');
         $('input[name=sp]').val('');
         $('input[name=itu]').val('');
-        $('input[name=cont]').val('');
+        $('select[name=cont]').val('');
         $('input[name=gsq]').val('');
         $('select[name=sortField]').val('logNum');
         $('input[name=sortZA]').prop('checked', 'checked');

@@ -3,28 +3,31 @@
         <table>
             <thead>
                 <tr>
-                    <th title="Confirmed logs qualify for QRZ 'United States' Award - remember to add Alaska and Hawaii" style="cursor: help">
+                    <th title="Confirmed USA logs qualify for QRZ 'United States' Award - remember to add Alaska and Hawaii" style="cursor: help">
                         <span>&#9432;</span>
                         States / Provs
                     </th>
-                    <th>Countries</th>
+                    <th title="Confirmed logs qualify for QRZ 'DX 100' Award" style="cursor: help">
+                        <span>&#9432;</span>
+                        Countries
+                    </th>
                     <th title="Confirmed logs qualify for QRZ 'Continents' Award" style="cursor: help">
                         <span>&#9432;</span>
                         Continents
                     </th>
-                    <th>
+                    <th title="Confirmed logs qualify for QRZ 'World Radio Friendship' and '30 Years of QRZ' Awards" style="cursor: help">
+                        <span>&#9432;</span>
                         Callsigns
                     </th>
                     <th title="Confirmed logs qualify for QRZ 'Grid Squared' Awards" style="cursor: help">
                         <span>&#9432;</span>
                         GSQs
                     </th>
-                    <th title="Confirmed logs qualify for QRZ 'DX 100' and six 'Master of Communications' Awards" style="cursor: help">
+                    <th title="Confirmed logs qualify for QRZ 'Master of Communications' Awards" style="cursor: help">
                         <span>&#9432;</span>
                         ITU+Band
                     </th>
-                    <th title="Confirmed logs qualify for QRZ 'World Radio Friendship' and '30 Years of QRZ' Awards" style="cursor: help">
-                        <span>&#9432;</span>
+                    <th>
                         Call+Band
                     </th>
                 </tr>
