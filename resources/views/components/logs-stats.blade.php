@@ -8,6 +8,8 @@
                     <th>Continents</th>
                     <th>Callsigns</th>
                     <th>GSQs</th>
+                    <th title="Used in some QRZ Awards to determine eligibility"><span style="color:white;cursor: help"> &#9432;</span>ITU+Band</th>
+                    <th>GSQ+Band</th>
                 </tr>
             </thead>
             <tbody>
@@ -17,6 +19,8 @@
                     <td id="statsContinents"></td>
                     <td id="statsCalls"></td>
                     <td id="statsGsqs"></td>
+                    <td id="statsItuBands"></td>
+                    <td id="statsGsqBands"></td>
                 </tr>
             </tbody>
         </table>

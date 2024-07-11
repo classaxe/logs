@@ -156,6 +156,8 @@ var frm = {
         $('#statsContinents').text(frm.getUniqueValues('continent'));
         $('#statsCalls').text(frm.getUniqueValues('call'));
         $('#statsGsqs').text(frm.getUniqueValues('gsq'));
+        $('#statsItuBands').text(frm.getUniqueValues('ituband'));
+        $('#statsGsqBands').text(frm.getUniqueValues('gsqband'));
     },
     load: function(callsign) {
         frm.start = Date.now();
@@ -168,6 +170,8 @@ var frm = {
                 $(logs).each(function(idx, log) {
                     logs[idx].datetime = log.date + log.time;
                     logs[idx].itusp = log.itu + log.sp;
+                    logs[idx].ituband = log.itu + log.band;
+                    logs[idx].gsqband = log.gsq + log.band;
                 });
                 frm.getFilters();
                 $('table.list tbody').html(frm.parseLogs());
