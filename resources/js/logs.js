@@ -157,7 +157,7 @@ var frm = {
         $('#statsCalls').text(frm.getUniqueValues('call'));
         $('#statsGsqs').text(frm.getUniqueValues('gsq'));
         $('#statsItuBands').text(frm.getUniqueValues('ituband'));
-        $('#statsGsqBands').text(frm.getUniqueValues('gsqband'));
+        $('#statsCallBands').text(frm.getUniqueValues('callband'));
     },
     load: function(callsign) {
         frm.start = Date.now();
@@ -171,7 +171,7 @@ var frm = {
                     logs[idx].datetime = log.date + log.time;
                     logs[idx].itusp = log.itu + log.sp;
                     logs[idx].ituband = log.itu + log.band;
-                    logs[idx].gsqband = log.gsq + log.band;
+                    logs[idx].callband = log.call + log.band;
                 });
                 frm.getFilters();
                 $('table.list tbody').html(frm.parseLogs());

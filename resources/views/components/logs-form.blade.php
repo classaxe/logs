@@ -6,7 +6,7 @@
         <fieldset class="logs">
             <div class="group">
                 <label class="b" title="Hold the SHIFT key while you click to select just that one band">
-                    <span style="color:blue;cursor: help">&#9432;</span>Bands:</label>
+                    <span style="cursor: help">&#9432;</span>Bands:</label>
                 @foreach($bands as $n => $b)
                     @if ($n % 4 === 0 && $n > 0)
             </div>
@@ -18,7 +18,7 @@
             </div><br>
             <div class="group">
                 <label class="b" title="Hold the SHIFT key while you click to select just that one mode">
-                    <span style="color:blue;cursor: help">&#9432;</span>Modes:</label>
+                    <span style="cursor: help">&#9432;</span>Modes:</label>
                 @foreach($modes as $m)
                     <label class="mode m{{ $m }}"><input type="checkbox" name="mode" data-mode="{{ $m }}" checked>{{ $m }}</label>
                 @endforeach
