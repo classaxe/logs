@@ -1,3 +1,4 @@
+/* Loading Shroud */
 .overlay{
     display: none;
     position: fixed;
@@ -8,11 +9,9 @@
     z-index: 999;
     background: rgba(255,255,255,0.8) url("$images/loader.gif") center no-repeat;
 }
-/* Turn off scrollbar when body element has the loading class */
 body.loading{
     overflow: hidden;
 }
-/* Make spinner image visible when body element has the loading class */
 body.loading .overlay{
     display: block;
 }
@@ -20,12 +19,57 @@ body.loading .overlay{
 div.group {
     display: inline-block; white-space: nowrap; margin-bottom: 0.25em;
 }
-table.list { border-collapse: collapse; font-size: 80%; margin: 0 auto; }
+#tabs {
+    margin: 0.5em 0 0 0;
+}
+#tabs .button {
+    color: #fff;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 5px 5px 0 0;
+    padding: 0.5em 0.75em;
+    border-bottom: none;
+    cursor: pointer;
+    border: #008;
+    margin: 0 0.25em 0 0;
+}
+#tabs .button span {
+    text-decoration: underline;
+}
+#tabs .button.is-active {
+    background: #4545e6;
+    color: yellow !important;
+}
+#tabs .button.is-inactive {
+    background: #7d7db3;
+}
+#tabs .button .tabicon {
+    display: inline;
+    width: 1.5em;
+    height: 1.5em;
+    text-decoration: none;
+}
+#tabs .button:hover span,
+#tabs .button.is-active span {
+    text-decoration: underline;
+}
+#tabs .button:hover .tabicon,
+#tabs .button.is-active .tabicon {
+    text-decoration: none;
+}
+#tabs .button.icon {
+    padding: 0.25em 0.75em;
+}
+
+table.list {
+    border-collapse: collapse; font-size: 80%; margin: 0 auto; width: 100%
+}
 table.list tbody tr:nth-child(odd) {
     background-color: #f0f8ff;
 }
 table.list thead {
     background: #9ca3af;
+    font-size: 90%;
     color: #fff;
     text-align: left;
     white-space: nowrap;

@@ -1,4 +1,3 @@
-<p class="mt-2 text-center">Showing <span id="logsShown"></span></p>
 <table class="list">
     <thead>
     <tr>

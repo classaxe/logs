@@ -6,5 +6,7 @@
     @include('components.logs-form')
     @include('components.logs-stats')
     @include('components.logs-tips')
-    @include('components.logs-table')
+    @include('components.logs-tabs')
+    @include('components.logs-list')
+    @include('components.logs-map')
 </x-app-layout>
