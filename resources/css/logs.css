@@ -20,7 +20,7 @@ div.group {
     display: inline-block; white-space: nowrap; margin-bottom: 0.25em;
 }
 #tabs {
-    margin: 0.5em 0 0 0;
+    margin: 0.5em 0 0 1em;
 }
 #tabs .button {
     color: #fff;
@@ -60,9 +60,18 @@ div.group {
 #tabs .button.icon {
     padding: 0.25em 0.75em;
 }
-
+#content {
+    border: 1px solid #008;
+    border-radius: 0.5em;
+    padding: 0.5em;
+    background: #ddf;
+}
 table.list {
-    border-collapse: collapse; font-size: 80%; margin: 0 auto; width: 100%
+    border-collapse: collapse;
+    background: #fff;
+    font-size: 80%;
+    margin: 0 auto;
+    width: 100%;
 }
 table.list tbody tr:nth-child(odd) {
     background-color: #f0f8ff;
