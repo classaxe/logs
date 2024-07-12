@@ -15,7 +15,14 @@
         <link rel="prefetch" href="/images/loader.gif" />
 
         <!-- Scripts -->
-        @vite(['resources/css/app.css', 'resources/css/logs.css', 'resources/js/app.js', 'resources/js/logs.js'])
+        @vite([
+            'resources/css/app.css',
+            'resources/css/logs.css',
+            'resources/js/app.js',
+            'resources/js/logs.js',
+            'resources/js/nite-overlay/nite-overlay.js',
+            'resources/js/map.js'
+        ])
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">
