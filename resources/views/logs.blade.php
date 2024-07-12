@@ -7,8 +7,8 @@
     @include('components.logs-stats')
     @include('components.logs-tips')
     @include('components.logs-tabs')
-    <div id="content">
-        @include('components.logs-list')
-        @include('components.logs-map')
-    </div>
+<div id="content">
+    @include('components.logs-list')
+    @include('components.logs-map')
+</div>
 </x-app-layout>
