@@ -261,3 +261,11 @@ th.sortable:hover,
 th.sortable:hover::after {
     color: #ff0;
 }
+.gridLabel {
+    position: absolute;
+    z-index: -100000;
+    color: #408080;
+    font-weight: bold;
+    font-family: Tahoma, Arial, Helvetica, sans-serif;
+    opacity: 0.9;
+}
