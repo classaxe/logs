@@ -1,5 +1,5 @@
 // Globals: signals, types
-var Map = {
+var LMap = {
     map : null,
     icons : {},
     infoWindow : null,
@@ -14,18 +14,18 @@ var Map = {
         for (var i in icons) {
                 for (var j in states) {
                 var pin = base_image + '/pins/' + icons[i] + '_' + states[j] + '.png';
-                Map.icons[icons[i] + '_' + states[j]] =
+                LMap.icons[icons[i] + '_' + states[j]] =
                     new google.maps.MarkerImage(pin, new google.maps.Size(12, 20));
             }
         }
-        Map.options = {
+        LMap.options = {
             'zoom': 7,
             'center': new google.maps.LatLng(center.lat, center.lon),
             'mapTypeId': google.maps.MapTypeId.ROADMAP
         };
-        Map.map = new google.maps.Map($('#map').get(0), Map.options);
+        LMap.map = new google.maps.Map($('#map').get(0), LMap.options);
         if (box[0].lat !== box[1].lat || box[0].lon !== box[1].lon) {
-            Map.map.fitBounds(
+            LMap.map.fitBounds(
                 new google.maps.LatLngBounds(
                     new google.maps.LatLng(box[0].lat, box[0].lon), //sw
                     new google.maps.LatLng(box[1].lat, box[1].lon) //ne
@@ -33,19 +33,19 @@ var Map = {
             );
         }
 
-        Map.infoWindow = new google.maps.InfoWindow();
-        Map.drawGrid();
-        Map.drawMarkers();
-        Map.drawQTH();
-        Map.setActions();
-        setExternalLinks();
-        setClippedCellTitles();
-        nite.init(Map.map);
+        LMap.infoWindow = new google.maps.InfoWindow();
+        LMap.drawGrid();
+        LMap.drawMarkers();
+        LMap.drawQTH();
+        LMap.setActions();
+        //setExternalLinks();
+        //setClippedCellTitles();
+        nite.init(LMap.map);
         setInterval(function() { nite.refresh() }, 10000); // every 10s
     },
 
     drawGrid : function() {
-        return drawGrid(Map.map, layers, true);
+        return drawGrid(LMap.map, layers, true);
     },
 
     drawMarkers : function() {
@@ -54,12 +54,12 @@ var Map = {
             return;
         }
         mode = (typeof listener === 'undefined' ? 'S' : 'LS');
-        Map.markerGroups=new google.maps.MVCObject();
+        LMap.markerGroups=new google.maps.MVCObject();
         for (i in types) {
-            Map.markerGroups.set('type_' + types[i] + '_0', Map.map);
-            Map.markerGroups.set('type_' + types[i] + '_1', Map.map);
+            LMap.markerGroups.set('type_' + types[i] + '_0', LMap.map);
+            LMap.markerGroups.set('type_' + types[i] + '_1', LMap.map);
         }
-        Map.markerGroups.set('highlight', Map.map);
+        LMap.markerGroups.set('highlight', LMap.map);
 
         icon_highlight = {
             url: base_image + '/map_point_here.gif',
@@ -95,12 +95,12 @@ var Map = {
 
             marker = new google.maps.Marker({
                 id : 'point_' + s.id,
-                icon : Map.icons[s.icon + '_' + (s.active ? 1 : 0)],
+                icon : LMap.icons[s.icon + '_' + (s.active ? 1 : 0)],
                 position : new google.maps.LatLng(s.lat, s.lon),
                 title :  strip_tags(s.khz + ' ' + s.call)
             });
-            google.maps.event.addListener(marker, 'click', Map.markerClickFunction(s));
-            marker.bindTo('map', Map.markerGroups, 'type_' + s.typeId + '_' + (s.active ? '1' : '0'));
+            google.maps.event.addListener(marker, 'click', LMap.markerClickFunction(s));
+            marker.bindTo('map', LMap.markerGroups, 'type_' + s.typeId + '_' + (s.active ? '1' : '0'));
             markers.push(marker);
         }
 
@@ -111,7 +111,7 @@ var Map = {
                 var coords = $(this).data('gmap').split('|');
                 highlight = new google.maps.Marker({
                     position: new google.maps.LatLng(coords[0], coords[1]),
-                    map: Map.map,
+                    map: LMap.map,
                     icon: icon_highlight
                 });
             })
@@ -129,7 +129,7 @@ var Map = {
         }
         layers.qth = new google.maps.Marker({
             position: { lat: listener.lat, lng: listener.lng },
-            map: Map.map,
+            map: LMap.map,
             icon: {
                 scaledSize: new google.maps.Size(30,30),
                 url: "//maps.google.com/mapfiles/kml/pushpin/red-pushpin.png"
@@ -145,7 +145,7 @@ var Map = {
         });
 
         layers.qth.addListener('click', function() {
-            qthInfo.open(Map.map, layers.qth);
+            qthInfo.open(LMap.map, layers.qth);
         });
     },
 
@@ -175,9 +175,9 @@ var Map = {
                 '    <tr><th>' + msg.heard_in + '</th><td>' + s.heard_in + '</td></tr>' +
                 '  </table>' +
                 '</div>';
-            Map.infoWindow.setContent(infoHtml);
-            Map.infoWindow.setPosition(new google.maps.LatLng(s.lat, s.lon));
-            Map.infoWindow.open(Map.map);
+            LMap.infoWindow.setContent(infoHtml);
+            LMap.infoWindow.setPosition(new google.maps.LatLng(s.lat, s.lon));
+            LMap.infoWindow.open(LMap.map);
         };
     },
 
@@ -186,7 +186,7 @@ var Map = {
             var active, i;
             active = $('#layer_grid').prop('checked');
             for (i in layers.grid) {
-                layers.grid[i].setMap(active ? Map.map : null);
+                layers.grid[i].setMap(active ? LMap.map : null);
             }
         });
 
@@ -199,7 +199,7 @@ var Map = {
         });
 
         $('#layer_qth').click(function () {
-            layers['qth'].setMap($('#layer_qth').prop('checked') ? Map.map : null);
+            layers['qth'].setMap($('#layer_qth').prop('checked') ? LMap.map : null);
         });
 
         $('#layer_active').click(function () {
@@ -208,9 +208,9 @@ var Map = {
                 type = types[i];
                 layer_active = $('#layer_active');
                 layer_type = $('#layer_' + type);
-                Map.markerGroups.set(
+                LMap.markerGroups.set(
                     'type_' + type + '_1',
-                    layer_active.prop('checked') && layer_type.prop('checked') ? Map.map : null
+                    layer_active.prop('checked') && layer_type.prop('checked') ? LMap.map : null
                 );
                 if (layer_type.prop('checked')) {
                     if (layer_active.prop('checked')) {
@@ -229,9 +229,9 @@ var Map = {
                 type = types[i];
                 layer_inactive = $('#layer_inactive');
                 layer_type = $('#layer_' + type);
-                Map.markerGroups.set(
+                LMap.markerGroups.set(
                     'type_' + type + '_0',
-                    layer_inactive.prop('checked') && layer_type.prop('checked') ? Map.map : null
+                    layer_inactive.prop('checked') && layer_type.prop('checked') ? LMap.map : null
                 );
                 if (layer_type.prop('checked')) {
                     if (layer_inactive.prop('checked')) {
@@ -247,13 +247,13 @@ var Map = {
         types.forEach(function (type) {
             $('#layer_' + type).click(function () {
                 var layer_type = $('#layer_' + type);
-                Map.markerGroups.set(
+                LMap.markerGroups.set(
                     'type_' + type + '_0',
-                    $('#layer_inactive').prop('checked') && layer_type.prop('checked') ? Map.map : null
+                    $('#layer_inactive').prop('checked') && layer_type.prop('checked') ? LMap.map : null
                 );
-                Map.markerGroups.set(
+                LMap.markerGroups.set(
                     'type_' + type + '_1',
-                    $('#layer_active').prop('checked') && layer_type.prop('checked') ? Map.map : null
+                    $('#layer_active').prop('checked') && layer_type.prop('checked') ? LMap.map : null
                 );
                 if (layer_type.prop('checked')) {
                     if ($('#layer_inactive').prop('checked')) {

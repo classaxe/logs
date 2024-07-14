@@ -19,10 +19,11 @@
             'resources/css/app.css',
             'resources/css/logs.css',
             'resources/js/app.js',
-            'resources/js/logs.js',
-            'resources/js/nite-overlay/nite-overlay.js',
-            'resources/js/map.js'
+            'resources/js/logs.js'
         ])
+        <script src="/js/nite-overlay/nite-overlay.js"></script>
+        <script src="/js/map_common.js"></script>
+        <script src="/js/lmap.js"></script>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100">

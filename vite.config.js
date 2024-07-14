@@ -8,11 +8,8 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/css/logs.css',
-
                 'resources/js/app.js',
                 'resources/js/logs.js',
-                'resources/js/map.js',
-                'resources/js/nite-overlay/nite-overlay.js',
             ],
             refresh: true,
         }),
