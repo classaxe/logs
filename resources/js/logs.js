@@ -13,6 +13,7 @@ var logsFiltered = [];
 
 var frm = {
     start: null,
+    gsqs: {},
     getFilters: function () {
         filters.bands = [];
         filters.modes = [];
@@ -133,6 +134,30 @@ var frm = {
             (all === shown ? 'all ' : '') + '<strong>' + shown + '</strong> log' + (shown ===1 ? '' : 's')
         );
     },
+    getGridSquares: function() {
+        frm.gsqs = {}
+        $(logsFiltered).each(function(idx,log){
+            let gsq = log.gsq;
+            let latlon;
+
+            if (gsq) {
+                if (typeof frm.gsqs[gsq] === 'undefined') {
+                    latlon = frm.gsq_deg(gsq);
+                    frm.gsqs[gsq] = {
+                        conf: '',
+                        lat: latlon.lat,
+                        lon: latlon.lon,
+                        logs: []
+                    };
+                }
+                if (log.conf === 'Y') {
+                    frm.gsqs[gsq].conf = 'Y'
+                }
+                frm.gsqs[gsq].logs.push(log);
+            }
+        });
+        console.log(frm.gsqs);
+    },
     getUniqueValues: function(field) {
         let idx;
         let tmp = [];
@@ -148,6 +173,24 @@ var frm = {
             }
         }
         return count;
+    },
+    gsq_deg: function(GSQ) {
+        let lat, lat_d, lat_m, lat_s, lon, lon_d, lon_m, lon_s, offset;
+        if (!GSQ.match(/^([a-rA-R]{2})([0-9]{2})([a-xA-X]{2})?$/i)) {
+            return false;
+        }
+        GSQ = GSQ.toUpperCase();
+        offset = (GSQ.length === 6 ? 1/48 : 0);
+        GSQ = GSQ + (GSQ.length === 4 ? 'MM' : '');
+        lon_d = GSQ.charCodeAt(0)-65;
+        lon_m = parseFloat(GSQ.substr(2,1));
+        lon_s = GSQ.charCodeAt(4)-65;
+        lat_d = GSQ.charCodeAt(1)-65;
+        lat_m = parseFloat(GSQ.substr(3,1));
+        lat_s = GSQ.charCodeAt(5)-65;
+        lon = Math.round((2 * (lon_d * 10 + lon_m + lon_s / 24 + offset) - 180) * 10000) / 10000;
+        lat = Math.round((lat_d * 10 + lat_m + lat_s / 24 + offset - 90) * 10000) / 10000;
+        return { lat: lat, lon: lon };
     },
     stats: function() {
         console.log(logsFiltered[0]);
@@ -178,6 +221,7 @@ var frm = {
                 $('#logUpdated').text(data.lastPulled);
                 frm.count();
                 frm.stats();
+                frm.getGridSquares();
                 frm.addLinks();
                 $("body").removeClass("loading");
                 console.log('Updated in ' + ((Date.now() - frm.start)/1000) + ' seconds');
@@ -195,6 +239,7 @@ var frm = {
         $('table.list tbody').html(frm.parseLogs());
         frm.count();
         frm.stats();
+        frm.getGridSquares();
         frm.addLinks();
         $("body").removeClass("loading");
         console.log('Updated in ' + ((Date.now() - frm.start)/1000) + ' seconds');

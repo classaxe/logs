@@ -12,12 +12,13 @@ var LMap = {
         var icons = [ 'dgps', 'dsc', 'hambcn', 'navtex', 'ndb', 'time', 'other' ];
         var states = [ 0, 1 ];
         for (var i in icons) {
-                for (var j in states) {
+            for (var j in states) {
                 var pin = base_image + '/pins/' + icons[i] + '_' + states[j] + '.png';
                 LMap.icons[icons[i] + '_' + states[j]] =
                     new google.maps.MarkerImage(pin, new google.maps.Size(12, 20));
             }
         }
+        //LMap.getGridSquares();
         LMap.options = {
             'zoom': 7,
             'center': new google.maps.LatLng(center.lat, center.lon),
@@ -97,7 +98,7 @@ var LMap = {
                 id : 'point_' + s.id,
                 icon : LMap.icons[s.icon + '_' + (s.active ? 1 : 0)],
                 position : new google.maps.LatLng(s.lat, s.lon),
-                title :  strip_tags(s.khz + ' ' + s.call)
+                title : s.khz + ' ' + s.call
             });
             google.maps.event.addListener(marker, 'click', LMap.markerClickFunction(s));
             marker.bindTo('map', LMap.markerGroups, 'type_' + s.typeId + '_' + (s.active ? '1' : '0'));
