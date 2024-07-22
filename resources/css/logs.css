@@ -269,3 +269,30 @@ th.sortable:hover::after {
     font-family: Tahoma, Arial, Helvetica, sans-serif;
     opacity: 0.9;
 }
+.map_info h3 {
+    margin: 0;
+    font-size: 10pt;
+    display: block;
+}
+.map_info .info-body {
+    padding: 0;
+    margin: 2px 0;
+    border: 1px solid #ccc;
+}
+.map_info .info-body tbody {
+    padding: 2px;
+    margin: 0;
+}
+.map_info .info-body tbody th {
+    vertical-align: top;
+    padding: 3px;
+    font-size: 8pt;
+    text-align: left;
+    width: 10em;
+}
+.map_info .info-body tbody td {
+    vertical-align: top;
+    padding: 3px;
+    font-size: 10pt;
+    width: 16em;
+}

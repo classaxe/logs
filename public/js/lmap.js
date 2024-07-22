@@ -18,7 +18,6 @@ var LMap = {
                     new google.maps.MarkerImage(pin, new google.maps.Size(12, 20));
             }
         }
-        //LMap.getGridSquares();
         LMap.options = {
             'zoom': 7,
             'center': new google.maps.LatLng(center.lat, center.lon),
@@ -54,7 +53,6 @@ var LMap = {
         if (!signals) {
             return;
         }
-        mode = (typeof listener === 'undefined' ? 'S' : 'LS');
         LMap.markerGroups=new google.maps.MVCObject();
         for (i in types) {
             LMap.markerGroups.set('type_' + types[i] + '_0', LMap.map);
@@ -68,7 +66,6 @@ var LMap = {
             anchor: new google.maps.Point(6, 7)
         };
 
-        html = '';
         for (i in signals) {
             s = signals[i];
             html +=
@@ -125,24 +122,24 @@ var LMap = {
     },
 
     drawQTH : function() {
-        if (typeof listener === 'undefined') {
+        if (typeof qth === 'undefined') {
             return;
         }
         layers.qth = new google.maps.Marker({
-            position: { lat: listener.lat, lng: listener.lng },
+            position: { lat: qth.lat, lng: qth.lng },
             map: LMap.map,
             icon: {
                 scaledSize: new google.maps.Size(30,30),
-                url: "//maps.google.com/mapfiles/kml/pushpin/red-pushpin.png"
+                url: base_image + '/pins/red-pushpin.png'
             },
-            title: listener.name,
+            title: qth.callsign,
             zIndex: 100
         });
 
         qthInfo = new google.maps.InfoWindow({
             content:
-                "<h2>" + listener.name + "</h2>" +
-                "<p>" + listener.qth + "</p>"
+                "<h2>" + qth.call + " " + name + "</h2>" +
+                "<p>" + qth.qth + "</p>"
         });
 
         layers.qth.addListener('click', function() {
