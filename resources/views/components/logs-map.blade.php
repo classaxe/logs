@@ -129,6 +129,7 @@ var types = [
     2,
     5
 ];
+var gsqs = {};
 var markers = [];
 </script>
 <script>

@@ -37,6 +37,17 @@ var LMap = {
         LMap.drawGrid();
         LMap.drawMarkers();
         LMap.drawQTH();
+        // 44.5N, 79W
+        LMap.drawGridSquares();
+        LMap.drawGridSquare(
+            {
+                "north": 45,
+                "south": 44,
+                "east": -78,
+                "west": -80
+            },
+            true
+        );
         LMap.setActions();
         //setExternalLinks();
         //setClippedCellTitles();
@@ -46,6 +57,30 @@ var LMap = {
 
     drawGrid : function() {
         return drawGrid(LMap.map, layers, true);
+    },
+
+    drawGridSquares: function() {
+        let bounds, conf, gsq;
+        for (gsq in gsqs) {
+            this.drawGridSquare(
+                this.gsq4Bounds(gsq),
+                gsqs[gsq].conf === 'Y'
+            )
+        }
+    },
+
+    drawGridSquare: function(bounds, conf) {
+        let map = LMap.map;
+        let rgb = conf ? '#FF0000' : '#FFFF00';
+        const rectangle = new google.maps.Rectangle({
+            strokeColor: rgb,
+            strokeOpacity: 0.5,
+            strokeWeight: 0.25,
+            fillColor: rgb,
+            fillOpacity: 0.35,
+            map,
+            bounds: bounds,
+        });
     },
 
     drawMarkers : function() {
@@ -145,6 +180,26 @@ var LMap = {
         layers.qth.addListener('click', function() {
             qthInfo.open(LMap.map, layers.qth);
         });
+    },
+
+    gsq4Bounds: function(GSQ) {
+        let lat, lat_d, lat_m, lon, lon_d, lon_m;
+        if (!GSQ.match(/^([a-rA-R]{2})([0-9]{2})$/i)) {
+            return false;
+        }
+        GSQ = GSQ.toUpperCase();
+        lon_d = GSQ.charCodeAt(0)-65;
+        lon_m = parseFloat(GSQ.substring(2,3));
+        lat_d = GSQ.charCodeAt(1)-65;
+        lat_m = parseFloat(GSQ.substring(3,4));
+        lon = Math.round((2 * (lon_d * 10 + lon_m) - 180) * 10000) / 10000;
+        lat = Math.round((lat_d * 10 + lat_m  - 90) * 10000) / 10000;
+        return {
+            north: lat + 1,
+            south: lat,
+            east: lon + 2,
+            west: lon
+        };
     },
 
     markerClickFunction: function(s) {
