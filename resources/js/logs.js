@@ -174,15 +174,6 @@ var frm = {
         }
         return count;
     },
-    gsq_bounds: function(GSQ) {
-        let c = this.gsq_deg(GSQ);
-        return {
-            north: c.lat + 0.5,
-            south: c.lat - 0.5,
-            east: c.lon - 1,
-            west: c.lon + 1,
-        }
-    },
     gsq_deg: function(GSQ) {
         let lat, lat_d, lat_m, lat_s, lon, lon_d, lon_m, lon_s, offset;
         if (!GSQ.match(/^([a-rA-R]{2})([0-9]{2})([a-xA-X]{2})?$/i)) {
@@ -362,9 +353,9 @@ window.addEventListener("DOMContentLoaded", function(){
         $('.list').show();
     });
     $('#show_map').click(function() {
+        LMap.drawGridSquares();
         $('#show_list').removeClass('is-active').addClass('is-inactive');
         $('#show_map').removeClass('is-inactive').addClass('is-active');
-        LMap.drawGridSquares();
         $('.list').hide();
         $('.map').show();
     });

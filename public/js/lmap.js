@@ -32,25 +32,11 @@ var LMap = {
                 )
             );
         }
-
         LMap.infoWindow = new google.maps.InfoWindow();
         LMap.drawGrid();
         LMap.drawMarkers();
         LMap.drawQTH();
-        // 44.5N, 79W
-        LMap.drawGridSquares();
-        LMap.drawGridSquare(
-            {
-                "north": 45,
-                "south": 44,
-                "east": -78,
-                "west": -80
-            },
-            true
-        );
         LMap.setActions();
-        //setExternalLinks();
-        //setClippedCellTitles();
         nite.init(LMap.map);
         setInterval(function() { nite.refresh() }, 10000); // every 10s
     },
@@ -74,10 +60,10 @@ var LMap = {
         let rgb = conf ? '#FF0000' : '#FFFF00';
         const rectangle = new google.maps.Rectangle({
             strokeColor: rgb,
-            strokeOpacity: 0.5,
+            strokeOpacity: 0.85,
             strokeWeight: 0.25,
             fillColor: rgb,
-            fillOpacity: 0.35,
+            fillOpacity: 0.5,
             map,
             bounds: bounds,
         });
