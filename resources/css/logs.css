@@ -296,3 +296,222 @@ th.sortable:hover::after {
     font-size: 10pt;
     width: 16em;
 }
+
+
+.map {
+    margin: 0;
+}
+.map #header .form_layers {
+    display: inline-block;
+    background: #ffffff;
+    border: 1px solid #aaa;
+    border-radius: 5px;
+}
+.map #header .form_layers div {
+    height: 1.8em;
+    line-height: 1.8em;
+    float: left;
+    padding: 0 4px;
+    margin: 0;
+}
+.map #header .form_layers div input[type='checkbox'] {
+    padding: 0;
+    margin: 0;
+}
+.map #header .form_layers div label {
+    padding: 0 0.25em;
+}
+.map #header .form_layers div:last-child {
+    border-radius: 0 5px 5px 0;
+}
+.map #map {
+    height: 80%;
+    margin: 0 0.25em;
+    overflow: auto;
+    border: 1px solid #aaa;
+}
+.map h1 {
+    margin: 0.125em 5px;
+    white-space: nowrap;
+}
+.map .gm-style-iw h2 {
+    margin: 0.25em 0;
+}
+.map .gm-style-iw p {
+    margin: 0.25em 0;
+}
+.txt_vertical {
+    vertical-align: bottom;
+    text-align: center;
+}
+.txt_vertical div {
+    -ms-writing-mode: tb-rl;
+    -webkit-writing-mode: vertical-rl;
+    writing-mode: vertical-rl;
+    white-space: nowrap;
+    padding-bottom: 0.5em;
+    display: table;
+    border-spacing: 0;
+}
+div.scroll {
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+}
+div.scroll div {
+    height: 100%;
+    overflow: auto;
+}
+div.scroll div table.results,
+div.scroll div table.results_noaction {
+    border-top: 2px solid #808080;
+    border-bottom: 1px solid #808080;
+    border-right: 1px solid #808080;
+    background: #ffffff;
+}
+div.scroll div table.results thead th,
+div.scroll div table.results_noaction thead th {
+    position: sticky;
+    top: -1px;
+    border-top: none;
+    border-bottom: none;
+}
+div.scroll div table.results tbody tr:hover,
+div.scroll div table.results_noaction tbody tr:hover,
+div.scroll div table.results tbody tr:hover td,
+div.scroll div table.results_noaction tbody tr:hover td {
+    background: #ffff00 !important;
+}
+div.scroll div table.results img,
+div.scroll div table.results_noaction img {
+    margin: 0.5em 0.25em 0 0;
+}
+/* [ Grid CSS ] */
+.results,
+.results_noaction {
+    margin: 0;
+    border-collapse: collapse;
+}
+.results thead th {
+    height: 7em !important;
+    max-height: 7em !important;
+    background: #686868;
+    color: #ffffff;
+    border: 1px solid #808080;
+    vertical-align: bottom;
+    font-size: 9pt;
+    padding: 0.25em;
+}
+.results thead th.hidden,
+.results_noaction thead th.hidden {
+    display: none;
+}
+.results thead th.sort,
+.results_noaction thead th.sort {
+    border-bottom: 3px solid #a0a0a0;
+}
+.results thead th.nosort,
+.results_noaction thead th.nosort {
+    background: #008000;
+    border-bottom: 3px solid #006000;
+}
+.results thead th.sort:hover,
+.results_noaction thead th.sort:hover,
+.results thead th.sorted,
+.results_noaction thead th.sorted {
+    border-bottom: 3px solid #FCC247 !important;
+    background: #665d4b;
+    cursor: pointer;
+}
+.results thead th.sorted,
+.results_noaction thead th.sorted {
+    color: #ffe4b3;
+}
+.results thead th b,
+.results_noaction thead th b {
+    background: #ffffa0;
+    color: #0000ff;
+    border: 1px solid #b0b000;
+    border-radius: 2px;
+}
+.results tbody th,
+.results_noaction tbody th,
+.results tbody td.personalise,
+.results_noaction tbody td.personalise {
+    padding: 0.125em 0.25em;
+    vertical-align: top;
+    background: #95de95;
+    color: #008000;
+    font-weight: bold;
+    border: 1px solid #808080;
+}
+.results tbody th.no-results,
+.results_noaction tbody th.no-results,
+.results tbody td.personalise.no-results,
+.results_noaction tbody td.personalise.no-results {
+    background: #de9595;
+    color: #800000;
+}
+.results tr.daytime td,
+.results_noaction tr.daytime td {
+    font-weight: bold;
+}
+.results tr.logged td,
+.results_noaction tr.logged td {
+    color: #008000 !important;
+}
+.results tr.unlogged td,
+.results_noaction tr.unlogged td {
+    color: #A00000 !important;
+}
+.results tr.l2_alt td,
+.results_noaction tr.l2_alt td {
+    padding: 0;
+}
+.results tr.l2_alt td table,
+.results_noaction tr.l2_alt td table {
+    background: transparent;
+    margin: 0;
+    border: none;
+}
+.results tr.l2_alt td table tbody,
+.results_noaction tr.l2_alt td table tbody {
+    background: transparent !important;
+}
+.results tr.l2_alt td table tbody tr,
+.results_noaction tr.l2_alt td table tbody tr {
+    background: transparent !important;
+}
+.results tr.l2_alt td table tbody tr th,
+.results_noaction tr.l2_alt td table tbody tr th {
+    background: transparent !important;
+    width: 6em;
+    white-space: nowrap;
+    text-align: right;
+    color: #000;
+}
+.results tr.l2_alt td table tbody tr td,
+.results_noaction tr.l2_alt td table tbody tr td,
+.results tr.l2_alt td table tbody tr th,
+.results_noaction tr.l2_alt td table tbody tr th {
+    text-align: left !important;
+    font-size: 100%;
+    margin: 0;
+    padding: 0 0.25em;
+    border: none;
+}
+.results tr.l2_alt td table tbody tr td div,
+.results_noaction tr.l2_alt td table tbody tr td div,
+.results tr.l2_alt td table tbody tr th div,
+.results_noaction tr.l2_alt td table tbody tr th div {
+    display: inline;
+}
+.results td,
+.results_noaction td {
+    border: 1px solid #808080;
+    height: 1.25em;
+    vertical-align: top;
+    font-size: 9pt;
+    padding: 0.125em 0.25em;
+}

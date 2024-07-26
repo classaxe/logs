@@ -34,17 +34,18 @@ var box = [
 var base_image = '/images';
 var base_url = '/';
 var gridColor = '#800000';
-var gridOpacity = 0.75;
+var gridOpacity = 0.35;
 var layers = {
-    grid: []
+    grid: [],
+    squares: []
 };
 var qth = {
     lat: 44.0016,
     lng: -79.4445,
-    gsq: "FN04ga",
-    call: "VA3PHP",
-    name: "Martin Francis",
-    qth: "Millcliff Circle, Aurora, ON, CAN"
+    gsq: "{{ $user['gsq'] }}",
+    call: "{{ $user['call'] }}",
+    name: "{{ $user['name'] }}",
+    qth: "{{ $user['qth'] }}, {{ $user['city'] }}, {{ $user['sp'] }}, {{ $user['itu'] }}"
 }
 var signals = [
     {
@@ -140,18 +141,68 @@ window.addEventListener("DOMContentLoaded", function() {
     document.head.appendChild(script);
 });
 </script>
-<div>
-    <table class="results">
-        <thead>
-            <tr>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
+<table class="map_layout">
+    <tbody style="background: transparent">
+        <tr>
+            <td width="35%">
+                <div class="scroll">
+                    <div id="scrollablelist" style="height: 473px;">
+                        <table class="results">
+                            <thead>
+                                <tr>
+                                    <th class="sort sorted" title="Sort by KHz">KHz</th>
+                                    <th class="sort" title="Sort by ID">ID</th>
+                                    <th class="sort" title="Sort by QTH">QTH</th>
+                                    <th class="sort" title="Sort by S/P">S/P</th>
+                                    <th class="sort" title="Sort by ITU">ITU</th>
+                                    <th class="sort txt_vertical" title="Sort by distance in KM"><div>KM</div></th>
+                                    <th class="sort txt_vertical" title="Sort by distance in Miles"><div>Miles</div></th>
+                                    <th class="sort txt_vertical" title="Sort by bearing"><div>Deg</div></th>
+                                </tr>
+                            </thead>
+                            <tbody>
 
-        </tbody>
-    </table>
-</div>
-<div class="map" style="display: none">
-    <div id="map" style="height: 1000px;">Loading...</div>
-</div>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </td>
+            <td class="map">
+                <div id="header">
+                    <div class="form_layers">
+                        <div>
+                            <label>
+                                <strong>Show</strong>
+                            </label>
+                        </div>
+                        <div>
+                            <label title="Show Maidenhead Locator Grid Squares">
+                                <input type="checkbox" id="layer_grid" checked="checked">
+                                Grid
+                            </label>
+                        </div>
+                        <div>
+                            <label title="Show Daytime / Nighttime">
+                                <input type="checkbox" id="layer_night" checked="checked">
+                                Night
+                            </label>
+                        </div>
+                        <div>
+                            <label title="Show Gridsquares">
+                                <input type="checkbox" id="layer_squares" checked="checked">
+                                Squares
+                            </label>
+                        </div>
+                        <div>
+                            <label title="Show QTH">
+                                <input type="checkbox" id="layer_qth" checked="checked">
+                                QTH
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div id="map" style="height: 1000px;">Loading...</div>
+            </td>
+        </tr>
+    </tbody>
+</table>

@@ -41,12 +41,126 @@ var LMap = {
         setInterval(function() { nite.refresh() }, 10000); // every 10s
     },
 
+    initMapsTxtOverlay: function() {
+        // Thanks to Michal, 'UX Lead at Alphero' for this custom text overlay code
+        // Ref: https://stackoverflow.com/a/3955258/815790
+
+        function TxtOverlay(pos, txt, cls) {
+            this.pos = pos;
+            this.txt_ = txt;
+            this.cls_ = cls;
+            this.div_ = null;
+            this.setMap(map);
+        }
+
+        TxtOverlay.prototype = new google.maps.OverlayView();
+
+        TxtOverlay.prototype.onAdd = function() {
+            var div, overlayProjection, panes, position;
+            div = document.createElement('DIV');
+            div.className = this.cls_;
+            div.innerHTML = this.txt_;
+            this.div_ = div;
+            overlayProjection = this.getProjection();
+            position = overlayProjection.fromLatLngToDivPixel(this.pos);
+            div.style.left = position.x + 'px';
+            div.style.top = position.y + 'px';
+            panes = this.getPanes();
+            panes.floatPane.appendChild(div);
+        };
+
+        TxtOverlay.prototype.draw = function() {
+            var div, position, overlayProjection;
+            overlayProjection = this.getProjection();
+            position = overlayProjection.fromLatLngToDivPixel(this.pos);
+            div = this.div_;
+            div.style.left = position.x + 'px';
+            div.style.top = position.y + 'px';
+        };
+
+        TxtOverlay.prototype.onRemove = function() {
+            this.div_.parentNode.removeChild(this.div_);
+            this.div_ = null;
+        };
+
+        return TxtOverlay;
+    },
+
     drawGrid : function() {
-        return drawGrid(LMap.map, layers, true);
+        let squares = true;
+        let TxtOverlay =    LMap.initMapsTxtOverlay();
+        var i, la, laf, lo, lof;
+        for (la=0; la<180; la+=10) {
+            layers.grid.push(
+                new google.maps.Polyline({
+                    path: [
+                        {lat: (la-90), lng: -180},
+                        {lat:(la-90), lng: 0},
+                        {lat: (la-90), lng: 180}
+                    ],
+                    geodesic: false,
+                    strokeColor: gridColor,
+                    strokeOpacity: gridOpacity,
+                    strokeWeight: 0.5
+                })
+            );
+            if (typeof squares !== 'undefined' && squares) {
+                for(laf=0; laf<10; laf++) {
+                    layers.grid.push(
+                        new google.maps.Polyline({
+                            path: [{lat: laf + (la-90), lng: -180}, {lat: laf + (la-90), lng: 0}, {lat: laf +  (la-90), lng: 180}],
+                            geodesic: false,
+                            strokeColor: gridColor,
+                            strokeOpacity: gridOpacity,
+                            strokeWeight: 0.25
+                        })
+                    );
+                }
+            }
+        }
+        for (lo=0; lo<360; lo+=20) {
+            layers.grid.push(
+                new google.maps.Polyline({
+                    path: [{lat: 85.05, lng: lo}, {lat: -85.05, lng: lo}],
+                    geodesic: false,
+                    strokeColor: gridColor,
+                    strokeOpacity: gridOpacity,
+                    strokeWeight: 0.5
+                })
+            );
+            if (typeof squares !== 'undefined' && squares) {
+                for (lof = 0; lof < 20; lof += 2) {
+                    layers.grid.push(
+                        new google.maps.Polyline({
+                            path: [{lat: 85.05, lng: lo + lof}, {lat: -85.05, lng: lo + lof}],
+                            geodesic: false,
+                            strokeColor: gridColor,
+                            strokeOpacity: gridOpacity,
+                            strokeWeight: 0.25
+                        })
+                    );
+
+                }
+            }
+        }
+        for (la=10; la<170; la+=10) {
+            for (lo = 0; lo < 360; lo += 20) {
+                layers.grid.push(
+                    new TxtOverlay(
+                        new google.maps.LatLng(la -90 + 5.17,lo -180 + 9.625),
+                        String.fromCharCode((lo/20) +65) + String.fromCharCode((la/10) +65),
+                        'gridLabel'
+                    )
+                );
+            }
+        }
+        for (i in layers.grid) {
+            layers.grid[i].setMap(LMap.map);
+        }
     },
 
     drawGridSquares: function() {
-        let bounds, conf, gsq;
+        let gsq;
         for (gsq in gsqs) {
             this.drawGridSquare(
                 this.gsq4Bounds(gsq),
@@ -159,7 +273,7 @@ var LMap = {
 
         qthInfo = new google.maps.InfoWindow({
             content:
-                "<h2>" + qth.call + " " + name + "</h2>" +
+                "<h2><b>" + qth.call + "</b> - " + qth.name + "</h2>" +
                 "<p>" + qth.qth + "</p>"
         });
 
@@ -221,6 +335,14 @@ var LMap = {
     },
 
     setActions : function() {
+        var mapDiv = $('#map');
+        $(window).resize(function() {
+            mapDiv.height($(window).height() - 140);
+            mapDiv.width($(window).width() - 410);
+            $('#scrollablelist').height(mapDiv.height() + 40);
+        })
+        .trigger('resize');
+
         $('#layer_grid').click(function () {
             var active, i;
             active = $('#layer_grid').prop('checked');
@@ -237,79 +359,18 @@ var LMap = {
             }
         });
 
+        $('#layer_squares').click(function () {
+            var active, i;
+            active = $('#layer_squares').prop('checked');
+            for (i in layers.squares) {
+                layers.squares[i].setMap(active ? LMap.map : null);
+            }
+        });
+
         $('#layer_qth').click(function () {
             layers['qth'].setMap($('#layer_qth').prop('checked') ? LMap.map : null);
         });
 
-        $('#layer_active').click(function () {
-            var i, layer_active, layer_type, type;
-            for (i in types) {
-                type = types[i];
-                layer_active = $('#layer_active');
-                layer_type = $('#layer_' + type);
-                LMap.markerGroups.set(
-                    'type_' + type + '_1',
-                    layer_active.prop('checked') && layer_type.prop('checked') ? LMap.map : null
-                );
-                if (layer_type.prop('checked')) {
-                    if (layer_active.prop('checked')) {
-                        $('.results tbody .type_' + type + '.active').show();
-                    } else {
-                        $('.results tbody .type_' + type + '.active').hide();
-                    }
-                } else {
-                    $('.results tbody .type_' + type + '.active').hide();
-                }
-            }
-        });
-        $('#layer_inactive').click(function () {
-            var i, layer_inactive, layer_type, type;
-            for (i in types) {
-                type = types[i];
-                layer_inactive = $('#layer_inactive');
-                layer_type = $('#layer_' + type);
-                LMap.markerGroups.set(
-                    'type_' + type + '_0',
-                    layer_inactive.prop('checked') && layer_type.prop('checked') ? LMap.map : null
-                );
-                if (layer_type.prop('checked')) {
-                    if (layer_inactive.prop('checked')) {
-                        $('.results tbody .type_' + type + '.inactive').show();
-                    } else {
-                        $('.results tbody .type_' + type + '.inactive').hide();
-                    }
-                } else {
-                    $('.results tbody .type_' + type + '.inactive').hide();
-                }
-            }
-        });
-        types.forEach(function (type) {
-            $('#layer_' + type).click(function () {
-                var layer_type = $('#layer_' + type);
-                LMap.markerGroups.set(
-                    'type_' + type + '_0',
-                    $('#layer_inactive').prop('checked') && layer_type.prop('checked') ? LMap.map : null
-                );
-                LMap.markerGroups.set(
-                    'type_' + type + '_1',
-                    $('#layer_active').prop('checked') && layer_type.prop('checked') ? LMap.map : null
-                );
-                if (layer_type.prop('checked')) {
-                    if ($('#layer_inactive').prop('checked')) {
-                        $('.results tbody .type_' + type + '.inactive').show();
-                    } else {
-                        $('.results tbody .type_' + type + '.inactive').hide();
-                    }
-                    if ($('#layer_active').prop('checked')) {
-                        $('.results tbody .type_' + type + '.active').show();
-                    } else {
-                        $('.results tbody .type_' + type + '.active').hide();
-                    }
-                } else {
-                    $('.results tbody .type_' + type).hide();
-                }
-            });
-        });
         mapMarkerColSetActions();
     }
 };
