@@ -162,6 +162,7 @@ var frm = {
         let idx;
         let tmp = [];
         let count = 0;
+        let values = [];
         $(logsFiltered).each(function(idx,log){
             if (log[field] !== '') {
                 tmp[log[field].toUpperCase()] = 1;
@@ -170,9 +171,17 @@ var frm = {
         for (idx in tmp) {
             if (tmp.hasOwnProperty(idx)) {
                 count++;
+                values.push(idx)
             }
         }
-        return count;
+        return {
+            count: count,
+            values: values.sort()
+        };
+    },
+    getUniqueValuesStats: function(field) {
+        let tmp = frm.getUniqueValues(field);
+        return "<span title='" + tmp.values.join(', ') + "' style='cursor: help'>" + tmp.count + "</span>";
     },
     gsq_deg: function(GSQ) {
         let lat, lat_d, lat_m, lat_s, lon, lon_d, lon_m, lon_s, offset;
@@ -200,13 +209,15 @@ var frm = {
         };
     },
     stats: function() {
-        $('#statsSps').text(frm.getUniqueValues('sp'));
-        $('#statsItus').text(frm.getUniqueValues('itu'));
-        $('#statsContinents').text(frm.getUniqueValues('continent'));
-        $('#statsCalls').text(frm.getUniqueValues('call'));
-        $('#statsGsqs').text(frm.getUniqueValues('gsq'));
-        $('#statsItuBands').text(frm.getUniqueValues('ituband'));
-        $('#statsCallBands').text(frm.getUniqueValues('callband'));
+        let sp = frm.getUniqueValues('sp');
+        let cont = frm.getUniqueValues('continent');
+        $('#statsSps').html(frm.getUniqueValuesStats('sp'));
+        $('#statsItus').html(frm.getUniqueValuesStats('itu'));
+        $('#statsContinents').html(frm.getUniqueValuesStats('continent'));
+        $('#statsCalls').text(frm.getUniqueValues('call').count);
+        $('#statsGsqs').text(frm.getUniqueValues('gsq').count);
+        $('#statsItuBands').text(frm.getUniqueValues('ituband').count);
+        $('#statsCallBands').text(frm.getUniqueValues('callband').count);
     },
     load: function(callsign) {
         frm.start = Date.now();
