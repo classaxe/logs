@@ -349,7 +349,8 @@ th.sortable:hover::after {
     -webkit-writing-mode: vertical-rl;
     writing-mode: vertical-rl;
     white-space: nowrap;
-    padding-bottom: 0.5em;
+    margin-bottom: 0.25em;
+    text-align: right;
     display: table;
     border-spacing: 0;
 }
@@ -409,7 +410,7 @@ div.scroll div table.results_noaction img {
 }
 .results thead th.sort,
 .results_noaction thead th.sort {
-    border-bottom: 3px solid #a0a0a0;
+    border-bottom: 3px solid #a0a0a0 !important;
 }
 .results thead th.nosort,
 .results_noaction thead th.nosort {

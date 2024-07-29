@@ -156,7 +156,6 @@ var frm = {
                 gsqs[gsq].logs.push(log);
             }
         });
-        // console.log(frm.gsqs);
     },
     getUniqueValues: function(field) {
         let idx;
@@ -258,6 +257,9 @@ var frm = {
         frm.stats();
         frm.getGridSquares();
         frm.addLinks();
+        if ($('.map').is(':visible')) {
+            LMap.drawGridSquares();
+        }
         $("body").removeClass("loading");
         console.log('Updated in ' + ((Date.now() - frm.start)/1000) + ' seconds');
     },

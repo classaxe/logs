@@ -160,7 +160,12 @@ var LMap = {
     },
 
     drawGridSquares: function() {
-        let gsq;
+        let gsq, i, old;
+        old = layers.squares.length;
+        for (i in layers.squares) {
+            layers.squares[i].setMap(null);
+        }
+        layers.squares = [];
         for (gsq in gsqs) {
             this.drawGridSquare(
                 this.gsq4Bounds(gsq),
@@ -172,15 +177,17 @@ var LMap = {
     drawGridSquare: function(bounds, conf) {
         let map = LMap.map;
         let rgb = conf ? '#FF0000' : '#FFFF00';
-        const rectangle = new google.maps.Rectangle({
-            strokeColor: rgb,
-            strokeOpacity: 0.85,
-            strokeWeight: 0.25,
-            fillColor: rgb,
-            fillOpacity: 0.5,
-            map,
-            bounds: bounds,
-        });
+        layers.squares.push(new google.maps.Rectangle(
+            {
+                strokeColor: rgb,
+                strokeOpacity: 0.85,
+                strokeWeight: 0.25,
+                fillColor: rgb,
+                fillOpacity: 0.5,
+                map,
+                bounds: bounds,
+            })
+        );
     },
 
     drawMarkers : function() {
