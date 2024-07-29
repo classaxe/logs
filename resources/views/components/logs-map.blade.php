@@ -144,7 +144,7 @@ window.addEventListener("DOMContentLoaded", function() {
 <table class="map_layout">
     <tbody style="background: transparent">
         <tr>
-            <td width="35%">
+            <td>
                 <div class="scroll">
                     <div id="scrollablelist" style="height: 473px;">
                         <table class="results">

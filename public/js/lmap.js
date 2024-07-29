@@ -344,8 +344,8 @@ var LMap = {
     setActions : function() {
         var mapDiv = $('#map');
         $(window).resize(function() {
-            mapDiv.height($(window).height() - 140);
-            mapDiv.width($(window).width() - 410);
+            mapDiv.height($(window).height() - 486);
+            mapDiv.width($(window).width() - 390);
             $('#scrollablelist').height(mapDiv.height() + 40);
         })
         .trigger('resize');
