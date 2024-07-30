@@ -515,7 +515,13 @@ div.scroll div table.results_noaction img {
     font-size: 8pt;
     padding: 0.125em 0.25em;
 }
-.map_info .close {
+.map_info {
+    margin-top: 0.5em;
+}
+.map_info h3 {
+    margin-bottom: 0.25em;
+}
+.map_info #close {
     font-size: 8px;
     padding: 0 3px;
     margin-bottom: 0.5em;
@@ -535,4 +541,7 @@ div.scroll div table.results_noaction img {
     content: '';
     display: block;
     clear: both;
+}
+.gm-style-iw-chr {
+    display: none;
 }

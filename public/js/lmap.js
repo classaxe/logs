@@ -322,7 +322,6 @@ var LMap = {
             rows = '';
             for(i in data.logs) {
                 log = data.logs[i];
-                console.log(log);
                 rows +=
                     "<tr>" +
                     "<td>" + log.datetime + "</td>" +
@@ -341,8 +340,8 @@ var LMap = {
             let infoHtml =
                 "<div class=\"map_info\">" +"" +
                 "<h3>" +
-                "<b>Grid Square " + data.gsq + "</b> (" + (data.conf === 'Y' ? "Confirmed" : "Unconfirmed") + ")" +
-                "<a class='close' href='#' onclick='LMap.infoWindow.close();return false'>X</a>" +
+                "<b>Grid Square <strong>" + data.gsq + "</strong></b> (" + (data.conf === 'Y' ? "Confirmed" : "Unconfirmed") + ")" +
+                "<a id='close' href='#' onclick='LMap.infoWindow.close();return false'>X</a>" +
                 "</h3>" +
                 "<table class='results'>" +
                 "<thead><tr>" +
@@ -363,7 +362,7 @@ var LMap = {
             LMap.infoWindow.setPosition(new google.maps.LatLng(data.lat, data.lon));
             LMap.infoWindow.open(LMap.map);
             setTimeout(() => {
-                $('.gm-ui-hover-effect')[0].remove();
+                $('#close').focus();
             }, 10);
         };
     },
