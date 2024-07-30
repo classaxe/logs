@@ -395,13 +395,13 @@ div.scroll div table.results_noaction img {
     border-collapse: collapse;
 }
 .results thead th {
-    height: 7em !important;
-    max-height: 7em !important;
+    height: 4em !important;
+    max-height: 4em !important;
     background: #686868;
     color: #ffffff;
     border: 1px solid #808080;
     vertical-align: bottom;
-    font-size: 9pt;
+    font-size: 8pt;
     padding: 0.25em;
 }
 .results thead th.hidden,
@@ -508,11 +508,14 @@ div.scroll div table.results_noaction img {
 .results_noaction tr.l2_alt td table tbody tr th div {
     display: inline;
 }
-.results td,
-.results_noaction td {
+.results td {
     border: 1px solid #808080;
     height: 1.25em;
     vertical-align: top;
-    font-size: 9pt;
+    font-size: 8pt;
     padding: 0.125em 0.25em;
+}
+.map_info .results thead th {
+    height: 2em !important;
+    max-height: 2em !important;
 }

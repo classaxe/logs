@@ -145,6 +145,7 @@ var frm = {
                     latlon = frm.gsq_deg(gsq);
                     gsqs[gsq] = {
                         conf: '',
+                        gsq: gsq,
                         lat: latlon.lat,
                         lon: latlon.lon,
                         logs: []
@@ -227,7 +228,7 @@ var frm = {
             success: function (data) {
                 logs = data.logs;
                 $(logs).each(function(idx, log) {
-                    logs[idx].datetime = log.date + log.time;
+                    logs[idx].datetime = log.date + ' ' + log.time;
                     logs[idx].itusp = log.itu + log.sp;
                     logs[idx].ituband = log.itu + log.band;
                     logs[idx].callband = log.call + log.band;

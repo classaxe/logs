@@ -161,37 +161,37 @@ var LMap = {
 
     drawGridSquares: function() {
         let gsq, i, old;
-        old = layers.squares.length;
         for (i in layers.squares) {
             layers.squares[i].setMap(null);
         }
         layers.squares = [];
         for (gsq in gsqs) {
             this.drawGridSquare(
+                gsq,
                 this.gsq4Bounds(gsq),
                 gsqs[gsq].conf === 'Y'
             )
         }
     },
 
-    drawGridSquare: function(bounds, conf) {
+    drawGridSquare: function(gsq, bounds, conf) {
         let map = LMap.map;
         let rgb = conf ? '#FF0000' : '#FFFF00';
-        layers.squares.push(new google.maps.Rectangle(
-            {
-                strokeColor: rgb,
-                strokeOpacity: 0.85,
-                strokeWeight: 0.25,
-                fillColor: rgb,
-                fillOpacity: 0.5,
-                map,
-                bounds: bounds,
-            })
-        );
+        let square = new google.maps.Rectangle({
+            strokeColor: rgb,
+            strokeOpacity: 0.85,
+            strokeWeight: 0.25,
+            fillColor: rgb,
+            fillOpacity: 0.5,
+            map,
+            bounds: bounds,
+        });
+        google.maps.event.addListener(square, 'click', LMap.gsqClickFunction(gsq));
+        layers.squares.push(square);
     },
 
     drawMarkers : function() {
-        var html, i, icon_highlight, marker, mode;
+        var html, i, icon_highlight, marker,s;
         if (!signals) {
             return;
         }
@@ -306,6 +306,58 @@ var LMap = {
             south: lat,
             east: lon + 2,
             west: lon
+        };
+    },
+
+    gsqClickFunction: function(g) {
+        return function (e) {
+            e.cancelBubble = true;
+            e.returnValue = false;
+            if (e.stopPropagation) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+            let data, i, log, rows;
+            data = gsqs[g];
+            rows = '';
+            for(i in data.logs) {
+                log = data.logs[i];
+                console.log(log);
+                rows +=
+                    "<tr>" +
+                    "<td>" + log.datetime + "</td>" +
+                    "<td>" + log.call + "</td>" +
+                    "<td><span class='band band" + log.band + "'>" + log.band + "</span></td>" +
+                    "<td><span class='mode m" + log.mode + "'>" + log.mode + "</span></td>" +
+                    "<td>" + log.sp + "</td>" +
+                    "<td>" + log.itu + "</td>" +
+                    "<td>" + log.km.toLocaleString() + " Km</td>" +
+                    "<td>" + log.rx + "</td>" +
+                    "<td>" + log.tx + "</td>" +
+                    "<td>" + log.pwr + "</td>" +
+                    "<td>" + log.conf + "</td>" +
+                    "</tr>";
+            }
+            let infoHtml =
+                "<div class=\"map_info\"><h3><b>Grid Square " + data.gsq + "</b> (" + (data.conf === 'Y' ? "Confirmed" : "Unconfirmed") + ")</h3>" +
+                "<table class='results'>" +
+                "<thead><tr>" +
+                "<th title='Date and time in UTC'>Date / Time</th>" +
+                "<th title='Callsign of worked station'>Call</th>" +
+                "<th>Band</th>" +
+                "<th>Mode</th>" +
+                "<th title='State, Province or Territory'>SP</th>" +
+                "<th title='Country'>ITU</th>" +
+                "<th title='Distance to worked station'>DX</th>" +
+                "<th title='Received signal strength'>RX</th>" +
+                "<th title='My signal strength'>TX</th>" +
+                "<th title='My power in Watts'>Pwr</th>" +
+                "<th title='Y=Confirmed by other party'>Conf</th>" +
+                "</tr></thead>" +
+                "<tbody>" + rows + "</table></div>";
+            LMap.infoWindow.setContent(infoHtml);
+            LMap.infoWindow.setPosition(new google.maps.LatLng(data.lat, data.lon));
+            LMap.infoWindow.open(LMap.map);
         };
     },
 
