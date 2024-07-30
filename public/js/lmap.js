@@ -339,7 +339,11 @@ var LMap = {
                     "</tr>";
             }
             let infoHtml =
-                "<div class=\"map_info\"><h3><b>Grid Square " + data.gsq + "</b> (" + (data.conf === 'Y' ? "Confirmed" : "Unconfirmed") + ")</h3>" +
+                "<div class=\"map_info\">" +"" +
+                "<h3>" +
+                "<b>Grid Square " + data.gsq + "</b> (" + (data.conf === 'Y' ? "Confirmed" : "Unconfirmed") + ")" +
+                "<a class='close' href='#' onclick='LMap.infoWindow.close();return false'>X</a>" +
+                "</h3>" +
                 "<table class='results'>" +
                 "<thead><tr>" +
                 "<th title='Date and time in UTC'>Date / Time</th>" +
@@ -358,6 +362,9 @@ var LMap = {
             LMap.infoWindow.setContent(infoHtml);
             LMap.infoWindow.setPosition(new google.maps.LatLng(data.lat, data.lon));
             LMap.infoWindow.open(LMap.map);
+            setTimeout(() => {
+                $('.gm-ui-hover-effect')[0].remove();
+            }, 10);
         };
     },
 
