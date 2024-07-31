@@ -69,6 +69,11 @@
                 </label>
                 <label><input type="checkbox" name="sortZA" value="1" checked="checked"> Z-A</label>
             </div>
+            <div class="group" style="margin: 0 2em">
+                <label class="b">Compact View:</label>
+                <label><input type="radio" id="compact_Y" name="compact" value="Y">Y</label>
+                <label><input type="radio" id="compact_N" name="compact" value="N">N</label>
+            </div>
             <div class="group">
                 <button id='reload' title="Fetches fresh records from QRZ.com" class="ml-5 bg-red-200 hover:bg-red-400 text-red-800 font-semibold px-2 border border-gray-400 rounded shadow">Reload</button>
                 <button id='reset' title="Clears form filters and shows all available logs" class="bg-yellow-200 hover:bg-yellow-400 text-yellow-800 font-semibold px-2 border border-gray-400 rounded shadow">Reset</button>

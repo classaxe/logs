@@ -125,6 +125,11 @@ var frm = {
         }
         return true;
     },
+    compact: function() {
+        let compact = COOKIE.get('compact');
+        'Y' === compact ? $('.not-compact').hide() : $('.not-compact').show();
+        $(window).trigger('resize');
+    },
     count: function() {
         let all = logs.length;
         let shown = logsFiltered.length;
@@ -285,6 +290,7 @@ window.setVal = function(source, value) {
     return false;
 }
 window.addEventListener("DOMContentLoaded", function(){
+    'Y' === COOKIE.get('compact') ? $('input#compact_Y').prop('checked','checked') : $('input#compact_N').prop('checked','checked');
     $('input[name=band]').click(function(e) {
         if (e.shiftKey) {
             $('input[name=band]').prop('checked', false);
@@ -317,6 +323,10 @@ window.addEventListener("DOMContentLoaded", function(){
         $(this).blur();
         frm.update();
     });
+    $('input[name=compact]').change(function() {
+        COOKIE.set('compact', $(this).val(), '/');
+        frm.compact();
+    })
     $('input[name=call]').keyup(function() {
         frm.update();
     });
@@ -356,6 +366,7 @@ window.addEventListener("DOMContentLoaded", function(){
         $('select[name=sortField]').val('logNum');
         $('input[name=sortZA]').prop('checked', 'checked');
         $('.sortable').removeClass('asc').removeClass('desc');
+        $('input#compact_N').prop('checked','checked');
         $('th[data-field=logNum]').addClass('desc');
         frm.update();
         $(this).blur();
@@ -390,6 +401,9 @@ window.addEventListener("DOMContentLoaded", function(){
         $('select[name=sortField]').val($this.data('field'));
         frm.update();
     });
-    frm.load(callsign)
+    if (typeof callsign !== 'undefined') {
+        frm.compact();
+        frm.load(callsign)
+    }
 });
 

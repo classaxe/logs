@@ -24,6 +24,7 @@
         <script src="/js/nite-overlay/nite-overlay.js"></script>
         <script src="/js/map_common.js"></script>
         <script src="/js/lmap.js"></script>
+        <script src="/js/cookies.js"></script>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 pt-1">
@@ -76,7 +77,7 @@
             <main style="margin: 0.5em">
                 {{ $slot }}
             </main>
-            <footer class="text-center text-sm text-gray-500">
+            <footer class="text-center text-sm text-gray-500 not-compact">
                 Logs <a href="https://github.com/classaxe/logs" target="_blank">v{{ $gitTag }}</a> |
                 Laravel v{{ Illuminate\Foundation\Application::VERSION }} | PHP v{{ PHP_VERSION }}
             </footer>
