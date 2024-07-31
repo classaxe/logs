@@ -79,8 +79,12 @@ class Log extends Authenticatable
 
     public static function getQRZDataForUser(User $user)
     {
-        $url = 'https://logbook.qrz.com/api?KEY=' . $user['qrz_api_key'] . '&ACTION=FETCH&OPTION=ALL';
-        $raw = file_get_contents($url);
+        try {
+            $url = 'https://logbook.qrz.com/api?KEY=' . $user['qrz_api_key'] . '&ACTION=FETCH&OPTION=ALL';
+            $raw = file_get_contents($url);
+        } catch (\Exception $e) {
+            return false;
+        }
         $data = str_replace(['&lt;', '&gt;'], ['<', '>'], $raw);
 
         $adif = new adif(trim('<EOH>' . $data));
@@ -145,7 +149,7 @@ class Log extends Authenticatable
     public static function getLogsForUser(User $user): array
     {
         if (!$user->qrz_last_data_pull || $user->qrz_last_data_pull->addMinutes(60)->isPast()) {
-            $fresh = static::getQRZDataForUser($user);
+            static::getQRZDataForUser($user);
         }
         return Log::getDBLogsForUserId($user->id);
     }
