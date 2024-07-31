@@ -15,9 +15,13 @@ body.loading{
 body.loading .overlay{
     display: block;
 }
-
 div.group {
-    display: inline-block; white-space: nowrap; margin-bottom: 0.25em;
+    display: inline-block;
+    white-space: nowrap;
+    margin-bottom: 0.25em;
+}
+div.group label > * {
+    margin: 0 0.125em 0 0.25em;
 }
 #tabs {
     margin: 0.5em 0 0 1em;

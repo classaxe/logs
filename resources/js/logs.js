@@ -324,6 +324,7 @@ window.addEventListener("DOMContentLoaded", function(){
         frm.update();
     });
     $('input[name=compact]').change(function() {
+        $(this).blur();
         COOKIE.set('compact', $(this).val(), '/');
         frm.compact();
     })
