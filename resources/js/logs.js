@@ -49,6 +49,8 @@ var frm = {
         let html = [];
         let sortField = $('select[name=sortField]').val();
         switch(sortField) {
+            case 'county':
+                sortField = 'countyName'
             case 'date':
                 sortField = 'datetime';
                 break;
@@ -79,7 +81,7 @@ var frm = {
                 '<td class="r">' + log.tx + '</td>' +
                 '<td class="r">' + log.pwr + '</td>' +
                 '<td>' + log.qth + '</td>' +
-                '<td>' + log.county + '</td>' +
+                '<td>' + log.countyName + '</td>' +
                 '<td data-link="sp">' + log.sp + '</td>' +
                 '<td data-link="itu">' + log.itu + '</td>' +
                 '<td data-link="cont">' + log.continent + '</td>' +
@@ -236,6 +238,7 @@ var frm = {
                 logs = data.logs;
                 $(logs).each(function(idx, log) {
                     logs[idx].datetime = log.date + ' ' + log.time;
+                    logs[idx].countyName = (log.county.indexOf(',') > 0 ? log.county.split(',')[1] : '');
                     logs[idx].itusp = log.itu + log.sp;
                     logs[idx].ituband = log.itu + log.band;
                     logs[idx].callband = log.call + log.band;

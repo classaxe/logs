@@ -24,7 +24,7 @@ class Log extends Authenticatable
         'tx' =>         ['lbl' =>   'TX',       'class' => 'r'],
         'pwr' =>        ['lbl' =>   'Pwr',      'class' => 'r'],
         'qth' =>        ['lbl' =>   'Location', 'class' => ''],
-        'county' =>     ['lbl' =>   'US County', 'class' => ''],
+        'countyName' => ['lbl' =>   'US County', 'class' => ''],
         'sp' =>         ['lbl' =>   'S/P',      'class' => ''],
         'itu' =>        ['lbl' =>   'Country',  'class' => ''],
         'continent' =>  ['lbl' =>   'Cont',     'class' => ''],
@@ -105,6 +105,11 @@ class Log extends Authenticatable
                     case 'Australia':
                     case 'Canada':
                         $county = '';
+                        break;
+                    case 'Alaska':
+                    case 'Hawaii':
+                    case 'Puerto Rico':
+                    case 'US Virgin Islands':
                         break;
                     case 'United States':
                         $itu = 'USA';
