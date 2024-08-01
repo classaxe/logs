@@ -79,6 +79,7 @@ var frm = {
                 '<td class="r">' + log.tx + '</td>' +
                 '<td class="r">' + log.pwr + '</td>' +
                 '<td>' + log.qth + '</td>' +
+                '<td>' + log.county + '</td>' +
                 '<td data-link="sp">' + log.sp + '</td>' +
                 '<td data-link="itu">' + log.itu + '</td>' +
                 '<td data-link="cont">' + log.continent + '</td>' +
@@ -216,6 +217,7 @@ var frm = {
     stats: function() {
         let sp = frm.getUniqueValues('sp');
         let cont = frm.getUniqueValues('continent');
+        $('#statsCounties').html(frm.getUniqueValuesStats('county'));
         $('#statsSps').html(frm.getUniqueValuesStats('sp'));
         $('#statsItus').html(frm.getUniqueValuesStats('itu'));
         $('#statsContinents').html(frm.getUniqueValuesStats('continent'));

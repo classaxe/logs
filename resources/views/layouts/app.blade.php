@@ -31,7 +31,7 @@
             <div class="flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
                 <header>
                     @if (Route::has('login'))
-                        <nav class="bg-gray-300 rounded-xl -mx-3 flex flex-1 justify-end">
+                        <nav class="bg-gray-300 border border-gray-500 rounded-xl -mx-3 flex flex-1 justify-end">
                             <a
                                 href="/"
                                 class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"

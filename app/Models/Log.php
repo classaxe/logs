@@ -24,6 +24,7 @@ class Log extends Authenticatable
         'tx' =>         ['lbl' =>   'TX',       'class' => 'r'],
         'pwr' =>        ['lbl' =>   'Pwr',      'class' => 'r'],
         'qth' =>        ['lbl' =>   'Location', 'class' => ''],
+        'county' =>     ['lbl' =>   'US County', 'class' => ''],
         'sp' =>         ['lbl' =>   'S/P',      'class' => ''],
         'itu' =>        ['lbl' =>   'Country',  'class' => ''],
         'continent' =>  ['lbl' =>   'Cont',     'class' => ''],
@@ -49,6 +50,7 @@ class Log extends Authenticatable
         'tx',
         'pwr',
         'qth',
+        'county',
         'sp',
         'itu',
         'continent',
@@ -96,38 +98,42 @@ class Log extends Authenticatable
                 continue;
             }
             try {
-                $itu = $i['COUNTRY'];
-                $sp = $i['STATE'] ?? '';
+                $itu =      $i['COUNTRY'];
+                $sp =       $i['STATE'] ?? '';
+                $county =   $i['CNTY'] ?? '';
                 switch ($itu) {
                     case 'Australia':
                     case 'Canada':
+                        $county = '';
                         break;
                     case 'United States':
                         $itu = 'USA';
                         break;
                     default:
                         $sp = '';
+                        $county = '';
                         break;
                 }
                 $items[] = [
-                    'logNum' => $logNum,
-                    'userId' => $user['id'],
-                    'qrzId' => $i['APP_QRZLOG_LOGID'],
-                    'date' => substr($i['QSO_DATE'], 0, 4) . '-' . substr($i['QSO_DATE'], 4, 2) . '-' . substr($i['QSO_DATE'], 6, 2),
-                    'time' => substr($i['TIME_ON'], 0, 2) . ':' . substr($i['TIME_ON'], 2, 2),
-                    'call' => $i['CALL'],
-                    'band' => $i['BAND'],
-                    'mode' => $i['MODE'] ?? '',
-                    'rx' => $i['RST_RCVD'] ?? '',
-                    'tx' => $i['RST_SENT'] ?? '',
-                    'pwr' => $i['TX_PWR'] ?? '',
-                    'qth' => $i['QTH'] ?? '',
-                    'sp' => $sp,
-                    'itu' => $itu,
-                    'continent' => strtoupper($i['CONT'] ?? ''),
-                    'gsq' => (isset($i['GRIDSQUARE']) ? strtoupper(substr($i['GRIDSQUARE'], 0, 4)) : ''),
-                    'km' => $i['DISTANCE'] ?? null,
-                    'conf' => ($i['APP_QRZLOG_STATUS'] ?? '') === 'C' ? 'Y' : ''
+                    'logNum' =>     $logNum,
+                    'userId' =>     $user['id'],
+                    'qrzId' =>      $i['APP_QRZLOG_LOGID'],
+                    'date' =>       substr($i['QSO_DATE'], 0, 4) . '-' . substr($i['QSO_DATE'], 4, 2) . '-' . substr($i['QSO_DATE'], 6, 2),
+                    'time' =>       substr($i['TIME_ON'], 0, 2) . ':' . substr($i['TIME_ON'], 2, 2),
+                    'call' =>       $i['CALL'],
+                    'band' =>       $i['BAND'],
+                    'mode' =>       $i['MODE'] ?? '',
+                    'rx' =>         $i['RST_RCVD'] ?? '',
+                    'tx' =>         $i['RST_SENT'] ?? '',
+                    'pwr' =>        $i['TX_PWR'] ?? '',
+                    'qth' =>        $i['QTH'] ?? '',
+                    'county' =>     $county,
+                    'sp' =>         $sp,
+                    'itu' =>        $itu,
+                    'continent' =>  strtoupper($i['CONT'] ?? ''),
+                    'gsq' =>        (isset($i['GRIDSQUARE']) ? strtoupper(substr($i['GRIDSQUARE'], 0, 4)) : ''),
+                    'km' =>         $i['DISTANCE'] ?? null,
+                    'conf' =>       ($i['APP_QRZLOG_STATUS'] ?? '') === 'C' ? 'Y' : ''
                 ];
                 $logNum++;
             } catch (\Exception $exception) {
