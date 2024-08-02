@@ -33,14 +33,14 @@ var frm = {
     sortLogs: function(sortField, sortZa) {
         if (sortZa) {
             logs.sort(function(a,b){
-                let aVal = (typeof a[sortField] === 'string' ? a[sortField].toLowerCase() : a[sortField]);
-                let bVal = (typeof b[sortField] === 'string' ? b[sortField].toLowerCase() : b[sortField]);
+                let aVal = (typeof a[sortField] === 'string' ? a[sortField].toLowerCase() || '|||' : a[sortField]);
+                let bVal = (typeof b[sortField] === 'string' ? b[sortField].toLowerCase() || '|||' : b[sortField]);
                 return ((aVal < bVal) ? -1 : ((aVal > bVal) ? 1 : 0));
             });
         } else {
             logs.sort(function(a,b){
-                let aVal = (typeof a[sortField] === 'string' ? a[sortField].toLowerCase() : a[sortField]);
-                let bVal = (typeof b[sortField] === 'string' ? b[sortField].toLowerCase() : b[sortField]);
+                let aVal = (typeof a[sortField] === 'string' ? a[sortField].toLowerCase() || '!!!' : a[sortField]);
+                let bVal = (typeof b[sortField] === 'string' ? b[sortField].toLowerCase() || '!!!' : b[sortField]);
                 return ((bVal < aVal) ? -1 : ((bVal > aVal) ? 1 : 0));
             });
         }
