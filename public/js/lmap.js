@@ -50,7 +50,7 @@ var LMap = {
             this.txt_ = txt;
             this.cls_ = cls;
             this.div_ = null;
-            this.setMap(map);
+            //this.setMap(LMap.map);
         }
 
         TxtOverlay.prototype = new google.maps.OverlayView();

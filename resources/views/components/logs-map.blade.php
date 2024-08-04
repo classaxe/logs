@@ -141,7 +141,7 @@ window.addEventListener("DOMContentLoaded", function() {
     document.head.appendChild(script);
 });
 </script>
-<table class="map_layout">
+<table class="map map_layout" style="display: none">
     <tbody style="background: transparent">
         <tr>
             <td>
