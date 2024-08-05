@@ -1,36 +1,33 @@
 {{--<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCMUy5Jogj6vJD5UvQevWeIQ-WuzdX71cE&callback=Map.init"></script>--}}
 <script>
 var msg = {
-    "gsq": "GSQ",
-    "heard_in": "Heard In",
-    "id": "ID",
-    "itu": "ITU",
-    "khz": "KHz",
-    "last_logged": "Last Logged",
-    "lat_lon": "Lat / Lon",
-    "logged": "Logged",
-    "name_qth": "'Name' and Location",
-    "no": "No",
-    "power": "Power",
-    "sec_format": "Secs / Format",
-    "sidebands": "Sidebands",
-    "type": "Type",
-    "yes": "Yes",
+    gsq: "GSQ",
+    heard_in: "Heard In",
+    id: "ID",
+    itu: "ITU",
+    khz: "KHz",
+    last_logged: "Last Logged",
+    lat_lon: "Lat / Lon",
+    logged: "Logged",
+    name_qth: "'Name' and Location",
+    no: "No",
+    power: "Power",
+    sec_format: "Secs / Format",
+    sidebands: "Sidebands",
+    type: "Type",
+    yes: "Yes",
 }
 var center = {
-    "lat": 27.25,
-    "lon": -88.99985
+    lat: 27.25,
+    lon: -88.99985
 }
-var box = [
-    {
-        "lat": -25.4792,
-        "lon": -142.458
-    },
-    {
-        "lat": 79.9792,
-        "lon": -35.5417
-    }
-];
+var box = [{
+    lat: -25.4792,
+    lon: -142.458
+},{
+    lat: 79.9792,
+    lon: -35.5417
+}];
 var base_image = '/images';
 var base_url = '/';
 var gridColor = '#800000';

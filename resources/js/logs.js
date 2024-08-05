@@ -13,9 +13,16 @@ var logsFiltered = [];
 
 var frm = {
     start: null,
-    gsqs: {},
 
-    addLinks: function() {
+    _init: () => {
+        if (typeof callsign !== 'undefined') {
+            frm.setActions();
+            frm.compact();
+            frm.load(callsign)
+        }
+    },
+
+    addLinks: () => {
         $('td[data-link]').each(function() {
             let link = $(this).attr('data-link');
             let html = $("<a href=\"#\">" + $(this).html() + "</a>");
@@ -26,13 +33,17 @@ var frm = {
         })
     },
 
-    compact: function() {
+    cl: function(v) {
+        console.log(v);
+    },
+
+    compact: () => {
         let compact = COOKIE.get('compact');
         'Y' === compact ? $('.not-compact').hide() : $('.not-compact').show();
         $(window).trigger('resize');
     },
 
-    count: function() {
+    count: () => {
         let all = logs.length;
         let shown = logsFiltered.length;
         $('#logCount').text(all);
@@ -42,7 +53,7 @@ var frm = {
         );
     },
 
-    getFilters: function () {
+    getFilters: () => {
         filters.bands = [];
         filters.modes = [];
         $('.band input:checked').each(function () {
@@ -59,8 +70,14 @@ var frm = {
         filters.gsq =   $('input[name=gsq]').val();
     },
 
-    getGridSquares: function() {
-        gsqs = {}
+    getGridSquares: ()  => {
+        gsqs = {} // Global
+
+        let lat_min = 90;
+        let lat_max = -90;
+        let lon_min = 180;
+        let lon_max = -180
+
         $(logsFiltered).each(function(idx,log){
             let gsq = log.gsq;
             let latlon;
@@ -75,6 +92,25 @@ var frm = {
                         lon: latlon.lon,
                         logs: []
                     };
+                    if (latlon.lat > lat_max) {
+                        lat_max = latlon.lat;
+                    }
+                    if (latlon.lat < lat_min) {
+                        lat_min = latlon.lat;
+                    }
+                    if (latlon.lon > lon_max) {
+                        lon_max = latlon.lon;
+                    }
+                    if (latlon.lon < lon_min) {
+                        lon_min = latlon.lon;
+                    }
+                    box = [{
+                        lat: lat_min,
+                        lon: lon_min
+                    }, {
+                        lat: lat_max,
+                        lon: lon_max
+                    }];
                 }
                 if (log.conf === 'Y') {
                     gsqs[gsq].conf = 'Y'
@@ -82,9 +118,10 @@ var frm = {
                 gsqs[gsq].logs.push(log);
             }
         });
+        LMap.fitToBox();
     },
 
-    getUniqueValues: function(field) {
+    getUniqueValues: (field) => {
         let idx;
         let tmp = [];
         let count = 0;
@@ -106,12 +143,12 @@ var frm = {
         };
     },
 
-    getUniqueValuesStats: function(field) {
+    getUniqueValuesStats: (field) => {
         let tmp = frm.getUniqueValues(field);
         return "<span title='" + tmp.values.join(', ') + "' style='cursor: help'>" + tmp.count + "</span>";
     },
 
-    gsq_deg: function(GSQ) {
+    gsq_deg: (GSQ) => {
         let lat, lat_d, lat_m, lat_s, lon, lon_d, lon_m, lon_s, offset;
         if (!GSQ.match(/^([a-rA-R]{2})([0-9]{2})([a-xA-X]{2})?$/i)) {
             return false;
@@ -137,7 +174,114 @@ var frm = {
         };
     },
 
-    init: function(){
+    isVisible: (log) => {
+        if (!filters.bands.length || $.inArray(log.band, filters.bands) < 0) {
+            return false;
+        }
+        if (!log.mode.length || $.inArray(log.mode, filters.modes) < 0) {
+            return false;
+        }
+        if (filters.conf === 'N' && log.conf !== '') {
+            return false;
+        }
+        if (filters.conf === 'Y' && log.conf !== 'Y') {
+            return false;
+        }
+        if (filters.call.length && filters.call.toLowerCase() !== log.call.toLowerCase().substring(0, filters.call.length)) {
+            return false;
+        }
+        if (filters.sp.length && filters.sp.toLowerCase() !== log.sp.toLowerCase()) {
+            return false;
+        }
+        if (filters.itu.length && filters.itu.toLowerCase() !== log.itu.toLowerCase().substring(0, filters.itu.length)) {
+            return false;
+        }
+        if (filters.cont.length && filters.cont.toLowerCase() !== log.continent.toLowerCase().substring(0, filters.cont.length)) {
+            return false;
+        }
+        if (filters.gsq.length && filters.gsq.toLowerCase() !== log.gsq.toLowerCase().substring(0, filters.gsq.length)) {
+            return false;
+        }
+        return true;
+    },
+
+    load: (callsign) => {
+        frm.start = Date.now();
+        $.ajax({
+            type: 'GET',
+            url: '/logs/' + callsign + '/logs',
+            dataType: 'json',
+            success: function (data) {
+                logs = data.logs;
+                $(logs).each(function(idx, log) {
+                    logs[idx].datetime = log.date + ' ' + log.time;
+                    logs[idx].countyName = (log.county.indexOf(',') > 0 ? log.county.split(',')[1] : '');
+                    logs[idx].itusp = log.itu + log.sp;
+                    logs[idx].ituband = log.itu + log.band;
+                    logs[idx].callband = log.call + log.band;
+                });
+                frm.getFilters();
+                $('table.list tbody').html(frm.parseLogs());
+                $('#logUpdated').text(data.lastPulled);
+                frm.count();
+                frm.stats();
+                frm.getGridSquares();
+                frm.addLinks();
+                $("body").removeClass("loading");
+                console.log('Updated in ' + ((Date.now() - frm.start)/1000) + ' seconds');
+            }
+        })
+    },
+
+    parseLogs: () => {
+        let html = [];
+        let sortField = $('select[name=sortField]').val();
+        switch(sortField) {
+            case 'county':
+                sortField = 'countyName'
+            case 'date':
+                sortField = 'datetime';
+                break;
+            case 'itu':
+                sortField = 'itusp';
+                break;
+        }
+        let sortZa = $('input[name=sortZA]').prop('checked') ? false : true;
+        if (sortField) {
+            frm.sortLogs(sortField, sortZa);
+        }
+        logsFiltered = [];
+        $.each(logs, function(idx, log) {
+            if (frm.isVisible(log)){
+                logsFiltered.push(log)
+            }
+        });
+        $.each(logsFiltered, function(idx, log){
+            html.push(
+                '<tr>' +
+                '<td class="r">' + (log.logNum)+ '</td>' +
+                '<td class="nowrap">' + log.date + '</td>' +
+                '<td class="nowrap">' + log.time + '</td>' +
+                '<td data-link="call">' + log.call + '</td>' +
+                '<td data-link="band"><span class="band band' + log.band + '">' + log.band + '</span></td>' +
+                '<td data-link="mode"><span class="mode m' + log.mode + '">' + log.mode + '</span></td>' +
+                '<td class="r">' + log.rx + '</td>' +
+                '<td class="r">' + log.tx + '</td>' +
+                '<td class="r">' + log.pwr + '</td>' +
+                '<td>' + log.qth + '</td>' +
+                '<td>' + log.countyName + '</td>' +
+                '<td data-link="sp">' + log.sp + '</td>' +
+                '<td data-link="itu">' + log.itu + '</td>' +
+                '<td data-link="cont">' + log.continent + '</td>' +
+                '<td data-link="gsq">' + log.gsq + '</td>' +
+                '<td class="r">' + log.km + '</td>' +
+                '<td class="r">' + log.conf + '</td>'
+            )
+        });
+        return html.join('\n');
+    },
+
+    setActions: () =>{
         ('Y' === COOKIE.get('compact') ?
             $('input#compact_Y').prop('checked','checked') :
             $('input#compact_N').prop('checked','checked')
@@ -253,120 +397,9 @@ var frm = {
             $('select[name=sortField]').val($this.data('field'));
             frm.update();
         });
-        if (typeof callsign !== 'undefined') {
-            frm.compact();
-            frm.load(callsign)
-        }
     },
 
-    isVisible: function(log) {
-        if (!filters.bands.length || $.inArray(log.band, filters.bands) < 0) {
-            return false;
-        }
-        if (!log.mode.length || $.inArray(log.mode, filters.modes) < 0) {
-            return false;
-        }
-        if (filters.conf === 'N' && log.conf !== '') {
-            return false;
-        }
-        if (filters.conf === 'Y' && log.conf !== 'Y') {
-            return false;
-        }
-        if (filters.call.length && filters.call.toLowerCase() !== log.call.toLowerCase().substring(0, filters.call.length)) {
-            return false;
-        }
-        if (filters.sp.length && filters.sp.toLowerCase() !== log.sp.toLowerCase()) {
-            return false;
-        }
-        if (filters.itu.length && filters.itu.toLowerCase() !== log.itu.toLowerCase().substring(0, filters.itu.length)) {
-            return false;
-        }
-        if (filters.cont.length && filters.cont.toLowerCase() !== log.continent.toLowerCase().substring(0, filters.cont.length)) {
-            return false;
-        }
-        if (filters.gsq.length && filters.gsq.toLowerCase() !== log.gsq.toLowerCase().substring(0, filters.gsq.length)) {
-            return false;
-        }
-        return true;
-    },
-
-    load: function(callsign) {
-        frm.start = Date.now();
-        $.ajax({
-            type: 'GET',
-            url: '/logs/' + callsign + '/logs',
-            dataType: 'json',
-            success: function (data) {
-                logs = data.logs;
-                $(logs).each(function(idx, log) {
-                    logs[idx].datetime = log.date + ' ' + log.time;
-                    logs[idx].countyName = (log.county.indexOf(',') > 0 ? log.county.split(',')[1] : '');
-                    logs[idx].itusp = log.itu + log.sp;
-                    logs[idx].ituband = log.itu + log.band;
-                    logs[idx].callband = log.call + log.band;
-                });
-                frm.getFilters();
-                $('table.list tbody').html(frm.parseLogs());
-                $('#logUpdated').text(data.lastPulled);
-                frm.count();
-                frm.stats();
-                frm.getGridSquares();
-                frm.addLinks();
-                $("body").removeClass("loading");
-                console.log('Updated in ' + ((Date.now() - frm.start)/1000) + ' seconds');
-            }
-        })
-    },
-
-    parseLogs: function() {
-        let html = [];
-        let sortField = $('select[name=sortField]').val();
-        switch(sortField) {
-            case 'county':
-                sortField = 'countyName'
-            case 'date':
-                sortField = 'datetime';
-                break;
-            case 'itu':
-                sortField = 'itusp';
-                break;
-        }
-        let sortZa = $('input[name=sortZA]').prop('checked') ? false : true;
-        if (sortField) {
-            frm.sortLogs(sortField, sortZa);
-        }
-        logsFiltered = [];
-        $.each(logs, function(idx, log) {
-            if (frm.isVisible(log)){
-                logsFiltered.push(log)
-            }
-        });
-        $.each(logsFiltered, function(idx, log){
-            html.push(
-                '<tr>' +
-                '<td class="r">' + (log.logNum)+ '</td>' +
-                '<td class="nowrap">' + log.date + '</td>' +
-                '<td class="nowrap">' + log.time + '</td>' +
-                '<td data-link="call">' + log.call + '</td>' +
-                '<td data-link="band"><span class="band band' + log.band + '">' + log.band + '</span></td>' +
-                '<td data-link="mode"><span class="mode m' + log.mode + '">' + log.mode + '</span></td>' +
-                '<td class="r">' + log.rx + '</td>' +
-                '<td class="r">' + log.tx + '</td>' +
-                '<td class="r">' + log.pwr + '</td>' +
-                '<td>' + log.qth + '</td>' +
-                '<td>' + log.countyName + '</td>' +
-                '<td data-link="sp">' + log.sp + '</td>' +
-                '<td data-link="itu">' + log.itu + '</td>' +
-                '<td data-link="cont">' + log.continent + '</td>' +
-                '<td data-link="gsq">' + log.gsq + '</td>' +
-                '<td class="r">' + log.km + '</td>' +
-                '<td class="r">' + log.conf + '</td>'
-            )
-        });
-        return html.join('\n');
-    },
-
-    setVal: function(source, value) {
+    setVal: (source, value)=>  {
         switch(source) {
             case 'band':
                 $('input[name=' + source + ']').prop('checked', false);
@@ -384,7 +417,7 @@ var frm = {
         return false;
     },
 
-    sortLogs: function(sortField, sortZa) {
+    sortLogs: (sortField, sortZa) => {
         if (sortZa) {
             logs.sort(function(a,b){
                 let aVal = (typeof a[sortField] === 'string' ? a[sortField].toLowerCase() || '|||' : a[sortField]);
@@ -400,7 +433,7 @@ var frm = {
         }
     },
 
-    stats: function() {
+    stats: () => {
         let sp = frm.getUniqueValues('sp');
         let cont = frm.getUniqueValues('continent');
         $('#statsCounties').html(frm.getUniqueValuesStats('county'));
@@ -413,13 +446,13 @@ var frm = {
         $('#statsCallBands').text(frm.getUniqueValues('callband').count);
     },
 
-    update: function() {
+    update: () => {
         frm.start = Date.now();
         $('body').addClass('loading');
         window.setTimeout(function() { frm.update_doit()}, 1);
     },
 
-    update_doit: function() {
+    update_doit: () => {
         frm.getFilters();
         $('table.list tbody').html(frm.parseLogs());
         frm.count();
@@ -434,4 +467,4 @@ var frm = {
     },
 }
 
-frm.init();
+frm._init();
