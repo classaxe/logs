@@ -263,6 +263,7 @@ var frm = {
                 '<td class="nowrap">' + log.date + '</td>' +
                 '<td class="nowrap">' + log.time + '</td>' +
                 '<td data-link="call">' + log.call + '</td>' +
+                '<td>' + log.name + '</td>' +
                 '<td data-link="band"><span class="band band' + log.band + '">' + log.band + '</span></td>' +
                 '<td data-link="mode"><span class="mode m' + log.mode + '">' + log.mode + '</span></td>' +
                 '<td class="r">' + log.rx + '</td>' +
@@ -274,7 +275,8 @@ var frm = {
                 '<td data-link="itu">' + log.itu + '</td>' +
                 '<td data-link="cont">' + log.continent + '</td>' +
                 '<td data-link="gsq">' + log.gsq + '</td>' +
-                '<td class="r">' + log.km + '</td>' +
+                '<td class="r">' + (typeof log.km === 'number' ? log.km : '') + '</td>' +
+                '<td class="r">' + (typeof log.deg === 'number' ? log.deg : '') + '</td>' +
                 '<td class="r">' + log.conf + '</td>'
             )
         });

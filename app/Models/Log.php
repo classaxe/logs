@@ -14,23 +14,25 @@ class Log extends Authenticatable
     use HasFactory, Notifiable;
 
     const columns = [
-        'logNum' =>     ['lbl' =>   'Log',      'class' => ''],
-        'date' =>       ['lbl' =>   'Date',     'class' => ''],
-        'time' =>       ['lbl' =>   'UTC',      'class' => ''],
-        'call' =>       ['lbl' =>   'Callsign', 'class' => ''],
-        'band' =>       ['lbl' =>   'Band',     'class' => ''],
-        'mode' =>       ['lbl' =>   'Mode',     'class' => ''],
-        'rx' =>         ['lbl' =>   'RX',       'class' => 'r'],
-        'tx' =>         ['lbl' =>   'TX',       'class' => 'r'],
-        'pwr' =>        ['lbl' =>   'Pwr',      'class' => 'r'],
-        'qth' =>        ['lbl' =>   'Location', 'class' => ''],
-        'countyName' => ['lbl' =>   'US County', 'class' => ''],
-        'sp' =>         ['lbl' =>   'S/P',      'class' => ''],
-        'itu' =>        ['lbl' =>   'Country',  'class' => ''],
-        'continent' =>  ['lbl' =>   'Cont',     'class' => ''],
-        'gsq' =>        ['lbl' =>   'GSQ',      'class' => ''],
-        'km' =>         ['lbl' =>   'Km',       'class' => 'r'],
-        'conf' =>       ['lbl' =>   'Conf',     'class' => 'r']
+        'logNum' =>     ['lbl' =>   'Log',          'class' => ''],
+        'date' =>       ['lbl' =>   'Date',         'class' => ''],
+        'time' =>       ['lbl' =>   'UTC',          'class' => ''],
+        'call' =>       ['lbl' =>   'Callsign',     'class' => ''],
+        'name' =>       ['lbl' =>   'Name',         'class' => ''],
+        'band' =>       ['lbl' =>   'Band',         'class' => ''],
+        'mode' =>       ['lbl' =>   'Mode',         'class' => ''],
+        'rx' =>         ['lbl' =>   'RX',           'class' => 'r'],
+        'tx' =>         ['lbl' =>   'TX',           'class' => 'r'],
+        'pwr' =>        ['lbl' =>   'Pwr',          'class' => 'r'],
+        'qth' =>        ['lbl' =>   'Location',     'class' => ''],
+        'countyName' => ['lbl' =>   'US County',    'class' => ''],
+        'sp' =>         ['lbl' =>   'S/P',          'class' => ''],
+        'itu' =>        ['lbl' =>   'Country',      'class' => ''],
+        'continent' =>  ['lbl' =>   'Cont',         'class' => ''],
+        'gsq' =>        ['lbl' =>   'GSQ',          'class' => ''],
+        'km' =>         ['lbl' =>   'Km',           'class' => 'r'],
+        'deg' =>        ['lbl' =>   'Deg',          'class' => 'r'],
+        'conf' =>       ['lbl' =>   'Conf',         'class' => 'r']
     ];
 
     /**
@@ -44,6 +46,7 @@ class Log extends Authenticatable
         'date',
         'time',
         'call',
+        'name',
         'band',
         'mode',
         'rx',
@@ -56,6 +59,7 @@ class Log extends Authenticatable
         'continent',
         'gsq',
         'km',
+        'deg',
         'conf'
     ];
 
@@ -73,10 +77,61 @@ class Log extends Authenticatable
      *
      * @return array<string, string>
      */
-    protected function casts(): array
-    {
+    protected function casts(): array {
+        return [];
+    }
+
+    public static function convertGsqToDegrees($GSQ) {
+        $GSQ =      substr(strToUpper($GSQ), 0, 6);
+        $offset =   (strlen($GSQ)==6 ? 1/48 : 0);
+        if (strlen($GSQ) == 4) {
+            $GSQ = $GSQ."MM";
+        }
+        if (!preg_match('/^[a-rA-R]{2}[0-9]{2}([a-xA-X]{2})?$/i', $GSQ)) {
+            return false;
+        }
+        $lon_d = ord(substr($GSQ, 0, 1))-65;
+        $lon_m = substr($GSQ, 2, 1);
+        $lon_s = ord(substr($GSQ, 4, 1))-65;
+
+        $lat_d = ord(substr($GSQ, 1, 1))-65;
+        $lat_m = substr($GSQ, 3, 1);
+        $lat_s = ord(substr($GSQ, 5, 1))-65;
+
         return [
+            "lat" => (int)round(($lat_d*10 + $lat_m + $lat_s/24 + $offset - 90)*10000)/10000,
+            "lon" => (int)round((2 * ($lon_d*10 + $lon_m + $lon_s/24 + $offset) - 180)*10000)/10000
         ];
+    }
+
+    public static function getBearing($qthGSQ, $logGSQ) {
+        $qth = static::convertGsqToDegrees($qthGSQ);
+        $log = static::convertGsqToDegrees($logGSQ);
+        if ($qth === false || $log === false) {
+            return null;
+        }
+        if ($qth['lat'] === $log['lat'] && $qth['lon'] === $log['lon']) {
+            return 0;
+        }
+        $qth_lat_r =    deg2rad($qth['lat']);
+        $qth_lon_r =    deg2rad($qth['lon']);
+        $log_lat_r =    deg2rad($log['lat']);
+        $log_lon_r =    deg2rad($log['lon']);
+        $diff_lon =     ($log['lon'] - $qth['lon']);
+        if (abs($diff_lon) > 180) {
+            $diff_lon = (360 - abs($diff_lon)) * (0 - ($diff_lon / abs($diff_lon)));
+        }
+        $diff_lon_r =   deg2rad($diff_lon);
+        $deg = (
+            rad2deg(
+                atan2(
+                    SIN($log_lon_r - $qth_lon_r) * COS($log_lat_r),
+                    COS($qth_lat_r) * SIN($log_lat_r) - SIN($qth_lat_r) * COS($log_lat_r) * COS($diff_lon_r)
+                )
+            ) + 360
+        ) % 360;
+//        dump([$qth, $log, $deg]);
+        return $deg;
     }
 
     public static function getQRZDataForUser(User $user)
@@ -119,6 +174,11 @@ class Log extends Authenticatable
                         $county = '';
                         break;
                 }
+                $log_gsq =          $i['GRIDSQUARE'] ?? '';
+                $qth_gsq =          $i['MY_GRIDSQUARE'] ?? $user['gsq'];
+                $deg =              Log::getBearing($qth_gsq, $log_gsq);
+                $name =             $i['NAME'] ?? '';
+                $name =             (strtoupper($name) === $name ? ucwords(strtolower($name)) : $name);
                 $items[] = [
                     'logNum' =>     $logNum,
                     'userId' =>     $user['id'],
@@ -126,6 +186,7 @@ class Log extends Authenticatable
                     'date' =>       substr($i['QSO_DATE'], 0, 4) . '-' . substr($i['QSO_DATE'], 4, 2) . '-' . substr($i['QSO_DATE'], 6, 2),
                     'time' =>       substr($i['TIME_ON'], 0, 2) . ':' . substr($i['TIME_ON'], 2, 2),
                     'call' =>       $i['CALL'],
+                    'name' =>       $name,
                     'band' =>       $i['BAND'],
                     'mode' =>       $i['MODE'] ?? '',
                     'rx' =>         $i['RST_RCVD'] ?? '',
@@ -136,8 +197,9 @@ class Log extends Authenticatable
                     'sp' =>         $sp,
                     'itu' =>        $itu,
                     'continent' =>  strtoupper($i['CONT'] ?? ''),
-                    'gsq' =>        (isset($i['GRIDSQUARE']) ? strtoupper(substr($i['GRIDSQUARE'], 0, 4)) : ''),
+                    'gsq' =>        substr(strtoupper($log_gsq), 0, 4),
                     'km' =>         $i['DISTANCE'] ?? null,
+                    'deg' =>        $deg,
                     'conf' =>       ($i['APP_QRZLOG_STATUS'] ?? '') === 'C' ? 'Y' : ''
                 ];
                 $logNum++;
