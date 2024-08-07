@@ -49,6 +49,7 @@
                 {{ $slot }}
             </main>
             <footer class="text-center text-sm text-gray-500 not-compact">
+                ©{{ date('Y') }} Martin Francis <a href="{{ route('logsPage', ['callsign' => 'VA3PHP']) }}">VA3PHP</a> |
                 Logs <a href="https://github.com/classaxe/logs" target="_blank">v{{ $gitTag }}</a> |
                 Laravel v{{ Illuminate\Foundation\Application::VERSION }} | PHP v{{ PHP_VERSION }}
             </footer>

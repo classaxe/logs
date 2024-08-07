@@ -119,6 +119,10 @@ table.list .nowrap { white-space: nowrap; }
     width: auto;
     margin: auto;
 }
+.callsigns a {
+    font-weight: bold;
+    color: blue;
+}
 table.list a {
     color: blue;
 }
