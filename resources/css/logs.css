@@ -15,6 +15,29 @@ body.loading{
 body.loading .overlay{
     display: block;
 }
+nav {
+    display: inline-block;
+    float: left;
+    padding-left: 0.25em;
+}
+nav a {
+    background: #7d7db3;
+    color: #fff;
+    font-weight: bold;
+    text-decoration: none;
+    border-radius: 0 0 5px 5px;
+    padding: 0.5em 0.75em;
+    border-bottom: none;
+    cursor: pointer;
+    border: #008;
+}
+nav a.is-active {
+    background: #4545e6;
+    color: yellow !important;
+}
+nav form {
+    display: inline;
+}
 div.group {
     display: inline-block;
     white-space: nowrap;
@@ -28,6 +51,7 @@ div.group label > * {
 }
 #tabs .button {
     color: #fff;
+    background: #7d7db3;
     font-weight: bold;
     text-decoration: none;
     border-radius: 5px 5px 0 0;
@@ -43,9 +67,6 @@ div.group label > * {
 #tabs .button.is-active {
     background: #4545e6;
     color: yellow !important;
-}
-#tabs .button.is-inactive {
-    background: #7d7db3;
 }
 #tabs .button .tabicon {
     display: inline;

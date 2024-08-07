@@ -28,53 +28,24 @@
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 pt-1">
-            <div class="flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-                <header>
-                    @if (Route::has('login'))
-                        <nav class="bg-gray-300 border border-gray-500 rounded-xl -mx-3 flex flex-1 justify-end">
-                            <a
-                                href="/"
-                                class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                            >Home</a>
-                            @auth
-                                <a
-                                    href="{{ route('profile.edit') }}"
-                                    class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                >
-                                    Profile
-                                </a>
-                                <form id="logout" method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                </form>
-                                <a href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout').submit();"
-                                   class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                >
-                                    {{ __('Log Out') }}
-                                </a>
-
-                            @else
-                                <a
-                                    href="{{ route('login') }}"
-                                    class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                >
-                                    Log in
-                                </a>
-
-                                @if (Route::has('register'))
-                                    <a
-                                        href="{{ route('register') }}"
-                                        class="rounded-md px-3 py-2 text-black ring-1 ring-transparent transition hover:text-black/70 focus:outline-none focus-visible:ring-[#FF2D20] dark:text-white dark:hover:text-white/80 dark:focus-visible:ring-white"
-                                    >
-                                        Register
-                                    </a>
-                                @endif
-                            @endauth
-                        </nav>
-                    @endif
-                </header>
-                <!-- Page Content -->
-            </div>
-            <main style="margin: 0.5em">
+            <header>
+                @if (Route::has('login'))
+                    <nav>
+                        <a href="{{ route('callsigns') }}"{{ Route::currentRouteName() === 'callsigns' ? "class=is-active" : '' }}>Home</a>
+                        @auth
+                            <a href="{{ route('profile.edit') }}"{{ Route::currentRouteName() === 'profile.edit' ? "class=is-active" : '' }}>Profile</a>
+                            <form id="logout" method="POST" action="{{ route('logout') }}">@csrf</form>
+                            <a href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout').submit();">{{ __('Log Out') }}</a>
+                        @else
+                            <a href="{{ route('login') }}"{{ Route::currentRouteName() === 'login' ? "class=is-active" : '' }}>Log in</a>
+                            @if (Route::has('register'))
+                                <a href="{{ route('register') }}"{{ Route::currentRouteName() === 'register' ? "class=is-active" : ''}}>Register</a>
+                            @endif
+                        @endauth
+                    </nav>
+                @endif
+            </header>
+            <main>
                 {{ $slot }}
             </main>
             <footer class="text-center text-sm text-gray-500 not-compact">

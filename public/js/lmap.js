@@ -419,7 +419,7 @@ var LMap = {
     setActions : function() {
         var mapDiv = $('#map');
         $(window).resize(function() {
-            let vspace = ('Y' === COOKIE.get('compact') ? 346 : 486);
+            let vspace = ('Y' === COOKIE.get('compact') ? 296 : 430);
             mapDiv.height($(window).height() - vspace);
             mapDiv.width($(window).width() - 390);
             $('#scrollablelist').height(mapDiv.height() + 40);
