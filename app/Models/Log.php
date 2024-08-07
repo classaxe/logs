@@ -18,20 +18,20 @@ class Log extends Authenticatable
         'date' =>       ['lbl' =>   'Date',         'class' => ''],
         'time' =>       ['lbl' =>   'UTC',          'class' => ''],
         'call' =>       ['lbl' =>   'Callsign',     'class' => ''],
-        'name' =>       ['lbl' =>   'Name',         'class' => ''],
+        'name' =>       ['lbl' =>   'Name',         'class' => 'not-compact'],
         'band' =>       ['lbl' =>   'Band',         'class' => ''],
         'mode' =>       ['lbl' =>   'Mode',         'class' => ''],
         'rx' =>         ['lbl' =>   'RX',           'class' => 'r'],
         'tx' =>         ['lbl' =>   'TX',           'class' => 'r'],
         'pwr' =>        ['lbl' =>   'Pwr',          'class' => 'r'],
         'qth' =>        ['lbl' =>   'Location',     'class' => ''],
-        'countyName' => ['lbl' =>   'US County',    'class' => ''],
+        'countyName' => ['lbl' =>   'US County',    'class' => 'not-compact'],
         'sp' =>         ['lbl' =>   'S/P',          'class' => ''],
         'itu' =>        ['lbl' =>   'Country',      'class' => ''],
         'continent' =>  ['lbl' =>   'Cont',         'class' => ''],
         'gsq' =>        ['lbl' =>   'GSQ',          'class' => ''],
         'km' =>         ['lbl' =>   'Km',           'class' => 'r'],
-        'deg' =>        ['lbl' =>   'Deg',          'class' => 'r'],
+        'deg' =>        ['lbl' =>   'Deg',          'class' => 'r not-compact'],
         'conf' =>       ['lbl' =>   'Conf',         'class' => 'r']
     ];
 

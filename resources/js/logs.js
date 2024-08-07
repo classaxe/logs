@@ -222,6 +222,7 @@ var frm = {
                 });
                 frm.getFilters();
                 $('table.list tbody').html(frm.parseLogs());
+                frm.compact();
                 $('#logUpdated').text(data.lastPulled);
                 frm.count();
                 frm.stats();
@@ -263,18 +264,18 @@ var frm = {
                 '<td class="nowrap">' + log.date + '</td>' +
                 '<td class="nowrap">' + log.time + '</td>' +
                 '<td data-link="call">' + log.call + '</td>' +
-                '<td>' + log.name + '</td>' +
+                '<td class="not-compact">' + log.name + '</td>' +
                 '<td data-link="band"><span class="band band' + log.band + '">' + log.band + '</span></td>' +
                 '<td data-link="mode"><span class="mode m' + log.mode + '">' + log.mode + '</span></td>' +
                 '<td class="r">' + log.rx + '</td>' +
                 '<td class="r">' + log.tx + '</td>' +
                 '<td class="r">' + log.pwr + '</td>' +
                 '<td>' + log.qth + '</td>' +
-                '<td>' + log.countyName + '</td>' +
+                '<td class="not-compact">' + log.countyName + '</td>' +
                 '<td data-link="sp">' + log.sp + '</td>' +
                 '<td data-link="itu">' + log.itu + '</td>' +
                 '<td data-link="cont">' + log.continent + '</td>' +
-                '<td data-link="gsq">' + log.gsq + '</td>' +
+                '<td class="not-compact" data-link="gsq">' + log.gsq + '</td>' +
                 '<td class="r">' + (typeof log.km === 'number' ? log.km : '') + '</td>' +
                 '<td class="r">' + (typeof log.deg === 'number' ? log.deg : '') + '</td>' +
                 '<td class="r">' + log.conf + '</td>'
@@ -457,6 +458,7 @@ var frm = {
     update_doit: () => {
         frm.getFilters();
         $('table.list tbody').html(frm.parseLogs());
+        frm.compact();
         frm.count();
         frm.stats();
         frm.getGridSquares();
