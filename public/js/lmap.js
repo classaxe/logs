@@ -1,4 +1,3 @@
-// Globals: signals, types
 var LMap = {
     map : null,
     icons : {},
@@ -9,18 +8,10 @@ var LMap = {
     sortOrder : 'a',
 
     init: function() {
-        var icons = [ 'dgps', 'dsc', 'hambcn', 'navtex', 'ndb', 'time', 'other' ];
-        var states = [ 0, 1 ];
-        for (var i in icons) {
-            for (var j in states) {
-                var pin = base_image + '/pins/' + icons[i] + '_' + states[j] + '.png';
-                LMap.icons[icons[i] + '_' + states[j]] =
-                    new google.maps.MarkerImage(pin, new google.maps.Size(12, 20));
-            }
-        }
+        let latlng = qth.gsq;
         LMap.options = {
             'zoom': 7,
-            'center': new google.maps.LatLng(center.lat, center.lon),
+            'center': new google.maps.LatLng(qth.lat, qth.lng),
             'mapTypeId': google.maps.MapTypeId.ROADMAP
         };
         LMap.map = new google.maps.Map($('#map').get(0), LMap.options);
@@ -38,7 +29,6 @@ var LMap = {
         }
         LMap.infoWindow = new google.maps.InfoWindow();
         LMap.drawGrid();
-        LMap.drawMarkers();
         LMap.drawQTH();
         LMap.setActions();
         nite.init(LMap.map);
@@ -168,13 +158,29 @@ var LMap = {
             layers.squares[i].setMap(null);
         }
         layers.squares = [];
+        let html = '';
         for (gsq in gsqs) {
             this.drawGridSquare(
                 gsq,
                 this.gsq4Bounds(gsq),
                 gsqs[gsq].conf === 'Y'
-            )
+            );
+            html += this.drawGridSquareList(
+                gsqs[gsq]
+            );
         }
+        $('#gsqs tbody').html(html);
+    },
+
+    drawGridSquareList: function(gsq) {
+
+//        let bands = LMap.getUniqueArrayValues(gsq.bands);
+//        console.log(bands);
+        return "<tr>" +
+            "<td>" + gsq.gsq +"</td>" +
+//            "<td>" + bands.length +"</td>" +
+            "<td>" + gsq.logs.length +"</td>" +
+            "</tr>";
     },
 
     drawGridSquare: function(gsq, bounds, conf) {
@@ -194,79 +200,6 @@ var LMap = {
         layers.squares.push(square);
     },
 
-    drawMarkers : function() {
-        var html, i, icon_highlight, marker,s;
-        if (!signals) {
-            return;
-        }
-        LMap.markerGroups=new google.maps.MVCObject();
-        for (i in types) {
-            LMap.markerGroups.set('type_' + types[i] + '_0', LMap.map);
-            LMap.markerGroups.set('type_' + types[i] + '_1', LMap.map);
-        }
-        LMap.markerGroups.set('highlight', LMap.map);
-
-        icon_highlight = {
-            url: base_image + '/map_point_here.gif',
-            origin: new google.maps.Point(0, 0),
-            anchor: new google.maps.Point(6, 7)
-        };
-
-        for (i in signals) {
-            s = signals[i];
-            html +=
-                '<tr' +
-                ' class="type_' + s.typeId +
-                ' type_' + s.className +
-                (s.decommissioned ? ' decommissioned' : '') +
-                (typeof s.logged !== 'undefined' ? (s.logged ? ' logged' : ' unlogged') : '') +
-                '"' +
-                ' id="signal_' + s.id + '"' +
-                ' data-gmap="' + s.lat + '|' + s.lon + '"' +
-                '>' +
-                (typeof s.logged !== 'undefined' ? '<td class="personalise" data-val="' + (s.logged ? 'logged' : 'unlogged') + '">' + (s.logged ? '&#x2714;' : '&nbsp;') + '</td>' : '') +
-                '<td data-val="' + s.khz +'">' + s.khz + '</td>' +
-                '<td data-val="' + s.call + '" class="text-nowrap">' +
-                '<a href="' + base_url + 'signals/' + s.id + '" data-popup="1">' + s.call + '</a>' +
-                '</td>' +
-                '<td data-val="' + s.qth + '" class="clipped">' + s.qth + '</td>' +
-                '<td data-val="' + s.sp + '">' + s.sp + '</td>' +
-                '<td data-val="' + s.itu + '">' + s.itu + '</td>' +
-                (typeof s.km !== 'undefined' ? '<td class="personalise num" data-val="' + s.km +'">' + s.km + '</td>' : '') +
-                (typeof s.mi !== 'undefined' ? '<td class="personalise num" data-val="' + s.mi +'">' + s.mi + '</td>' : '') +
-                (typeof s.deg !== 'undefined' ? '<td class="personalise num" data-val="' + s.deg +'">' + s.deg + '</td>' : '') +
-                '</tr>';
-
-            marker = new google.maps.Marker({
-                id : 'point_' + s.id,
-                icon : LMap.icons[s.icon + '_' + (s.active ? 1 : 0)],
-                position : new google.maps.LatLng(s.lat, s.lon),
-                title : s.khz + ' ' + s.call
-            });
-            google.maps.event.addListener(marker, 'click', LMap.markerClickFunction(s));
-            marker.bindTo('map', LMap.markerGroups, 'type_' + s.typeId + '_' + (s.active ? '1' : '0'));
-            markers.push(marker);
-        }
-
-        $('.results tbody').append(html);
-
-        $('tr[data-gmap]')
-            .mouseover(function() {
-                var coords = $(this).data('gmap').split('|');
-                highlight = new google.maps.Marker({
-                    position: new google.maps.LatLng(coords[0], coords[1]),
-                    map: LMap.map,
-                    icon: icon_highlight
-                });
-            })
-            .mouseout(function() {
-                highlight.setMap(null);
-            });
-
-        $('.no-results').hide();
-        $('.results').show();
-    },
-
     drawQTH : function() {
         if (typeof qth === 'undefined') {
             return;
@@ -276,7 +209,7 @@ var LMap = {
             map: LMap.map,
             icon: {
                 scaledSize: new google.maps.Size(30,30),
-                url: base_image + '/pins/red-pushpin.png'
+                url: base_image + '/red-pushpin.png'
             },
             title: qth.callsign,
             zIndex: 100
@@ -304,6 +237,16 @@ var LMap = {
                 new google.maps.LatLng(Math.max(qth.lat, box[1].lat) + 0.5, Math.max(qth.lng, box[1].lon) + 1) //ne
             )
         );
+    },
+
+    getUniqueArrayValues: (arr) => {
+        let tmp = [];
+        for (let key in arr) {
+            if (arr.hasOwnProperty(key)) {
+                tmp.push(key);
+            }
+        }
+        return tmp;
     },
 
     gsq4Bounds: function(GSQ) {
@@ -357,7 +300,7 @@ var LMap = {
             let infoHtml =
                 "<div class=\"map_info\">" +"" +
                 "<h3>" +
-                "<b>Grid Square <strong>" + data.gsq + "</strong></b> (" + (data.conf === 'Y' ? "Confirmed" : "Unconfirmed") + ")" +
+                "<b>Grid Square <strong>" + data.gsq + "</strong></b> - " + data.logs.length +" logs (Square " + (data.conf === 'Y' ? "is" : "not") + " confirmed)" +
                 "<a id='close' href='#' onclick='LMap.infoWindow.close();return false'>X</a>" +
                 "</h3>" +
                 "<table class='results'>" +
@@ -381,38 +324,6 @@ var LMap = {
             setTimeout(() => {
                 $('#close').focus();
             }, 10);
-        };
-    },
-
-    markerClickFunction: function(s) {
-        return function(e) {
-            e.cancelBubble = true;
-            e.returnValue = false;
-            if (e.stopPropagation) {
-                e.stopPropagation();
-                e.preventDefault();
-            }
-            var infoHtml =
-                '<div class="map_info">' +
-                '  <h3><a href="' + base_url + 'signals/' + s.id + '" onclick="return popup(this.href);">' + s.khz + ' ' + s.call + '</a></h3>' +
-                '  <table class="info-body">' +
-                (typeof s.logged !== 'undefined' ? '    <tr><th>' + msg.logged +'</th><td>' + (s.logged ? msg.yes : msg.no) + '</td></tr>' : '') +
-                '    <tr><th>' + msg.id + '</th><td>'+s.call + '</td></tr>' +
-                '    <tr><th>' + msg.khz + '</th><td>'+s.khz + '</td></tr>' +
-                '    <tr><th>' + msg.type + '</th><td>'+s.type + '</td></tr>' +
-                (s.pwr !== '0' ? '    <tr><th>' + msg.power + '</th><td>'+s.pwr + 'W</td></tr>' : '') +
-                '    <tr><th>' + msg.name_qth + '</th><td>'+s.qth + (s.sp ? ', ' + s.sp : '') + ', ' + s.itu + '</td></tr>' +
-                (s.gsq ? '    <tr><th>' + msg.gsq + '</th><td><a href="' + base_url + 'signals/' + s.id + '/map" onclick="return popup(this.href);" title="Show map (accuracy limited to nearest Grid Square)">'+s.gsq+'</a></td></tr>' : '') +
-                '    <tr><th>' + msg.lat_lon + '</th><td>' + s.lat + ', ' + s.lon + '</td></tr>' +
-                (s.usb || s.lsb ? '    <tr><th>' + msg.sidebands + '</th><td>' + (s.lsb ? 'LSB: ' + s.lsb : '') + (s.usb ? (s.lsb ? ', ' : '') + ' USB: ' + s.usb : '') + '</td></tr>' : '') +
-                (s.sec || s.fmt ? '    <tr><th>' + msg.sec_format + '</th><td>' + (s.sec ? s.sec + ' sec' : '') + (s.sec && s.fmt ? ', ' : '') + s.fmt + '</td></tr>' : '') +
-                '    <tr><th>' + msg.last_logged + '</th><td>' + s.heard + '</td></tr>' +
-                '    <tr><th>' + msg.heard_in + '</th><td>' + s.heard_in + '</td></tr>' +
-                '  </table>' +
-                '</div>';
-            LMap.infoWindow.setContent(infoHtml);
-            LMap.infoWindow.setPosition(new google.maps.LatLng(s.lat, s.lon));
-            LMap.infoWindow.open(LMap.map);
         };
     },
 

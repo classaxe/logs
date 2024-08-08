@@ -86,6 +86,8 @@ var frm = {
                 if (typeof gsqs[gsq] === 'undefined') {
                     latlon = frm.gsq_deg(gsq);
                     gsqs[gsq] = {
+                        bands: [],
+                        calls: [],
                         conf: '',
                         gsq: gsq,
                         lat: latlon.lat,
@@ -117,6 +119,7 @@ var frm = {
                 }
                 gsqs[gsq].logs.push(log);
             }
+
         });
         LMap.fitToBox();
     },
