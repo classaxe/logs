@@ -71,12 +71,6 @@ $latlon = Log::convertGsqToDegrees($user['gsq']);
                             <th class="sort" title="Sort by Logs">Logs</th>
                             <th class="sort" title="Sort by Bands">Bands</th>
                             <th class="sort" title="Sort by Calls">Calls</th>
-                            <th class="sort txt_vertical" title="Sort by distance in KM">
-                                <div>KM</div>
-                            </th>
-                            <th class="sort txt_vertical" title="Sort by bearing">
-                                <div>Deg</div>
-                            </th>
                             <th class="sort txt_vertical" title="Sort by Confirmed Status">
                                 <div>Conf</div>
                             </th>

@@ -89,7 +89,9 @@ var frm = {
                         bands: [],
                         calls: [],
                         conf: '',
+                        deg: 0,
                         gsq: gsq,
+                        km: 0,
                         lat: latlon.lat,
                         lon: latlon.lon,
                         logs: []
@@ -118,8 +120,9 @@ var frm = {
                     gsqs[gsq].conf = 'Y'
                 }
                 gsqs[gsq].logs.push(log);
+                gsqs[gsq].bands[log.band] = log.band;
+                gsqs[gsq].calls[log.call] = log.call;
             }
-
         });
         LMap.fitToBox();
     },

@@ -173,13 +173,14 @@ var LMap = {
     },
 
     drawGridSquareList: function(gsq) {
-
-//        let bands = LMap.getUniqueArrayValues(gsq.bands);
-//        console.log(bands);
+        let bands = LMap.getUniqueArrayValues(gsq.bands);
+        let calls = LMap.getUniqueArrayValues(gsq.calls);
         return "<tr>" +
             "<td>" + gsq.gsq +"</td>" +
-//            "<td>" + bands.length +"</td>" +
             "<td>" + gsq.logs.length +"</td>" +
+            "<td>" + bands.sort(LMap.sortBands).join(' ') +"</td>" +
+            "<td title='(" + calls.join(' ') + ")'>" + calls.length +"</td>" +
+            "<td>" + gsq.conf +"</td>" +
             "</tr>";
     },
 
@@ -366,5 +367,9 @@ var LMap = {
         });
 
         mapMarkerColSetActions();
+    },
+
+     sortBands: (a,b) => {
+        return (parseInt(a) * (a.indexOf('cm') !== -1 ? 1 : 1000)) > (parseInt(b) * (b.indexOf('cm') !== -1 ? 1 : 1000)) ? -1 : 1;
     }
 };
