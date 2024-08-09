@@ -157,27 +157,28 @@ var LMap = {
         layers.squares = [];
         let html = '';
         LMap.sortGrids('gsq', false);
-        for (gsq in gsqs) {
-            this.drawGridSquare(
-                gsq,
-                this.gsq4Bounds(gsqs[gsq].gsq),
-                gsqs[gsq].conf === 'Y'
+        for (i in gsqs) {
+            gsqs[i].marker = this.drawGridSquare(
+                i,
+                this.gsq4Bounds(gsqs[i].gsq),
+                gsqs[i].conf === 'Y'
             );
             html += this.drawGridSquareList(
-                gsqs[gsq]
+                i,
+                gsqs[i],
             );
         }
         $('#gsqs tbody').html(html);
     },
 
-    drawGridSquareList: function(gsq) {
+    drawGridSquareList: function(idx, gsq) {
         let bands = LMap.getUniqueArrayValues(gsq.bands).sort(LMap.sortBands);
         let calls = LMap.getUniqueArrayValues(gsq.calls);
         let bands_html = '';
         for (let i=0; i<bands.length; i++) {
             bands_html += "<span class='band band" + bands[i] + "'>" + bands[i] + "</span>";
         }
-        return "<tr>" +
+        return "<tr onclick=\"google.maps.event.trigger(gsqs[" + idx + "].marker, 'click');\">" +
             "<td>" + gsq.gsq +"</td>" +
             "<td>" + bands_html +"</td>" +
             "<td class='r'>" + gsq.logs.length +"</td>" +
@@ -201,6 +202,7 @@ var LMap = {
         });
         google.maps.event.addListener(square, 'click', LMap.gsqClickFunction(gsq));
         layers.squares.push(square);
+        return square;
     },
 
     drawQTH : function() {
@@ -274,11 +276,13 @@ var LMap = {
 
     gsqClickFunction: function(g) {
         return function (e) {
-            e.cancelBubble = true;
-            e.returnValue = false;
-            if (e.stopPropagation) {
-                e.stopPropagation();
-                e.preventDefault();
+            if (e) {
+                e.cancelBubble = true;
+                e.returnValue = false;
+                if (e.stopPropagation) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                }
             }
             let data, i, log, rows;
             data = gsqs[g];

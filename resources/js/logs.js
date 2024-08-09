@@ -93,7 +93,8 @@ var frm = {
                         km: 0,
                         lat: latlon.lat,
                         lon: latlon.lon,
-                        logs: []
+                        logs: [],
+                        marker: null
                     };
                     if (latlon.lat > lat_max) {
                         lat_max = latlon.lat;
