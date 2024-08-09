@@ -1,11 +1,8 @@
 var LMap = {
     map : null,
-    icons : {},
     infoWindow : null,
     markers : [],
     options : {},
-    sortBy  : 'khz',
-    sortOrder : 'a',
 
     init: function() {
         let latlng = qth.gsq;
@@ -159,10 +156,11 @@ var LMap = {
         }
         layers.squares = [];
         let html = '';
+        LMap.sortGrids('gsq', false);
         for (gsq in gsqs) {
             this.drawGridSquare(
                 gsq,
-                this.gsq4Bounds(gsq),
+                this.gsq4Bounds(gsqs[gsq].gsq),
                 gsqs[gsq].conf === 'Y'
             );
             html += this.drawGridSquareList(
@@ -173,14 +171,18 @@ var LMap = {
     },
 
     drawGridSquareList: function(gsq) {
-        let bands = LMap.getUniqueArrayValues(gsq.bands);
+        let bands = LMap.getUniqueArrayValues(gsq.bands).sort(LMap.sortBands);
         let calls = LMap.getUniqueArrayValues(gsq.calls);
+        let bands_html = '';
+        for (let i=0; i<bands.length; i++) {
+            bands_html += "<span class='band band" + bands[i] + "'>" + bands[i] + "</span>";
+        }
         return "<tr>" +
             "<td>" + gsq.gsq +"</td>" +
-            "<td>" + gsq.logs.length +"</td>" +
-            "<td>" + bands.sort(LMap.sortBands).join(' ') +"</td>" +
-            "<td title='(" + calls.join(' ') + ")'>" + calls.length +"</td>" +
-            "<td>" + gsq.conf +"</td>" +
+            "<td>" + bands_html +"</td>" +
+            "<td class='r'>" + gsq.logs.length +"</td>" +
+            "<td class='r' title='(" + calls.join(' ') + ")'>" + calls.length +"</td>" +
+            "<td class='r'>" + gsq.conf +"</td>" +
             "</tr>";
     },
 
@@ -285,17 +287,17 @@ var LMap = {
                 log = data.logs[i];
                 rows +=
                     "<tr>" +
-                    "<td>" + log.datetime + "</td>" +
+                    "<td class='nowrap'>" + log.datetime + "</td>" +
                     "<td>" + log.call + "</td>" +
                     "<td><span class='band band" + log.band + "'>" + log.band + "</span></td>" +
                     "<td><span class='mode m" + log.mode + "'>" + log.mode + "</span></td>" +
                     "<td>" + log.sp + "</td>" +
                     "<td>" + log.itu + "</td>" +
-                    "<td>" + log.km.toLocaleString() + " Km</td>" +
+                    "<td>" + log.km.toLocaleString() + "</td>" +
                     "<td>" + log.rx + "</td>" +
                     "<td>" + log.tx + "</td>" +
                     "<td>" + log.pwr + "</td>" +
-                    "<td>" + log.conf + "</td>" +
+                    "<td class='r'>" + log.conf + "</td>" +
                     "</tr>";
             }
             let infoHtml =
@@ -312,7 +314,7 @@ var LMap = {
                 "<th>Mode</th>" +
                 "<th title='State, Province or Territory'>SP</th>" +
                 "<th title='Country'>ITU</th>" +
-                "<th title='Distance to worked station'>DX</th>" +
+                "<th title='Distance to worked station'>KM</th>" +
                 "<th title='Received signal strength'>RX</th>" +
                 "<th title='My signal strength'>TX</th>" +
                 "<th title='My power in Watts'>Pwr</th>" +
@@ -371,5 +373,23 @@ var LMap = {
 
      sortBands: (a,b) => {
         return (parseInt(a) * (a.indexOf('cm') !== -1 ? 1 : 1000)) > (parseInt(b) * (b.indexOf('cm') !== -1 ? 1 : 1000)) ? -1 : 1;
-    }
+    },
+
+    sortGrids: (sortField, sortZa) => {
+        if (sortZa) {
+            gsqs.sort(function(a,b){
+                let aVal = (typeof a[sortField] === 'string' ? a[sortField].toLowerCase() || '!!!' : a[sortField]);
+                let bVal = (typeof b[sortField] === 'string' ? b[sortField].toLowerCase() || '!!!' : b[sortField]);
+                return ((bVal < aVal) ? -1 : ((bVal > aVal) ? 1 : 0));
+            });
+        } else {
+            gsqs.sort(function(a,b){
+                let aVal = (typeof a[sortField] === 'string' ? a[sortField].toLowerCase() || '|||' : a[sortField]);
+                let bVal = (typeof b[sortField] === 'string' ? b[sortField].toLowerCase() || '|||' : b[sortField]);
+                return ((aVal < bVal) ? -1 : ((aVal > bVal) ? 1 : 0));
+            });
+        }
+    },
+
+
 };

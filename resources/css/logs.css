@@ -197,7 +197,7 @@ label.band {
 }
 .band {
     display: inline-block;
-    border: 1px solid black;
+    border: 1px solid #888;
     background-color: grey;
     border-radius: 1em;
     padding: 0.1em 0.2em 0.2em 0.2em;
@@ -207,6 +207,7 @@ label.band {
     line-height: 1em;
     min-width: 3em;
     text-align:center;
+    margin-right: 0.125em;
 }
 .band160m{background-color:rgba(124, 252, 0, 0.6);color:black;}
 .band80m{background-color:rgba(229, 80, 229, 0.6);color:black;}
@@ -220,7 +221,7 @@ label.band {
 .band11m{background-color:rgba(0, 255, 0, 0.6);color:black;}
 .band10m{background-color:rgba(255, 105, 180, 0.6);color:black;}
 .band8m{background-color:rgba(127, 0, 241, 0.6);color:black;}
-.band6m{background-color:rgba(255, 0, 0, 0.6);color:black;}
+.band6m{background-color:rgba(255, 0, 0, 0.6);color:white;}
 .band5m{background-color:rgba(224, 224, 224, 0.6);color:black;}
 .band4m{background-color:rgba(204, 0, 68, 0.6);color:black;}
 .band2m{background-color:rgba(255, 20, 147, 0.6);color:black;}
@@ -370,6 +371,7 @@ th.sortable:hover::after {
     margin: 0.25em 0;
 }
 .txt_vertical {
+    width: 1.5em;
     vertical-align: bottom;
     text-align: center;
 }
@@ -393,33 +395,29 @@ div.scroll div {
     height: 100%;
     overflow: auto;
 }
-div.scroll div table.results,
-div.scroll div table.results_noaction {
+div.scroll div table.results {
     border-top: 2px solid #808080;
     border-bottom: 1px solid #808080;
     border-right: 1px solid #808080;
     background: #ffffff;
 }
-div.scroll div table.results thead th,
-div.scroll div table.results_noaction thead th {
+div.scroll div table.results thead th {
     position: sticky;
     top: -1px;
     border-top: none;
     border-bottom: none;
 }
 div.scroll div table.results tbody tr:hover,
-div.scroll div table.results_noaction tbody tr:hover,
-div.scroll div table.results tbody tr:hover td,
-div.scroll div table.results_noaction tbody tr:hover td {
+div.scroll div table.results tbody tr:hover td {
     background: #ffff00 !important;
 }
-div.scroll div table.results img,
-div.scroll div table.results_noaction img {
+div.scroll div table.results img {
     margin: 0.5em 0.25em 0 0;
 }
 /* [ Grid CSS ] */
-.results,
-.results_noaction {
+.results {
+    width: 390px;
+    overflow: auto;
     margin: 0;
     border-collapse: collapse;
 }
@@ -433,42 +431,32 @@ div.scroll div table.results_noaction img {
     font-size: 8pt;
     padding: 0.25em;
 }
-.results thead th.hidden,
-.results_noaction thead th.hidden {
+.results thead th.hidden {
     display: none;
 }
-.results thead th.sort,
-.results_noaction thead th.sort {
+.results thead th.sort {
     border-bottom: 3px solid #a0a0a0 !important;
 }
-.results thead th.nosort,
-.results_noaction thead th.nosort {
+.results thead th.nosort {
     background: #008000;
     border-bottom: 3px solid #006000;
 }
 .results thead th.sort:hover,
-.results_noaction thead th.sort:hover,
-.results thead th.sorted,
-.results_noaction thead th.sorted {
+.results thead th.sorted {
     border-bottom: 3px solid #FCC247 !important;
     background: #665d4b;
     cursor: pointer;
 }
-.results thead th.sorted,
-.results_noaction thead th.sorted {
+.results thead th.sorted {
     color: #ffe4b3;
 }
-.results thead th b,
-.results_noaction thead th b {
+.results thead th b {
     background: #ffffa0;
     color: #0000ff;
     border: 1px solid #b0b000;
     border-radius: 2px;
 }
-.results tbody th,
-.results_noaction tbody th,
-.results tbody td.personalise,
-.results_noaction tbody td.personalise {
+.results tbody th {
     padding: 0.125em 0.25em;
     vertical-align: top;
     background: #95de95;
@@ -476,73 +464,23 @@ div.scroll div table.results_noaction img {
     font-weight: bold;
     border: 1px solid #808080;
 }
-.results tbody th.no-results,
-.results_noaction tbody th.no-results,
-.results tbody td.personalise.no-results,
-.results_noaction tbody td.personalise.no-results {
+.results tbody th.no-results {
     background: #de9595;
     color: #800000;
 }
-.results tr.daytime td,
-.results_noaction tr.daytime td {
-    font-weight: bold;
-}
-.results tr.logged td,
-.results_noaction tr.logged td {
-    color: #008000 !important;
-}
-.results tr.unlogged td,
-.results_noaction tr.unlogged td {
-    color: #A00000 !important;
-}
-.results tr.l2_alt td,
-.results_noaction tr.l2_alt td {
-    padding: 0;
-}
-.results tr.l2_alt td table,
-.results_noaction tr.l2_alt td table {
-    background: transparent;
-    margin: 0;
-    border: none;
-}
-.results tr.l2_alt td table tbody,
-.results_noaction tr.l2_alt td table tbody {
-    background: transparent !important;
-}
-.results tr.l2_alt td table tbody tr,
-.results_noaction tr.l2_alt td table tbody tr {
-    background: transparent !important;
-}
-.results tr.l2_alt td table tbody tr th,
-.results_noaction tr.l2_alt td table tbody tr th {
-    background: transparent !important;
-    width: 6em;
-    white-space: nowrap;
-    text-align: right;
-    color: #000;
-}
-.results tr.l2_alt td table tbody tr td,
-.results_noaction tr.l2_alt td table tbody tr td,
-.results tr.l2_alt td table tbody tr th,
-.results_noaction tr.l2_alt td table tbody tr th {
-    text-align: left !important;
-    font-size: 100%;
-    margin: 0;
-    padding: 0 0.25em;
-    border: none;
-}
-.results tr.l2_alt td table tbody tr td div,
-.results_noaction tr.l2_alt td table tbody tr td div,
-.results tr.l2_alt td table tbody tr th div,
-.results_noaction tr.l2_alt td table tbody tr th div {
-    display: inline;
-}
+
 .results td {
     border: 1px solid #808080;
     height: 1.25em;
     vertical-align: top;
     font-size: 8pt;
     padding: 0.125em 0.25em;
+}
+.results td.r {
+    text-align: right;
+}
+.results .nowrap {
+    white-space: nowrap;
 }
 .map_info {
     margin-top: 0.5em;

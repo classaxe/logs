@@ -71,8 +71,8 @@ var frm = {
     },
 
     getGridSquares: ()  => {
-        gsqs = {} // Global
-
+        gsqs = [] // Global
+        let gsqs_tmp = {}
         let lat_min = 90;
         let lat_max = -90;
         let lon_min = 180;
@@ -81,11 +81,10 @@ var frm = {
         $(logsFiltered).each(function(idx,log){
             let gsq = log.gsq;
             let latlon;
-
             if (gsq) {
-                if (typeof gsqs[gsq] === 'undefined') {
+                if (typeof gsqs_tmp[gsq] === 'undefined') {
                     latlon = frm.gsq_deg(gsq);
-                    gsqs[gsq] = {
+                    gsqs_tmp[gsq] = {
                         bands: [],
                         calls: [],
                         conf: '',
@@ -117,13 +116,16 @@ var frm = {
                     }];
                 }
                 if (log.conf === 'Y') {
-                    gsqs[gsq].conf = 'Y'
+                    gsqs_tmp[gsq].conf = 'Y'
                 }
-                gsqs[gsq].logs.push(log);
-                gsqs[gsq].bands[log.band] = log.band;
-                gsqs[gsq].calls[log.call] = log.call;
+                gsqs_tmp[gsq].logs.push(log);
+                gsqs_tmp[gsq].bands[log.band] = log.band;
+                gsqs_tmp[gsq].calls[log.call] = log.call;
             }
         });
+        for (let gsq in gsqs_tmp) {
+            gsqs.push(gsqs_tmp[gsq]);
+        }
         LMap.fitToBox();
     },
 

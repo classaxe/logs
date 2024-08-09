@@ -55,7 +55,7 @@
                 </select>
             </label>
             <label class="b">GSQ:
-                <input type="text" name="gsq" size="4">
+                <input type="text" name="gsq" size="4" maxlength="4">
             </label>
         </div><br>
         <div class="group">

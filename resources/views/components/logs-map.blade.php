@@ -47,7 +47,7 @@ $latlon = Log::convertGsqToDegrees($user['gsq']);
         qth: "{{ $user['qth'] }}, {{ $user['city'] }}, {{ $user['sp'] }}, {{ $user['itu'] }}"
     }
 
-    var gsqs = {};
+    var gsqs = [];
     var markers = [];
 </script>
 <script>
@@ -67,13 +67,11 @@ $latlon = Log::convertGsqToDegrees($user['gsq']);
                     <table id="gsqs" class="results">
                         <thead>
                         <tr>
-                            <th class="sort sorted" title="Sort by GSQ">GSQ</th>
-                            <th class="sort" title="Sort by Logs">Logs</th>
+                            <th class="sort sorted" title="Sort by GSQ" style="width: 3.25em">GSQ</th>
                             <th class="sort" title="Sort by Bands">Bands</th>
-                            <th class="sort" title="Sort by Calls">Calls</th>
-                            <th class="sort txt_vertical" title="Sort by Confirmed Status">
-                                <div>Conf</div>
-                            </th>
+                            <th class="sort txt_vertical" title="Sort by Logs"><div>Logs</div></th>
+                            <th class="sort txt_vertical" title="Sort by Calls"><div>Calls</div></th>
+                            <th class="sort txt_vertical" title="Sort by Confirmed Status"><div>Conf</div></th>
                         </tr>
                         </thead>
                         <tbody>
