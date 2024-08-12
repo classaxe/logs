@@ -512,3 +512,7 @@ div.scroll div table.results img {
 .gm-style-iw-chr {
     display: none;
 }
+#gsqs tbody tr.highlight td {
+    border-color: #080;
+    background: #d0ffd0;
+}

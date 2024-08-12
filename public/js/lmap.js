@@ -1,10 +1,11 @@
 var LMap = {
-    map : null,
+    gsqHighlight: null,
     infoWindow : null,
+    map : null,
     markers : [],
     options : {},
 
-    init: function() {
+    init: () => {
         let latlng = qth.gsq;
         LMap.options = {
             'zoom': 7,
@@ -24,6 +25,15 @@ var LMap = {
         if (box[0].lat !== box[1].lat || box[0].lon !== box[1].lon) {
             LMap.fitToBox();
         }
+        LMap.gsqHighlight = new google.maps.Rectangle({
+            strokeColor: '#008000',
+            strokeOpacity: 0.85,
+            strokeWeight: 3,
+            fillColor: '#80ff80',
+            fillOpacity: 0.5,
+            map: null,
+            bounds: null,
+        });
         LMap.infoWindow = new google.maps.InfoWindow();
         LMap.drawGrid();
         LMap.drawQTH();
@@ -32,7 +42,7 @@ var LMap = {
         setInterval(function() { nite.refresh() }, 10000); // every 10s
     },
 
-    initMapsTxtOverlay: function() {
+    initMapsTxtOverlay: () => {
         // Thanks to Michal, 'UX Lead at Alphero' for this custom text overlay code
         // Ref: https://stackoverflow.com/a/3955258/815790
 
@@ -76,7 +86,7 @@ var LMap = {
         return TxtOverlay;
     },
 
-    drawGrid : function() {
+    drawGrid : () => {
         let squares = true;
         let TxtOverlay =    LMap.initMapsTxtOverlay();
         var i, la, laf, lo, lof;
@@ -149,7 +159,7 @@ var LMap = {
         }
     },
 
-    drawGridSquares: function() {
+    drawGridSquares: () => {
         let gsq, i, old;
         for (i in layers.squares) {
             layers.squares[i].setMap(null);
@@ -169,16 +179,26 @@ var LMap = {
             );
         }
         $('#gsqs tbody').html(html);
+
+        $('#gsqs tbody tr').on('click',function() {
+            var id = $(this).data('id');
+            google.maps.event.trigger(gsqs[id].marker, 'click');
+        });
+
+        $('#gsqs tbody tr').on('mouseover',function() {
+            var id = $(this).data('id');
+            google.maps.event.trigger(gsqs[id].marker, 'mouseover');
+        });
     },
 
-    drawGridSquareList: function(idx, gsq) {
+    drawGridSquareList: (idx, gsq) => {
         let bands = LMap.getUniqueArrayValues(gsq.bands).sort(LMap.sortBands);
         let calls = LMap.getUniqueArrayValues(gsq.calls);
         let bands_html = '';
         for (let i=0; i<bands.length; i++) {
             bands_html += "<span class='band band" + bands[i] + "'>" + bands[i] + "</span>";
         }
-        return "<tr onclick=\"google.maps.event.trigger(gsqs[" + idx + "].marker, 'click');\">" +
+        return "<tr data-id='" + idx + "'>" +
             "<td>" + gsq.gsq +"</td>" +
             "<td>" + bands_html +"</td>" +
             "<td class='r'>" + gsq.logs.length +"</td>" +
@@ -187,7 +207,7 @@ var LMap = {
             "</tr>";
     },
 
-    drawGridSquare: function(gsq, bounds, conf) {
+    drawGridSquare: (gsq, bounds, conf) => {
         let map = LMap.map;
         let rgb = conf ? '#FF0000' : '#FFFF00';
         let rgbb = conf ? '#800000' : '#808000';
@@ -200,12 +220,13 @@ var LMap = {
             map,
             bounds: bounds,
         });
-        google.maps.event.addListener(square, 'click', LMap.gsqClickFunction(gsq));
+        square.addListener('click', LMap.gsqClickFunction(gsq));
+        square.addListener('mouseover', LMap.gsqMouseoverFunction(gsq));
         layers.squares.push(square);
         return square;
     },
 
-    drawQTH : function() {
+    drawQTH : () => {
         if (typeof qth === 'undefined') {
             return;
         }
@@ -254,7 +275,7 @@ var LMap = {
         return tmp;
     },
 
-    gsq4Bounds: function(GSQ) {
+    gsq4Bounds: (GSQ) => {
         let lat, lat_d, lat_m, lon, lon_d, lon_m;
         if (!GSQ.match(/^([a-rA-R]{2})([0-9]{2})$/i)) {
             return false;
@@ -274,7 +295,7 @@ var LMap = {
         };
     },
 
-    gsqClickFunction: function(g) {
+    gsqClickFunction: (g) => {
         return function (e) {
             if (e) {
                 e.cancelBubble = true;
@@ -308,7 +329,7 @@ var LMap = {
                 "<div class=\"map_info\">" +"" +
                 "<h3>" +
                 "<b>Grid Square <strong>" + data.gsq + "</strong></b> - " + data.logs.length +" logs (Square " + (data.conf === 'Y' ? "is" : "not") + " confirmed)" +
-                "<a id='close' href='#' onclick='LMap.infoWindow.close();return false'>X</a>" +
+                "<a id='close' href='#' onclick=\"$('#gsqs tbody tr').removeClass('highlight');LMap.infoWindow.close();return false\">X</a>" +
                 "</h3>" +
                 "<table class='results'>" +
                 "<thead><tr>" +
@@ -334,9 +355,17 @@ var LMap = {
         };
     },
 
-    setActions : function() {
+    gsqMouseoverFunction: (g) => {
+        return function () {
+            $('#gsqs tbody tr').removeClass('highlight');
+            $('#gsqs tbody tr[data-id=' + g + ']').addClass('highlight');
+            console.log(g);
+        }
+    },
+
+    setActions : () => {
         var mapDiv = $('#map');
-        $(window).resize(function() {
+        $(window).resize(() => {
             let vspace = ('Y' === COOKIE.get('compact') ? 296 : 430);
             mapDiv.height($(window).height() - vspace);
             mapDiv.width($(window).width() - 390);
@@ -344,35 +373,30 @@ var LMap = {
         })
         .trigger('resize');
 
-        $('#layer_grid').click(function () {
-            var active, i;
+        $('#layer_grid').click(() =>  {
+            let active, i;
             active = $('#layer_grid').prop('checked');
             for (i in layers.grid) {
                 layers.grid[i].setMap(active ? LMap.map : null);
             }
         });
 
-        $('#layer_night').click(function () {
-            if ($('#layer_night').prop('checked')) {
-                nite.show()
-            } else {
-                nite.hide();
-            }
+        $('#layer_night').click(() => {
+            $('#layer_night').prop('checked') ? nite.show() : nite.hide();
         });
 
-        $('#layer_squares').click(function () {
-            var active, i;
+        $('#layer_squares').click(() => {
+            let active, i;
             active = $('#layer_squares').prop('checked');
             for (i in layers.squares) {
                 layers.squares[i].setMap(active ? LMap.map : null);
             }
         });
 
-        $('#layer_qth').click(function () {
+        $('#layer_qth').click(() => {
             layers['qth'].setMap($('#layer_qth').prop('checked') ? LMap.map : null);
         });
 
-        mapMarkerColSetActions();
     },
 
      sortBands: (a,b) => {
