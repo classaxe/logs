@@ -168,12 +168,12 @@ var LMap = {
         let html = '';
         LMap.sortGrids('gsq', false);
         for (i in gsqs) {
-            gsqs[i].marker = this.drawGridSquare(
+            gsqs[i].marker = LMap.drawGridSquare(
                 i,
-                this.gsq4Bounds(gsqs[i].gsq),
+                LMap.gsq4Bounds(gsqs[i].gsq),
                 gsqs[i].conf === 'Y'
             );
-            html += this.drawGridSquareList(
+            html += LMap.drawGridSquareList(
                 i,
                 gsqs[i],
             );
@@ -187,7 +187,7 @@ var LMap = {
 
         $('#gsqs tbody tr').on('mouseover',function() {
             var id = $(this).data('id');
-            google.maps.event.trigger(gsqs[id].marker, 'mouseover');
+            //google.maps.event.trigger(gsqs[id].marker, 'mouseover');
         });
     },
 
@@ -359,7 +359,6 @@ var LMap = {
         return function () {
             $('#gsqs tbody tr').removeClass('highlight');
             $('#gsqs tbody tr[data-id=' + g + ']').addClass('highlight');
-            console.log(g);
         }
     },
 

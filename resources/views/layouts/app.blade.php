@@ -22,7 +22,6 @@
             'resources/js/logs.js'
         ])
         <script src="/js/nite-overlay/nite-overlay.js"></script>
-        <script src="/js/map_common.js"></script>
         <script src="/js/lmap.js"></script>
         <script src="/js/cookies.js"></script>
     </head>
