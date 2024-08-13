@@ -516,3 +516,38 @@ div.scroll div table.results img {
     border-color: #080;
     background: #d0ffd0;
 }
+.changes {
+    clear: both;
+    margin: 3em auto 0.5em auto;
+    padding: 0.5em 1em;
+    float: none;
+    width: 90%;
+    background: #fff;
+    border: 1px solid #888;
+    border-radius: 1em;
+}
+.changes h1 {
+    font-weight: bold;
+    text-align: center;
+}
+.changes ul li {
+    margin-bottom: 0.5em;
+}
+.changes a {
+    color: #00f;
+}
+.changes a:hover {
+    color: #f00;
+    text-decoration: underline;
+}
+.changes span {
+    padding: 0.125em 0.25em;
+    font-weight: bolder;
+    background: #6f6;
+}
+.changes span.new {
+    color: #f00;
+    border: 1px solid #880;
+    background: #ff6;
+    border-radius: 0.55em;
+}

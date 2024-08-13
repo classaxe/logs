@@ -41,6 +41,7 @@
                                 <a href="{{ route('register') }}"{{ Route::currentRouteName() === 'register' ? "class=is-active" : ''}}>Register</a>
                             @endif
                         @endauth
+                        <a href="{{ route('changes') }}"{{ Route::currentRouteName() === 'changes' ? "class=is-active" : '' }}>Changes</a>
                     </nav>
                 @endif
             </header>
