@@ -1,6 +1,7 @@
 var LMap = {
     gsqHighlight: null,
     infoWindow : null,
+    infoWindowGsq : null,
     map : null,
     markers : [],
     options : {},
@@ -295,6 +296,63 @@ var LMap = {
         };
     },
 
+    gsqInfoWindowOpen: (data) => {
+        let i, log, rows;
+        LMap.infoWindowGsq = data.gsq;
+        rows = '';
+        for(i in data.logs) {
+            log = data.logs[i];
+            rows +=
+                "<tr>" +
+                "<td class='nowrap'>" + log.datetime + "</td>" +
+                "<td>" + log.call + "</td>" +
+                "<td><span class='band band" + log.band + "'>" + log.band + "</span></td>" +
+                "<td><span class='mode m" + log.mode + "'>" + log.mode + "</span></td>" +
+                "<td>" + log.sp + "</td>" +
+                "<td>" + log.itu + "</td>" +
+                "<td>" + log.km.toLocaleString() + "</td>" +
+                "<td>" + log.rx + "</td>" +
+                "<td>" + log.tx + "</td>" +
+                "<td>" + log.pwr + "</td>" +
+                "<td class='r'>" + log.conf + "</td>" +
+                "</tr>";
+        }
+        let infoHtml =
+            "<div class=\"map_info\">" +"" +
+            "<h3>" +
+            "<b>Grid Square <strong>" + data.gsq + "</strong></b> - " + data.logs.length +" logs (Square " + (data.conf === 'Y' ? "is" : "not") + " confirmed)" +
+            "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
+            "</h3>" +
+            "<table class='results'>" +
+            "<thead><tr>" +
+            "<th title='Date and time in UTC'>Date / Time</th>" +
+            "<th title='Callsign of worked station'>Call</th>" +
+            "<th>Band</th>" +
+            "<th>Mode</th>" +
+            "<th title='State, Province or Territory'>SP</th>" +
+            "<th title='Country'>ITU</th>" +
+            "<th title='Distance to worked station'>KM</th>" +
+            "<th title='Received signal strength'>RX</th>" +
+            "<th title='My signal strength'>TX</th>" +
+            "<th title='My power in Watts'>Pwr</th>" +
+            "<th title='Y=Confirmed by other party'>Conf</th>" +
+            "</tr></thead>" +
+            "<tbody>" + rows + "</table></div>";
+        LMap.infoWindow.setContent(infoHtml);
+        LMap.infoWindow.setPosition(new google.maps.LatLng(data.lat, data.lon));
+        LMap.infoWindow.open(LMap.map);
+        setTimeout(() => {
+            $('#close').focus();
+        }, 10);
+    },
+
+    gsqInfoWindowClose: () => {
+        LMap.infoWindowGsq = null
+        $('#gsqs tbody tr').removeClass('highlight');
+        LMap.infoWindow.close();
+        return false
+    },
+
     gsqClickFunction: (g) => {
         return function (e) {
             if (e) {
@@ -305,53 +363,7 @@ var LMap = {
                     e.preventDefault();
                 }
             }
-            let data, i, log, rows;
-            data = gsqs[g];
-            rows = '';
-            for(i in data.logs) {
-                log = data.logs[i];
-                rows +=
-                    "<tr>" +
-                    "<td class='nowrap'>" + log.datetime + "</td>" +
-                    "<td>" + log.call + "</td>" +
-                    "<td><span class='band band" + log.band + "'>" + log.band + "</span></td>" +
-                    "<td><span class='mode m" + log.mode + "'>" + log.mode + "</span></td>" +
-                    "<td>" + log.sp + "</td>" +
-                    "<td>" + log.itu + "</td>" +
-                    "<td>" + log.km.toLocaleString() + "</td>" +
-                    "<td>" + log.rx + "</td>" +
-                    "<td>" + log.tx + "</td>" +
-                    "<td>" + log.pwr + "</td>" +
-                    "<td class='r'>" + log.conf + "</td>" +
-                    "</tr>";
-            }
-            let infoHtml =
-                "<div class=\"map_info\">" +"" +
-                "<h3>" +
-                "<b>Grid Square <strong>" + data.gsq + "</strong></b> - " + data.logs.length +" logs (Square " + (data.conf === 'Y' ? "is" : "not") + " confirmed)" +
-                "<a id='close' href='#' onclick=\"$('#gsqs tbody tr').removeClass('highlight');LMap.infoWindow.close();return false\">X</a>" +
-                "</h3>" +
-                "<table class='results'>" +
-                "<thead><tr>" +
-                "<th title='Date and time in UTC'>Date / Time</th>" +
-                "<th title='Callsign of worked station'>Call</th>" +
-                "<th>Band</th>" +
-                "<th>Mode</th>" +
-                "<th title='State, Province or Territory'>SP</th>" +
-                "<th title='Country'>ITU</th>" +
-                "<th title='Distance to worked station'>KM</th>" +
-                "<th title='Received signal strength'>RX</th>" +
-                "<th title='My signal strength'>TX</th>" +
-                "<th title='My power in Watts'>Pwr</th>" +
-                "<th title='Y=Confirmed by other party'>Conf</th>" +
-                "</tr></thead>" +
-                "<tbody>" + rows + "</table></div>";
-            LMap.infoWindow.setContent(infoHtml);
-            LMap.infoWindow.setPosition(new google.maps.LatLng(data.lat, data.lon));
-            LMap.infoWindow.open(LMap.map);
-            setTimeout(() => {
-                $('#close').focus();
-            }, 10);
+            LMap.gsqInfoWindowOpen(gsqs[g]);
         };
     },
 

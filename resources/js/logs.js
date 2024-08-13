@@ -236,6 +236,7 @@ var frm = {
                 frm.count();
                 frm.stats();
                 frm.getGridSquares();
+
                 frm.addLinks();
                 $("body").removeClass("loading");
                 console.log('Updated in ' + ((Date.now() - frm.start)/1000) + ' seconds');
@@ -465,6 +466,7 @@ var frm = {
     },
 
     update_doit: () => {
+        let gsq, gsqList, i;
         frm.getFilters();
         $('table.list tbody').html(frm.parseLogs());
         frm.compact();
@@ -474,6 +476,20 @@ var frm = {
         frm.addLinks();
         if ($('.map').is(':visible')) {
             LMap.drawGridSquares();
+        }
+        if (LMap.infoWindowGsq) {
+            gsq = LMap.infoWindowGsq;
+            gsqList = frm.getUniqueValues('gsq').values;
+            if ($.inArray(LMap.infoWindowGsq, gsqList) !== -1) {
+                for (i=0; i<gsqs.length; i++) {
+                    if (gsqs[i].gsq === gsq) {
+                        LMap.gsqInfoWindowOpen(gsqs[i]);
+                        break;
+                    }
+                }
+            } else {
+                LMap.gsqInfoWindowClose();
+            }
         }
         $("body").removeClass("loading");
         console.log('Updated in ' + ((Date.now() - frm.start)/1000) + ' seconds');
