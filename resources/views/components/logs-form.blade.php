@@ -2,7 +2,7 @@
     <h1 style="display: inline-block">Showing logs for <a href="{{ url('/logs', ['callsign' => $user['call']]) }}">{{ $user['call'] }}</a></h1>
     <h2 style="display: inline-block; margin-left: 2em"><strong>{{ $user['name'] }}</strong>, {{ $user['gsq'] }} {{ $user['sp'] }} {{ $user['itu' ]}}</h2>
     <h3 style="display: inline-block; margin-left: 2em"><span id="logCount">{{ $user['log_count' ]}}</span> logs (updated: <span id="logUpdated">{{ \Carbon\Carbon::parse($user['qrz_last_data_pull'])->diffForHumans() }})</span></h3><br>
-    <fieldset class="logs">
+    <fieldset class="logs prevent-select">
         <div class="group">
             <label class="b" title="Hold the SHIFT key while you click to select just that one band" style="cursor: help">
                 <span>&#9432;</span>

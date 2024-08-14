@@ -551,3 +551,8 @@ div.scroll div table.results img {
     background: #ff6;
     border-radius: 0.55em;
 }
+.prevent-select {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
