@@ -36,7 +36,8 @@ $latlon = Log::convertGsqToDegrees($user['gsq']);
     var gridOpacity = 0.35;
     var layers = {
         grid: [],
-        squares: []
+        squares: [],
+        squareLabels: []
     };
     var qth = {
         lat: {{ $latlon['lat'] }},

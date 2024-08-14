@@ -294,10 +294,18 @@ th.sortable:hover::after {
 .gridLabel {
     position: absolute;
     z-index: -100000;
-    color: #408080;
     font-weight: bold;
     font-family: Tahoma, Arial, Helvetica, sans-serif;
     opacity: 0.9;
+}
+.gridLabel.teal {
+    color: #408080;
+}
+.gridLabel.pink {
+    color: #fff0f0;
+}
+.gridLabel.brown {
+    color: #606000;
 }
 .map_info h3 {
     margin: 0;

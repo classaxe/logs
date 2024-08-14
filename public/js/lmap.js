@@ -5,8 +5,11 @@ var LMap = {
     map : null,
     markers : [],
     options : {},
+    TxtOverlay: null,
+
 
     init: () => {
+        LMap.TxtOverlay =    LMap.initMapsTxtOverlay();
         let latlng = qth.gsq;
         LMap.options = {
             'zoom': 7,
@@ -89,7 +92,6 @@ var LMap = {
 
     drawGrid : () => {
         let squares = true;
-        let TxtOverlay =    LMap.initMapsTxtOverlay();
         var i, la, laf, lo, lof;
         for (la=0; la<180; la+=10) {
             layers.grid.push(
@@ -147,10 +149,10 @@ var LMap = {
         for (la=10; la<170; la+=10) {
             for (lo = 0; lo < 360; lo += 20) {
                 layers.grid.push(
-                    new TxtOverlay(
+                    new LMap.TxtOverlay(
                         new google.maps.LatLng(la -90 + 5.17,lo -180 + 9.625),
                         String.fromCharCode((lo/20) +65) + String.fromCharCode((la/10) +65),
-                        'gridLabel'
+                        'gridLabel teal'
                     )
                 );
             }
@@ -160,17 +162,47 @@ var LMap = {
         }
     },
 
+    drawGridSquare: (idx, gsq, bounds, conf) => {
+        let rgb = conf ? '#FF0000' : '#FFFF00';
+        let rgbb = conf ? '#800000' : '#808000';
+        let square = new google.maps.Rectangle({
+            strokeColor: rgbb,
+            strokeOpacity: 0.85,
+            strokeWeight: 1,
+            fillColor: rgb,
+            fillOpacity: 0.5,
+            map: LMap.map,
+            bounds: bounds,
+        });
+        square.addListener('click', LMap.gsqClickFunction(idx));
+        square.addListener('mouseover', LMap.gsqMouseoverFunction(idx));
+        layers.squares.push(square);
+
+        layers.squareLabels.push(
+            new LMap.TxtOverlay(
+                new google.maps.LatLng(bounds.north - 0.45, bounds.east - 1.5),
+                gsq,
+                'gridLabel ' + (conf ? 'pink' : 'brown')
+            )
+        );
+        return square;
+    },
+
     drawGridSquares: () => {
-        let gsq, i, old;
+        let gsq, html= '', i, old;
         for (i in layers.squares) {
             layers.squares[i].setMap(null);
         }
         layers.squares = [];
-        let html = '';
+        for (i in layers.squareLabels) {
+            layers.squareLabels[i].setMap(null);
+        }
+        layers.squareLabels = [];
         LMap.sortGrids('gsq', false);
         for (i in gsqs) {
             gsqs[i].marker = LMap.drawGridSquare(
                 i,
+                gsqs[i].gsq,
                 LMap.gsq4Bounds(gsqs[i].gsq),
                 gsqs[i].conf === 'Y'
             );
@@ -208,25 +240,6 @@ var LMap = {
             "</tr>";
     },
 
-    drawGridSquare: (gsq, bounds, conf) => {
-        let map = LMap.map;
-        let rgb = conf ? '#FF0000' : '#FFFF00';
-        let rgbb = conf ? '#800000' : '#808000';
-        let square = new google.maps.Rectangle({
-            strokeColor: rgbb,
-            strokeOpacity: 0.85,
-            strokeWeight: 1,
-            fillColor: rgb,
-            fillOpacity: 0.5,
-            map,
-            bounds: bounds,
-        });
-        square.addListener('click', LMap.gsqClickFunction(gsq));
-        square.addListener('mouseover', LMap.gsqMouseoverFunction(gsq));
-        layers.squares.push(square);
-        return square;
-    },
-
     drawQTH : () => {
         if (typeof qth === 'undefined') {
             return;
@@ -254,16 +267,22 @@ var LMap = {
     },
 
     fitToBox: () => {
+        let bounds;
         if (!LMap.map) {
             return;
         }
-
-        LMap.map.fitBounds(
-            new google.maps.LatLngBounds(
+        if ($('#layer_qth').prop('checked') === false) {
+            bounds = new google.maps.LatLngBounds(
+                new google.maps.LatLng(box[0].lat - 0.5, box[0].lon - 1), //sw
+                new google.maps.LatLng(box[1].lat + 0.5, box[1].lon + 1) //ne
+            )
+        } else {
+            bounds = new google.maps.LatLngBounds(
                 new google.maps.LatLng(Math.min(qth.lat, box[0].lat) - 0.5, Math.min(qth.lng, box[0].lon) - 1), //sw
                 new google.maps.LatLng(Math.max(qth.lat, box[1].lat) + 0.5, Math.max(qth.lng, box[1].lon) + 1) //ne
             )
-        );
+        }
+        LMap.map.fitBounds(bounds);
     },
 
     getUniqueArrayValues: (arr) => {
@@ -402,12 +421,21 @@ var LMap = {
             for (i in layers.squares) {
                 layers.squares[i].setMap(active ? LMap.map : null);
             }
+            google.maps.event.trigger(LMap.map, 'zoom_changed');
+        });
+
+        google.maps.event.addListener(LMap.map, 'zoom_changed', () => {
+            let active, i;
+            active = $('#layer_squares').prop('checked');
+            for (i in layers.squareLabels) {
+                layers.squareLabels[i].setMap(active && LMap.map.getZoom() >4 ? LMap.map : null);
+            }
         });
 
         $('#layer_qth').click(() => {
             layers['qth'].setMap($('#layer_qth').prop('checked') ? LMap.map : null);
+            LMap.fitToBox();
         });
-
     },
 
      sortBands: (a,b) => {

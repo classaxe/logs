@@ -476,19 +476,21 @@ var frm = {
         frm.addLinks();
         if ($('.map').is(':visible')) {
             LMap.drawGridSquares();
-        }
-        if (LMap.infoWindowGsq) {
-            gsq = LMap.infoWindowGsq;
-            gsqList = frm.getUniqueValues('gsq').values;
-            if ($.inArray(LMap.infoWindowGsq, gsqList) !== -1) {
-                for (i=0; i<gsqs.length; i++) {
-                    if (gsqs[i].gsq === gsq) {
-                        LMap.gsqInfoWindowOpen(gsqs[i]);
-                        break;
+            $('#layer_squares').prop('checked', 'checked')
+            google.maps.event.trigger(LMap.map, 'zoom_changed');
+            if (LMap.infoWindowGsq) {
+                gsq = LMap.infoWindowGsq;
+                gsqList = frm.getUniqueValues('gsq').values;
+                if ($.inArray(LMap.infoWindowGsq, gsqList) !== -1) {
+                    for (i=0; i<gsqs.length; i++) {
+                        if (gsqs[i].gsq === gsq) {
+                            LMap.gsqInfoWindowOpen(gsqs[i]);
+                            break;
+                        }
                     }
+                } else {
+                    LMap.gsqInfoWindowClose();
                 }
-            } else {
-                LMap.gsqInfoWindowClose();
             }
         }
         $("body").removeClass("loading");
