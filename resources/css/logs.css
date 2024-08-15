@@ -127,6 +127,10 @@ table.list .nowrap { white-space: nowrap; }
     font-size: 120%;
     text-align: center;
 }
+.callsigns h2 {
+    margin-top: 2em;
+    font-weight: bold;
+}
 .callsigns p {
     max-width: 40em;
     text-align: justify;
