@@ -35,6 +35,10 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'call' => ['required', 'string', 'max:12'],
             'gsq' => ['required', 'string', 'max:8'],
+            'qth' => ['required', 'string', 'max:40'],
+            'city' => ['required', 'string', 'max:40'],
+            'sp' => ['required', 'string', 'max:2'],
+            'itu' => ['required', 'string', 'max:3'],
             'qrz_api_key' => ['required', 'string', 'min:19, max:19'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -44,8 +48,15 @@ class RegisteredUserController extends Controller
             'email' => $request->email,
             'call' => $request->call,
             'gsq' => $request->gsq,
+            'qth' => $request->qth,
+            'city' => $request->city,
+            'sp' => $request->sp,
+            'itu' => $request->itu,
             'qrz_api_key' => $request->qrz_api_key,
             'password' => Hash::make($request->password),
+
+            // For now make all users visible
+            'is_visible' => 1
         ]);
 
         event(new Registered($user));

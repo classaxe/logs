@@ -257,8 +257,12 @@ var LMap = {
 
         qthInfo = new google.maps.InfoWindow({
             content:
-                "<h2><b>" + qth.call + "</b> - " + qth.name + "</h2>" +
-                "<p>" + qth.qth + "</p>"
+                "<div class=\"map_info\">" +
+                "<h3><b>" + qth.call + "</b> - " + qth.name +
+                "<a id='close' href='#' onclick=\"qthInfo.close()\">X</a>" +
+                "</h3>" +
+                "<p>" + qth.qth + "</p>" +
+                "</div>"
         });
 
         layers.qth.addListener('click', function() {

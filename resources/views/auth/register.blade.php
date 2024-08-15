@@ -24,6 +24,30 @@
                 <x-input-error :messages="$errors->get('call')" class="mt-2" />
             </div>
 
+            <div>
+                <x-input-label for="qth" :value="__('Address')" />
+                <x-text-input id="qth" name="qth" type="text" class="mt-1 block w-full" :value="old('qth')" required autofocus autocomplete="qth" />
+                <x-input-error class="mt-2" :messages="$errors->get('qth')" />
+            </div>
+
+            <div>
+                <x-input-label for="city" :value="__('Town / City')" />
+                <x-text-input id="city" name="city" type="text" class="mt-1 block w-full" :value="old('city')" required autofocus autocomplete="city" />
+                <x-input-error class="mt-2" :messages="$errors->get('city')" />
+            </div>
+
+            <div>
+                <x-input-label for="sp" :value="__('State / Province')" />
+                <x-text-input id="sp" name="sp" type="text" class="mt-1 block w-full" :value="old('sp')" required autofocus autocomplete="sp" />
+                <x-input-error class="mt-2" :messages="$errors->get('sp')" />
+            </div>
+
+            <div>
+                <x-input-label for="itu" :value="__('Country')" />
+                <x-text-input id="itu" name="itu" type="text" class="mt-1 block w-full" :value="old('sp')" required autofocus autocomplete="itu" />
+                <x-input-error class="mt-2" :messages="$errors->get('itu')" />
+            </div>
+
             <!-- Gridsquare -->
             <div class="mt-4">
                 <x-input-label for="gsq" :value="__('Gridsquare')" />
