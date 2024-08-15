@@ -40,6 +40,7 @@ var frm = {
     compact: () => {
         let compact = COOKIE.get('compact');
         'Y' === compact ? $('.not-compact').hide() : $('.not-compact').show();
+        'Y' === compact ? $('main').addClass('compact') : $('main').removeClass('compact');
         $(window).trigger('resize');
     },
 
