@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Log;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\Auth;
 
 class LogsController extends Controller
 {
@@ -15,6 +16,18 @@ class LogsController extends Controller
             'status' => 200,
             'logs' => Log::getLogsForUser($user)
         ]);
+    }
+
+    public static function logsFetch()
+    {
+        if (!Auth::user()) {
+            return redirect()->route('login');
+        }
+        if (!Auth::user()->is_visible) {
+            abort(403);
+        }
+        Log::getQRZDataForUser(Auth::user());
+        return redirect()->route('logs.page', ['callsign' => Auth::user()->call]);
     }
 
     public static function logsPage(string $callsign)

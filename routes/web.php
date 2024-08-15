@@ -23,8 +23,11 @@ Route::get('/', [HomeController::class, 'callsigns']
 Route::get('/changes', [ChangesController::class, 'index']
 )->name('changes');
 
+Route::get('/logs/fetch', [LogsController::class, 'logsFetch']
+)->name('logs.fetch');
+
 Route::get('/logs/{callsign}', [LogsController::class, 'logsPage']
-)->name('logsPage');
+)->name('logs.page');
 
 Route::get('/logs/{callsign}/logs', [LogsController::class, 'logs']
 )->name('logs');

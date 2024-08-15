@@ -33,6 +33,10 @@
                         <a href="{{ route('callsigns') }}"{{ Route::currentRouteName() === 'callsigns' ? "class=is-active" : '' }}>Home</a>
                         @auth
                             <a href="{{ route('profile.edit') }}"{{ Route::currentRouteName() === 'profile.edit' ? "class=is-active" : '' }}>Profile</a>
+                            @if (Auth::user()->is_visible)
+                                <a href="{{ route('logs.page', ['callsign' => Auth::user()->call]) }}"{{ Route::currentRouteName() === 'logs.page' ? "class=is-active" : '' }}>View Logs</a>
+                                <a href="{{ route('logs.fetch') }}"{{ Route::currentRouteName() === 'logs.fetch' ? "class=is-active" : '' }}>Fetch Logs</a>
+                            @endif
                             <form id="logout" method="POST" action="{{ route('logout') }}">@csrf</form>
                             <a href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout').submit();">{{ __('Log Out') }}</a>
                         @else
@@ -49,7 +53,7 @@
                 {{ $slot }}
             </main>
             <footer class="text-center text-sm text-gray-500 not-compact">
-                ©{{ date('Y') }} Martin Francis <a href="{{ route('logsPage', ['callsign' => 'VA3PHP']) }}">VA3PHP</a> <b>|</b>
+                ©{{ date('Y') }} Martin Francis <a href="{{ route('logs.page', ['callsign' => 'VA3PHP']) }}">VA3PHP</a> <b>|</b>
                 Logs <a href="https://github.com/classaxe/logs" target="_blank">v{{ $gitTag }}</a> <b>|</b>
                 Laravel v{{ Illuminate\Foundation\Application::VERSION }} <b>|</b>
                 PHP v{{ PHP_VERSION }}

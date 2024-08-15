@@ -114,10 +114,19 @@ table.list td { border: 1px solid #000; padding: 4px; }
 table.list .r { text-align: right; }
 table.list .nowrap { white-space: nowrap; }
 .callsigns {
-    font-size: 80%;
     color: black;
     width: auto;
     margin: auto;
+}
+.callsigns h1 {
+    font-weight: bold;
+    font-size: 120%;
+    text-align: center;
+}
+.callsigns p {
+    max-width: 40em;
+    text-align: justify;
+    margin-bottom: 0.75em;
 }
 .callsigns a {
     font-weight: bold;
