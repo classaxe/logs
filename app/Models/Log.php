@@ -156,11 +156,11 @@ class Log extends Authenticatable
                 if (str_contains($raw, 'REASON=user does not have a valid QRZ subscription')) {
                     $user->setAttribute('qrz_last_result', 'Not XML Subscriber');
                 } else {
-                    $user->setAttribute('qrz_last_result', $raw);
+                    $user->setAttribute('qrz_last_result', substr($raw, 0, 100));
                 }
                 $user->save();
             } catch (\Exception $e) {
-                print $e->getMessage();
+                print substr($e->getMessage(), 0, 100);
                 return false;
             }
             return false;
