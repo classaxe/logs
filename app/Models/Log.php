@@ -150,7 +150,9 @@ class Log extends Authenticatable
             $user->save();
             return false;
         }
-        if (substr($raw, 0, 5) !== 'ADIF=') {
+        if (substr($raw, 0, 5) === 'ADIF=' || str_contains($raw, 'RESULT=OK')) {
+            $user->setAttribute('qrz_last_result', 'OK');
+        } else {
             try {
                 $user->setAttribute('qrz_last_data_pull', null);
                 if (str_contains($raw, 'REASON=user does not have a valid QRZ subscription')) {
