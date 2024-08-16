@@ -13,6 +13,8 @@ class Log extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    const BATCHINSERTSIZE = 250;
+
     const columns = [
         'logNum' =>     ['lbl' =>   'Log',          'class' => ''],
         'date' =>       ['lbl' =>   'Date',         'class' => ''],
@@ -34,6 +36,8 @@ class Log extends Authenticatable
         'deg' =>        ['lbl' =>   'Deg',          'class' => 'r not-compact'],
         'conf' =>       ['lbl' =>   'Conf',         'class' => 'r']
     ];
+
+    const MAX_AGE = 60;
 
     /**
      * The attributes that are mass assignable.
@@ -136,10 +140,24 @@ class Log extends Authenticatable
 
     public static function getQRZDataForUser(User $user)
     {
+        ini_set('max_execution_time', 600);
         try {
             $url = 'https://logbook.qrz.com/api?KEY=' . $user['qrz_api_key'] . '&ACTION=FETCH&OPTION=ALL';
             $raw = file_get_contents($url);
         } catch (\Exception $e) {
+            $user->setAttribute('qrz_last_data_pull', null);
+            $user->setAttribute('qrz_last_result', 'Server Error');
+            $user->save();
+            return false;
+        }
+        if (substr($raw, 0, 5) !== 'ADIF=') {
+            $user->setAttribute('qrz_last_data_pull', null);
+            if (str_contains($raw, 'REASON=user does not have a valid QRZ subscription')) {
+                $user->setAttribute('qrz_last_result', 'Not XML Subscriber');
+            } else {
+                $user->setAttribute('qrz_last_result', $raw);
+            }
+            $user->save();
             return false;
         }
         $data = str_replace(['&lt;', '&gt;'], ['<', '>'], $raw);
@@ -203,25 +221,38 @@ class Log extends Authenticatable
                     'conf' =>       ($i['APP_QRZLOG_STATUS'] ?? '') === 'C' ? 'Y' : ''
                 ];
                 $logNum++;
-            } catch (\Exception $exception) {
-                print $exception->getMessage();
-                dd($i);
+            } catch (\Exception $e) {
+                $user->setAttribute('qrz_last_data_pull', null);
+                $user->setAttribute('qrz_last_result', $e->getMessage());
+                $user->save();
+                return false;
             }
         }
         if ($items) {
-            Log::deleteLogsForUserId($user->id);
-            Log::insert($items);
-            $user->setAttribute('qrz_last_data_pull', time());
-            $user->setAttribute('log_count', count($items));
-            $user->save();
-            return true;
+            try {
+                Log::deleteLogsForUserId($user->id);
+                //log::insert($items);
+                for ($i=0; $i<count($items); $i += self::BATCHINSERTSIZE) {
+                    $chunk = array_slice($items, $i, self::BATCHINSERTSIZE);
+                    Log::insert($chunk);
+                }
+                $user->setAttribute('qrz_last_data_pull', time());
+                $user->setAttribute('log_count', count($items));
+                $user->save();
+                return true;
+            } catch (\Exception $e) {
+                $user->setAttribute('qrz_last_data_pull', null);
+                $user->setAttribute('qrz_last_result', $e->getMessage());
+                $user->save();
+                return false;
+            }
         }
         return false;
     }
 
     public static function getLogsForUser(User $user): array
     {
-        if (!$user->qrz_last_data_pull || $user->qrz_last_data_pull->addMinutes(60)->isPast()) {
+        if (!$user->qrz_last_data_pull || $user->qrz_last_data_pull->addMinutes(self::MAX_AGE)->isPast()) {
             static::getQRZDataForUser($user);
         }
         return Log::getDBLogsForUserId($user->id);

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -81,4 +82,16 @@ class User extends Authenticatable
         ];
     }
 
+    public function getLastQrzPull(): string
+    {
+        if ($this['qrz_last_data_pull'] === null) {
+            return 'Never' . ($this['qrz_last_result'] ? ' - ' . $this['qrz_last_result'] : '');
+        }
+        $result = Carbon::parse($this['qrz_last_data_pull'])->diffForHumans();
+        return str_replace(
+            ['second', 'minute'],
+            ['sec', 'min'],
+            $result
+        );
+    }
 }

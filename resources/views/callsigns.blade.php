@@ -22,6 +22,7 @@
                     <th>ITU</th>
                     <th>GSQ</th>
                     <th>Logs</th>
+                    <th>Last Fetch</th>
                     <th>QRZ</th>
                 </tr>
             </thead>
@@ -35,6 +36,7 @@
                 <td>{{ $u['itu'] }}</td>
                 <td>{{ $u['gsq'] }}</td>
                 <td>{{ $u['log_count'] }}</td>
+                <td>{{ $u->getLastQrzPull() }}</td>
                 <td><a target="_blank" href="https://www.qrz.com/db/{{ $u['call'] }}">LINK</a></td>
             </tr>
         @endforeach
