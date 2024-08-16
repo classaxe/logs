@@ -151,13 +151,18 @@ class Log extends Authenticatable
             return false;
         }
         if (substr($raw, 0, 5) !== 'ADIF=') {
-            $user->setAttribute('qrz_last_data_pull', null);
-            if (str_contains($raw, 'REASON=user does not have a valid QRZ subscription')) {
-                $user->setAttribute('qrz_last_result', 'Not XML Subscriber');
-            } else {
-                $user->setAttribute('qrz_last_result', $raw);
+            try {
+                $user->setAttribute('qrz_last_data_pull', null);
+                if (str_contains($raw, 'REASON=user does not have a valid QRZ subscription')) {
+                    $user->setAttribute('qrz_last_result', 'Not XML Subscriber');
+                } else {
+                    $user->setAttribute('qrz_last_result', $raw);
+                }
+                $user->save();
+            } catch (\Exception $e) {
+                print $e->getMessage();
+                return false;
             }
-            $user->save();
             return false;
         }
         $data = str_replace(['&lt;', '&gt;'], ['<', '>'], $raw);
@@ -205,7 +210,7 @@ class Log extends Authenticatable
                     'time' =>       substr($i['TIME_ON'], 0, 2) . ':' . substr($i['TIME_ON'], 2, 2),
                     'call' =>       $i['CALL'],
                     'name' =>       $name,
-                    'band' =>       $i['BAND'],
+                    'band' =>       strtolower($i['BAND']),
                     'mode' =>       $i['MODE'] ?? '',
                     'rx' =>         $i['RST_RCVD'] ?? '',
                     'tx' =>         $i['RST_SENT'] ?? '',
@@ -263,11 +268,11 @@ class Log extends Authenticatable
         $bands = Log::distinct()->where('userId', $userId)->get(['band'])->toArray();
         $out = [];
         foreach ($bands as $band) {
-            $b = $band['band'];
+            $b =        $band['band'];
             $num =      preg_replace('/[^0-9]/', '', $b);
             $units =    preg_replace('/[^a-zA-Z]/', '', $b);
-            $value =    $num * ($units === 'm' ? 1000 : 1);
-            $out[$value] = $band['band'];
+            $v =        ($num ? $num * (strtolower($units) === 'm' ? 1000 : 1) : $b);
+            $out[$v] =  $band['band'];
         }
         krsort($out);
         return array_values($out);
