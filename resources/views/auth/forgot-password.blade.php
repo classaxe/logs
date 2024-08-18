@@ -1,6 +1,7 @@
 <x-app-layout>
     <div class="w-full sm:max-w-lg mt-6 px-6 py-4 bg-white shadow-md sm:rounded-lg" style="margin: 0 auto">
         <div class="mb-4 text-sm text-gray-600">
+            <h2>Forgotten Password?</h2>
             <p>
                 {{ __('Let us know your email address and we will') }}<br>
                 {{ __('email you a password reset link.') }}

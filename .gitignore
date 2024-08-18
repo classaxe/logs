@@ -5,6 +5,9 @@
 /public/storage
 /storage/*.key
 /vendor
+/stats/
+logs.sql.gz
+
 .env
 .env.backup
 .env.production

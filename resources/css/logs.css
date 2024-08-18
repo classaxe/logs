@@ -85,6 +85,10 @@ div.group label > * {
 #tabs .button.icon {
     padding: 0.25em 0.75em;
 }
+main h2 {
+    font-weight: bold;
+    text-align: center;
+}
 main:not(.compact)  {
     clear: both;
     padding-top: 1em
