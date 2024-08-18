@@ -35,7 +35,7 @@ class RegisteredUserController extends Controller
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'call' => ['required', 'string', 'max:12'],
             'gsq' => ['required', 'string', 'max:8'],
-            'qth' => ['required', 'string', 'max:40'],
+            'qth' => ['nullable', 'string', 'max:40'],
             'city' => ['required', 'string', 'max:40'],
             'sp' => ['required', 'string', 'max:2'],
             'itu' => ['required', 'string', 'max:3'],
