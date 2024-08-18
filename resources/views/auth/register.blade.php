@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="w-full sm:max-w-md mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg" style="margin: 0 auto">
-        <h2>Registration Form</h2>
+        <h1>Registration Form</h1>
         <p>Fields marked * are required.</p>
         <form method="POST" action="{{ route('register') }}">
             @csrf

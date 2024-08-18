@@ -154,9 +154,10 @@ class Log extends Authenticatable
             $user->setAttribute('qrz_last_result', 'OK');
         } else {
             try {
-                $user->setAttribute('qrz_last_data_pull', null);
                 if (str_contains($raw, 'REASON=user does not have a valid QRZ subscription')) {
                     $user->setAttribute('qrz_last_result', 'Not XML Subscriber');
+                } elseif (str_contains($raw, 'REASON=invalid api key')) {
+                    $user->setAttribute('qrz_last_result', 'Invalid QRZ API Key');
                 } else {
                     $user->setAttribute('qrz_last_result', substr($raw, 0, 100));
                 }

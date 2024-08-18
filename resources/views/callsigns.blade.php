@@ -28,7 +28,7 @@
             </thead>
             <tbody>
         @foreach($users as $u)
-            <tr>
+            <tr @if(Auth::user() && $u['id'] === Auth::user()->id) class="current" title="This is you" @endif>
                 <td><a href="{{ route('logs.page', ['callsign' => $u['call']]) }}">{{ $u['call'] }}</a></td>
                 <td>{{ $u['name'] }}</td>
                 <td>{{ $u['city'] }}</td>
