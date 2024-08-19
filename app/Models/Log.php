@@ -13,9 +13,12 @@ class Log extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    const BATCHINSERTSIZE = 250;
+    const MAX_AGE = 60;
+    const MAXBATCHINSERT = 250;
 
-    const columns = [
+    const APIURL = "https://logbook.qrz.com/api";
+
+    const COLUMNS = [
         'logNum' =>     ['lbl' =>   'Log',          'class' => ''],
         'date' =>       ['lbl' =>   'Date',         'class' => ''],
         'time' =>       ['lbl' =>   'UTC',          'class' => ''],
@@ -36,8 +39,6 @@ class Log extends Authenticatable
         'deg' =>        ['lbl' =>   'Deg',          'class' => 'r not-compact'],
         'conf' =>       ['lbl' =>   'Conf',         'class' => 'r']
     ];
-
-    const MAX_AGE = 60;
 
     /**
      * The attributes that are mass assignable.
@@ -138,11 +139,50 @@ class Log extends Authenticatable
         return $deg;
     }
 
+    public static function getQRZStatusForUser(User $user)
+    {
+        // $user['qrz_api_key'] = "eahgwhwtyhjetyjetj"; // Invalid key
+        // $user['qrz_api_key'] = "8A43-EAFF-BD8E-857F"; // Non XML Subscriber
+        try {
+            $url = self::APIURL . '?KEY=' . $user['qrz_api_key'] . '&ACTION=STATUS';
+            $raw = file_get_contents($url);
+        } catch (\Exception $e) {
+            return false;
+        }
+        $status = [];
+        $pairs = explode('&', $raw);
+        foreach ($pairs as $pair) {
+            list($key, $value) = explode('=', $pair, 2);
+            $status[$key] = $value;
+        }
+        if ($status['RESULT'] === "OK") {
+            return $status;
+        }
+        if (str_contains($status['REASON'], 'invalid api key')) {
+            $user->setAttribute('qrz_last_result', 'Invalid QRZ API Key');
+            $user->save();
+            return false;
+        }
+        if (str_contains($status['REASON'], 'user does not have a valid QRZ subscription')) {
+            $user->setAttribute('qrz_last_result', 'Not XML Subscriber');
+            $user->save();
+            return false;
+        }
+        $user->setAttribute('qrz_last_result', 'QRZ Server error');
+        $user->save();
+        return false;
+    }
+
     public static function getQRZDataForUser(User $user)
     {
         ini_set('max_execution_time', 600);
+        $status = self::getQRZStatusForUser($user);
+        if (!$status) {
+            return;
+        }
+        // https://logbook.qrz.com/api?KEY=YOURQRZAPIKEY&ACTION=FETCH&OPTION=MODSINCE:2024-08-18
         try {
-            $url = 'https://logbook.qrz.com/api?KEY=' . $user['qrz_api_key'] . '&ACTION=FETCH&OPTION=ALL';
+            $url = self::APIURL . '?KEY=' . $user['qrz_api_key'] . '&ACTION=FETCH&OPTION=ALL';
             $raw = file_get_contents($url);
         } catch (\Exception $e) {
             $user->setAttribute('qrz_last_data_pull', null);
@@ -240,8 +280,8 @@ class Log extends Authenticatable
             try {
                 Log::deleteLogsForUserId($user->id);
                 //log::insert($items);
-                for ($i=0; $i<count($items); $i += self::BATCHINSERTSIZE) {
-                    $chunk = array_slice($items, $i, self::BATCHINSERTSIZE);
+                for ($i=0; $i<count($items); $i += self::MAXBATCHINSERT) {
+                    $chunk = array_slice($items, $i, self::MAXBATCHINSERT);
                     Log::insert($chunk);
                 }
                 $user->setAttribute('qrz_last_data_pull', time());

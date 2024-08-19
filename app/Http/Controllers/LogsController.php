@@ -35,7 +35,7 @@ class LogsController extends Controller
         $data = User::getUserDataByCallsign($callsign);
         return view('logs', [
             'bands' =>      $data['bands'],
-            'columns' =>    Log::columns,
+            'columns' =>    Log::COLUMNS,
             'lastPulled' => Carbon::parse($data['user']['qrz_last_data_pull'])->diffForHumans(),
             'modes' =>      $data['modes'],
             'user' =>       $data['user']
