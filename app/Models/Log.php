@@ -284,12 +284,13 @@ class Log extends Authenticatable
                     $chunk = array_slice($items, $i, self::MAXBATCHINSERT);
                     Log::insert($chunk);
                 }
+                $last = Log::where('userId','=',$user->id)->orderBy('date', 'desc')->orderBy('time', 'desc')->first();
                 $user->setAttribute('qrz_last_data_pull', time());
+                $user->setAttribute('last_log', $last->date . ' ' . $last->time);
                 $user->setAttribute('log_count', count($items));
                 $user->save();
                 return true;
             } catch (\Exception $e) {
-                $user->setAttribute('qrz_last_data_pull', null);
                 $user->setAttribute('qrz_last_result', $e->getMessage());
                 $user->save();
                 return false;

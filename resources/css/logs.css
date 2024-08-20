@@ -145,7 +145,7 @@ table.list .nowrap { white-space: nowrap; }
     font-weight: bold;
 }
 .callsigns p {
-    max-width: 40em;
+    max-width: 50em;
     text-align: justify;
     margin-bottom: 0.75em;
 }
