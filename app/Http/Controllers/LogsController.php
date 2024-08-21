@@ -12,9 +12,12 @@ class LogsController extends Controller
     public static function logs(string $callsign)
     {
         $user = User::getUserByCallsign($callsign);
+        $logs = Log::getLogsForUser($user);
+        $user = User::getUserByCallsign($callsign);
         return response()->json([
             'status' => 200,
-            'logs' => Log::getLogsForUser($user)
+            'lastPulled' => $user->getLastQrzPull(),
+            'logs' => $logs
         ]);
     }
 

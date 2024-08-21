@@ -25,6 +25,10 @@
                     <th>Last Log</th>
                     <th>Last Fetch</th>
                     <th>QRZ</th>
+                    @if(Auth::user() && Auth::user()->admin)
+                        <th>Visible</th>
+                        <th>Admin</th>
+                     @endif
                 </tr>
             </thead>
             <tbody>
@@ -40,9 +44,17 @@
                 <td>{{ substr($u['last_log'], 0, 16) }}</td>
                 <td>{{ $u->getLastQrzPull() }}</td>
                 <td><a target="_blank" href="https://www.qrz.com/db/{{ $u['call'] }}">LINK</a></td>
+                @if(Auth::user() && Auth::user()->admin)
+                    <td class="r u_is_visible">{{ $u->is_visible ? 'Y' : 'N' }}</td>
+                    <td class="r u_admin">{{ $u->admin ? 'Y' : 'N' }}</td>
+                @endif
             </tr>
         @endforeach
             </tbody>
         </table>
     </div>
+@if(Auth::user() && Auth::user()->admin)
+
+@endif
+
 </x-app-layout>

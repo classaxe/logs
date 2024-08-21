@@ -18,12 +18,8 @@
         @vite([
             'resources/css/app.css',
             'resources/css/logs.css',
-            'resources/js/app.js',
-            'resources/js/logs.js'
+            'resources/js/app.js'
         ])
-        <script src="/js/nite-overlay/nite-overlay.js"></script>
-        <script src="/js/lmap.js"></script>
-        <script src="/js/cookies.js"></script>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 pt-1">

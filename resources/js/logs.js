@@ -48,7 +48,6 @@ var frm = {
         let all = logs.length;
         let shown = logsFiltered.length;
         $('#logCount').text(all);
-        $('#logUpdated').text()
         $('#logsShown').html(
             (all === shown ? 'all ' : '') + '<strong>' + shown + '</strong> log' + (shown ===1 ? '' : 's')
         );
@@ -233,8 +232,8 @@ var frm = {
                 frm.getFilters();
                 $('table.list tbody').html(frm.parseLogs());
                 frm.compact();
-                $('#logUpdated').text(data.lastPulled);
                 frm.count();
+                $('#logUpdated').text(data.lastPulled);
                 frm.stats();
                 frm.getGridSquares();
 
