@@ -52,12 +52,12 @@ $latlon = Log::convertGsqToDegrees($user['gsq']);
     var markers = [];
 </script>
 <script>
-    window.addEventListener("DOMContentLoaded", function () {
-        let script = document.createElement("script");
-        script.loading = 'async';
-        script.src = "https://maps.googleapis.com/maps/api/js?key={{ getEnv('GOOGLE_MAPS_API_KEY') }}&loading=async&callback=LMap.init";
-        document.head.appendChild(script);
-    });
+window.addEventListener("DOMContentLoaded", () => {
+    let script = document.createElement("script");
+    script.loading = 'async';
+    script.src = "https://maps.googleapis.com/maps/api/js?key={{ getEnv('GOOGLE_MAPS_API_KEY') }}&loading=async&callback=LMap.init";
+    document.head.appendChild(script);
+});
 </script>
 <table class="map map_layout" style="display: none">
     <tbody style="background: transparent">

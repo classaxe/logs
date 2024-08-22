@@ -47,10 +47,14 @@ var frm = {
     count: () => {
         let all = logs.length;
         let shown = logsFiltered.length;
-        $('#logCount').text(all);
-        $('#logsShown').html(
-            (all === shown ? 'all ' : '') + '<strong>' + shown + '</strong> log' + (shown ===1 ? '' : 's')
-        );
+        let msg = 'Showing ' +
+            (all === shown ?
+                'all <b>' + shown
+            :
+                '<b>' + shown + '</b> of <b>' + all
+            ) +
+            '</b> log' + (shown ===1 ? '' : 's');
+        $('#logCount').html(msg);
     },
 
     getFilters: () => {
@@ -302,30 +306,34 @@ var frm = {
         $('input[name=band]').click(function(e) {
             if (e.shiftKey) {
                 $('input[name=band]').prop('checked', false);
-                $('.bandsAll').prop('checked', false);
                 $(this).prop('checked', 'checked');
             }
+            let all = $('input[name=band]:not(:checked)').length === 0;
+            $('.bandsAll').prop('checked', (all ? 'checked' : false));
             $(this).blur();
-            $('#logUpdated').focus();
             frm.update();
         });
         $('.bandsAll').click(function() {
             $('input[name=band]').prop('checked', $(this).prop('checked'));
             $('input[name=band]').trigger('change');
+            $(this).blur();
+            frm.update();
         });
         $('input[name=mode]').click(function(e) {
             if (e.shiftKey) {
                 $('input[name=mode]').prop('checked', false);
-                $('.modesAll').prop('checked', false);
                 $(this).prop('checked', 'checked');
             }
+            let all = $('input[name=mode]:not(:checked)').length === 0;
+            $('.modesAll').prop('checked', (all ? 'checked' : false));
             $(this).blur();
-            $('#logUpdated').focus();
             frm.update();
         });
         $('.modesAll').click(function() {
             $('input[name=mode]').prop('checked', $(this).prop('checked'));
             $('input[name=mode]').trigger('change');
+            $(this).blur();
+            frm.update();
         });
         $('input[name=conf]').change(function() {
             $(this).blur();

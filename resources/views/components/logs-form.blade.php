@@ -1,7 +1,7 @@
 <div class="bands mt-6 text-center">
     <h1 style="display: inline-block">Showing logs for <a href="{{ url('/logs', ['callsign' => $user['call']]) }}">{{ $user['call'] }}</a></h1>
     <h2 style="display: inline-block; margin-left: 2em"><strong>{{ $user['name'] }}</strong>, {{ $user['gsq'] }} {{ $user['sp'] }} {{ $user['itu' ]}}</h2>
-    <h3 style="display: inline-block; margin-left: 2em"><span id="logCount">{{ $user['log_count' ]}}</span> logs (updated: <span id="logUpdated">{{ $user->getLastQrzPull() }}</span>)</h3><br>
+    <h3 style="display: inline-block; margin-left: 2em"><span id="logCount">Showing all <b>{{ $user['log_count']}}</b> logs</span> (updated: <span id="logUpdated">{{ $user->getLastQrzPull() }}</span>)</h3><br>
     <fieldset class="logs prevent-select">
         <div class="group">
             <label class="b" title="Hold the SHIFT key while you click to select just that one band" style="cursor: help">
@@ -15,7 +15,7 @@
             @endif
             <label class="band band{{ $b }}"><input type="checkbox" name="band" data-band="{{ $b }}" checked>{{ $b }}</label>
             @endforeach
-            <label><input type="checkbox" name="band" checked class="bandsAll"> All</label>
+            <label><input type="checkbox" checked class="bandsAll"> All</label>
         </div><br>
         <div class="group">
             <label class="b" title="Hold the SHIFT key while you click to select just that one mode" style="cursor: help">
@@ -25,7 +25,7 @@
             @foreach($modes as $m)
                 <label class="mode m{{ $m }}"><input type="checkbox" name="mode" data-mode="{{ $m }}" checked>{{ $m }}</label>
             @endforeach
-            <label><input type="checkbox" name="mode" checked class="modesAll"> All</label>
+            <label><input type="checkbox" checked class="modesAll"> All</label>
         </div>
         <div class="group">
             <label class="b" style="margin-left: 2em">Confirmed:</label>
