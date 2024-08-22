@@ -113,10 +113,19 @@ table.list tbody tr:nth-child(odd) {
 }
 table.list tbody tr.current {
     color: #080;
-    background: #dfd;
+    background-color: #dfd !important;
 }
 table.list tbody tr.current a {
     color: #4a4;
+}
+table.list tbody tr.inactive {
+    font-style: italic;
+    text-decoration: line-through;
+    color: #f44 !important;
+    background-color: #fcc !important;
+}
+table.list tbody tr.inactive a {
+    color: #844 !important;
 }
 table.list thead {
     background: #9ca3af;

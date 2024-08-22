@@ -33,7 +33,15 @@
             </thead>
             <tbody>
         @foreach($users as $u)
-            <tr @if(Auth::user() && $u['id'] === Auth::user()->id) class="current" title="This is you" @endif>
+            <?php
+                $isYou = Auth::user() && $u['id'] === Auth::user()->id;
+                $class = ($u->is_visible ? '' : 'inactive ') . ($isYou ? 'current' : '');
+            ?>
+            <tr data-user="{{ $u->id }}" class="<?= $class ?>"
+                @if($isYou)
+                    title="This is you"
+                @endif
+            >
                 <td><a href="{{ route('logs.page', ['callsign' => $u['call']]) }}">{{ $u['call'] }}</a></td>
                 <td>{{ $u['name'] }}</td>
                 <td>{{ $u['city'] }}</td>
@@ -45,8 +53,8 @@
                 <td>{{ $u->getLastQrzPull() }}</td>
                 <td><a target="_blank" href="https://www.qrz.com/db/{{ $u['call'] }}">LINK</a></td>
                 @if(Auth::user() && Auth::user()->admin)
-                    <td class="r u_is_visible">{{ $u->is_visible ? 'Y' : 'N' }}</td>
-                    <td class="r u_admin">{{ $u->admin ? 'Y' : 'N' }}</td>
+                    <td class="r u_is_visible"><a href="#">{{ $u->is_visible ? 'Y' : 'N' }}</a></td>
+                    <td class="r u_admin"><a href="#">{{ $u->admin ? 'Y' : 'N' }}</a></td>
                 @endif
             </tr>
         @endforeach
@@ -54,7 +62,36 @@
         </table>
     </div>
 @if(Auth::user() && Auth::user()->admin)
-
+<form id="form" method="POST">
+    @csrf
+    <input type="hidden" name="action" value="">
+    <input type="hidden" name="target" value="">
+    <input type="hidden" name="value" value="">
+</form>
+<script>
+window.addEventListener("DOMContentLoaded", function() {
+    $('.u_admin').click((e) => {
+        if (confirm($(e.target).text() === 'N' ? 'Make this user an administrator?' : 'Revoke admin access for this user?')) {
+            $('[name=action]').val('setAdmin');
+            $('[name=target]').val($(e.target).parent().parent().data('user'));
+            $('[name=value]').val($(e.target).text() === 'Y' ? '0' : '1');
+            $('#form').submit();
+        } else {
+            alert('Operation cancelled');
+        }
+    });
+    $('.u_is_visible').click((e) => {
+        if (confirm($(e.target).text() === 'N' ? 'Make this user visible?' : 'Make this user invisible?')) {
+            $('[name=action]').val('setVisible');
+            $('[name=target]').val($(e.target).parent().parent().data('user'));
+            $('[name=value]').val($(e.target).text() === 'Y' ? '0' : '1');
+            $('#form').submit();
+        } else {
+            alert('Operation cancelled');
+        }
+    });
+})
+</script>
 @endif
 
 </x-app-layout>

@@ -42,4 +42,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
+    Route::post('/', [HomeController::class, 'update']
+    )->name('callsigns');
+});
+
 require __DIR__.'/auth.php';
