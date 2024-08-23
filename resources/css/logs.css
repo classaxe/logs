@@ -85,6 +85,13 @@ div.group label > * {
 #tabs .button.icon {
     padding: 0.25em 0.75em;
 }
+#status {
+    display: inline-block;
+    border: 1px solid #88f;
+    padding: 0.25em;
+    margin: 0.5em 0;
+    background-color: #ddf;
+}
 main h1,
 main h2 {
     font-weight: bold;
@@ -112,7 +119,7 @@ table.list tbody tr:nth-child(odd) {
     background-color: #f0f8ff;
 }
 table.list tbody tr.current {
-    color: #080;
+    border: 3px dashed #080;
     background-color: #dfd !important;
 }
 table.list tbody tr.current a {
@@ -127,6 +134,14 @@ table.list tbody tr.inactive {
 table.list tbody tr.inactive a {
     color: #844 !important;
 }
+table.list tbody tr.admin {
+    font-weight: bold;
+    color: #008 !important;
+    background-color: #88f;
+}
+table.list tbody tr.admin a {
+    color: #00F !important;
+}
 table.list thead {
     background: #9ca3af;
     font-size: 90%;
@@ -137,6 +152,7 @@ table.list thead {
 table tbody td { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
 table.list th,
 table.list td { border: 1px solid #000; padding: 4px; }
+table.list .c { text-align: center; }
 table.list .r { text-align: right; }
 table.list .nowrap { white-space: nowrap; }
 .callsigns {

@@ -3,13 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\UserUpdateRequest;
-use App\Models\Log;
 use App\Models\User;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
 
 class HomeController extends Controller
 {
@@ -27,6 +23,9 @@ class HomeController extends Controller
                 $user->save();
                 break;
             case 'setAdmin':
+                if (Auth::user()->id === (int)$request->target && $request->value === '0') {
+                    return Redirect::route('callsigns')->with('status', '<b>Error:</b><br>This would remove your own access.');
+                }
                 $user->admin = $request->value;
                 $user->save();
                 break;
@@ -34,7 +33,7 @@ class HomeController extends Controller
                 die(500);
         }
         //return view('callsigns', ['users' => User::getActiveUsers()]);
-        return Redirect::route('callsigns')->with('status', 'profile-updated');
+        return Redirect::route('callsigns')->with('status', '<b>Success</b><br>User profile has been updated.');
     }
 
     public static function callsigns()
