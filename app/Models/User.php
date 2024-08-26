@@ -72,7 +72,12 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public static function getUserByCallsign(string $callsign): User|Exception
     {
-        return User::where('call', '=', $callsign)->firstOrFail();
+        static $result = [];
+        if (isset($result[$callsign])) {
+            return $result[$callsign];
+        }
+        $result[$callsign] = User::where('call', '=', $callsign)->firstOrFail();
+        return $result[$callsign];
     }
 
     public static function getUserDataByCallsign(string $callsign): Array|Exception
