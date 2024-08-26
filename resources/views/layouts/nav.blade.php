@@ -10,7 +10,7 @@
                 && isset(Route::current()->parameters()['callsign'])
                 && Route::current()->parameters()['callsign'] === Auth::user()->call ? "class=is-active" : ''
             }}>Your Logs</a>
-            <a href="{{ route('logs.fetch') }}" title="Reloads your own logs from QRZ.com"{{
+            <a href="{{ route('logs.fetch') }}" id="fetch" title="Reloads your own logs from QRZ.com"{{
                 Route::currentRouteName() === 'logs.fetch' ? "class=is-active" : ''
             }}>Refresh Your Logs</a>
         @endif

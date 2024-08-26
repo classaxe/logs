@@ -61,8 +61,8 @@
                 <td>{{ $u['itu'] }}</td>
                 <td>{{ $u['gsq'] }}</td>
                 <td class="r">{{ $u['log_count'] }}</td>
-                <td>{{ substr($u['last_log'], 0, 16) }}</td>
-                <td>{{ $u->getLastQrzPull() }}</td>
+                <td class="r">{{ $u->getLastLog() }}</td>
+                <td class="r">{{ $u->getLastQrzPull() }}</td>
                 <td><a target="_blank" href="https://www.qrz.com/db/{{ $u['call'] }}">LINK</a></td>
                 @if(Auth::user() && Auth::user()->admin)
                     <td class="c u_is_visible"><a href="#">{{ $u->is_visible ? 'Yes' : 'No' }}</a></td>

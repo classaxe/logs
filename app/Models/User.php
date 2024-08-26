@@ -15,6 +15,8 @@ class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    const RECENTDAYS = 2;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -83,10 +85,29 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    public function getLastLog(): string
+    {
+        if ($this['last_log'] === null) {
+            return 'Never';
+        }
+        if (Carbon::parse($this['last_log'])->diffInDays() >= self::RECENTDAYS) {
+            return substr($this['last_log'], 0, 16);
+        }
+        $result = Carbon::parse($this['last_log'])->diffForHumans();
+        return str_replace(
+            ['second', 'minute'],
+            ['sec', 'min'],
+            $result
+        );
+    }
+
     public function getLastQrzPull(): string
     {
         if ($this['qrz_last_data_pull'] === null) {
             return 'Never' . ($this['qrz_last_result'] ? ' - ' . $this['qrz_last_result'] : '');
+        }
+        if (Carbon::parse($this['qrz_last_data_pull'])->diffInDays() >= self::RECENTDAYS) {
+            return substr($this['qrz_last_data_pull'], 0, 16);
         }
         $result = Carbon::parse($this['qrz_last_data_pull'])->diffForHumans();
         return str_replace(
@@ -95,4 +116,5 @@ class User extends Authenticatable implements MustVerifyEmail
             $result
         );
     }
+
 }
