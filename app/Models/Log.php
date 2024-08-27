@@ -218,6 +218,9 @@ class Log extends Authenticatable
             if (!isset($i['APP_QRZLOG_LOGID'])) {
                 continue;
             }
+            if ($i['STATION_CALLSIGN'] !== $user['call']) {
+                continue;
+            }
             try {
                 $itu =      $i['COUNTRY'];
                 $sp =       $i['STATE'] ?? '';
