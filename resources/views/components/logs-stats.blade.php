@@ -3,6 +3,9 @@
         <table>
             <thead>
                 <tr>
+                    <th>
+                        QSOs
+                    </th>
                     <th title="Gridsquares
 Confirmed logs qualify for QRZ 'Grid Squared' Awards" style="cursor: help">
                         <span>&#9432;</span>
@@ -30,7 +33,8 @@ Confirmed USA logs qualify for QRZ 'United States' Award - remember to add Alask
                         <span>&#9432;</span>
                         Callsigns
                     </th>
-                    <th title="Confirmed logs qualify for QRZ 'Master of Communications' Awards" style="cursor: help">
+                    <th title="Confirmed logs qualify for QRZ 'Master of Communications' Awards -
+Add Bonus Entities such as United Nations and ITU Geneva if you have them." style="cursor: help">
                         <span>&#9432;</span>
                         ITU+Band
                     </th>
@@ -41,6 +45,7 @@ Confirmed USA logs qualify for QRZ 'United States' Award - remember to add Alask
             </thead>
             <tbody>
                 <tr>
+                    <td id="statsQsos"></td>
                     <td id="statsGsqs"></td>
                     <td id="statsCounties"></td>
                     <td id="statsSps"></td>

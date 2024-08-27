@@ -210,6 +210,18 @@ var frm = {
             return false;
         }
         if (filters.cont.length && filters.cont.toLowerCase() !== log.continent.toLowerCase().substring(0, filters.cont.length)) {
+            switch(filters.cont) {
+                case 'AF':
+                    return ($.inArray(log.itu, ['ITU Geneva', 'United Nations']) !== -1 ? true : false);
+                case 'AS':
+                    return ($.inArray(log.itu, ['Cyprus SBA', 'ITU Geneva', 'United Nations']) !== -1 ? true : false);
+                case 'EU':
+                    return ($.inArray(log.itu, ['ITU Geneva', 'SMO Malta', 'United Nations']) !== -1 ? true : false);
+                case 'OC':
+                case 'NA':
+                case 'SA':
+                    return ($.inArray(log.itu, ['ITU Geneva', 'United Nations']) !== -1 ? true : false);
+            }
             return false;
         }
         if (filters.gsq.length && filters.gsq.toLowerCase() !== log.gsq.toLowerCase().substring(0, filters.gsq.length)) {
@@ -272,8 +284,17 @@ var frm = {
             }
         });
         $.each(logsFiltered, function(idx, log){
+            let bonus = false;
+            switch (log.itu) {
+                case 'Cyprus SBA':
+                case 'ITU Geneva':
+                case 'SMO Malta':
+                case 'United Nations':
+                    bonus = true;
+                    break;
+            }
             html.push(
-                '<tr>' +
+                '<tr' + (bonus ? " class='bonus' title='Bonus Entity for some QRZ Awards'" : "") + ">" +
                 '<td class="r">' + (log.logNum)+ '</td>' +
                 '<td class="nowrap">' + log.date + '</td>' +
                 '<td class="nowrap">' + log.time + '</td>' +
@@ -457,6 +478,7 @@ var frm = {
     stats: () => {
         let sp = frm.getUniqueValues('sp');
         let cont = frm.getUniqueValues('continent');
+        $('#statsQsos').text(logsFiltered.length);
         $('#statsCounties').html(frm.getUniqueValuesStats('county'));
         $('#statsSps').html(frm.getUniqueValuesStats('sp'));
         $('#statsItus').html(frm.getUniqueValuesStats('itu'));

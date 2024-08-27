@@ -122,6 +122,11 @@ table.list tbody tr.current {
     border: 3px dashed #080;
     background-color: #dfd !important;
 }
+table.list tbody tr.bonus {
+    border: 3px dashed #008;
+    background-color: #ddf !important;
+    color: #008;
+}
 table.list tbody tr.current a {
     color: #4a4;
 }

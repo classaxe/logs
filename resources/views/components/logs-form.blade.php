@@ -49,8 +49,8 @@
                     <option value="AF">Africa</option>
                     <option value="AS">Asia</option>
                     <option value="EU">Europe</option>
-                    <option value="NA">N America</option>
                     <option value="OC">Oceania</option>
+                    <option value="NA">N America</option>
                     <option value="SA">S America</option>
                 </select>
             </label>
