@@ -6,6 +6,7 @@ use App\Models\Log;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Redirect;
 
 class LogsController extends Controller
 {
@@ -29,8 +30,10 @@ class LogsController extends Controller
         if (!Auth::user()->is_visible) {
             abort(403);
         }
-        Log::getQRZDataForUser(Auth::user());
-        return redirect()->route('logs.page', ['callsign' => Auth::user()->call]);
+        if (Log::getQRZDataForUser(Auth::user())) {
+            return redirect()->route('logs.page', ['callsign' => Auth::user()->call]);
+        }
+        return redirect()->route('callsigns')->with('status', '<b>Error:</b><br>' . Auth::user()->qrz_last_result);
     }
 
     public static function logsPage(string $callsign)

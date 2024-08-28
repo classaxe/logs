@@ -141,8 +141,6 @@ class Log extends Authenticatable
 
     public static function getQRZStatusForUser(User $user)
     {
-        // $user['qrz_api_key'] = "eahgwhwtyhjetyjetj"; // Invalid key
-        // $user['qrz_api_key'] = "8A43-EAFF-BD8E-857F"; // Non XML Subscriber
         try {
             $url = self::APIURL . '?KEY=' . $user['qrz_api_key'] . '&ACTION=STATUS';
             $raw = file_get_contents($url);
@@ -154,6 +152,11 @@ class Log extends Authenticatable
         foreach ($pairs as $pair) {
             list($key, $value) = explode('=', $pair, 2);
             $status[$key] = $value;
+        }
+        if ($status['CALLSIGN'] !== $user->call) {
+            $user->setAttribute('qrz_last_result', 'Wrong Call for key');
+            $user->save();
+            return false;
         }
         if ($status['RESULT'] === "OK") {
             return $status;
@@ -185,27 +188,13 @@ class Log extends Authenticatable
             $url = self::APIURL . '?KEY=' . $user['qrz_api_key'] . '&ACTION=FETCH&OPTION=ALL';
             $raw = file_get_contents($url);
         } catch (\Exception $e) {
-            $user->setAttribute('qrz_last_data_pull', null);
-            $user->setAttribute('qrz_last_result', 'Server Error');
+            $user->setAttribute('qrz_last_result', 'Server Error - ' . substr($e->getMessage(), 0, 240));
             $user->save();
             return false;
         }
-        if (substr($raw, 0, 5) === 'ADIF=' || str_contains($raw, 'RESULT=OK')) {
-            $user->setAttribute('qrz_last_result', 'OK');
-        } else {
-            try {
-                if (str_contains($raw, 'REASON=user does not have a valid QRZ subscription')) {
-                    $user->setAttribute('qrz_last_result', 'Not XML Subscriber');
-                } elseif (str_contains($raw, 'REASON=invalid api key')) {
-                    $user->setAttribute('qrz_last_result', 'Invalid QRZ API Key');
-                } else {
-                    $user->setAttribute('qrz_last_result', substr($raw, 0, 100));
-                }
-                $user->save();
-            } catch (\Exception $e) {
-                print substr($e->getMessage(), 0, 100);
-                return false;
-            }
+        if (!(substr($raw, 0, 5) === 'ADIF=' || str_contains($raw, 'RESULT=OK'))) {
+            $user->setAttribute('qrz_last_result', substr($raw, 0, 250));
+            $user->save();
             return false;
         }
         $data = str_replace(['&lt;', '&gt;'], ['<', '>'], $raw);
@@ -216,9 +205,6 @@ class Log extends Authenticatable
         $logNum = 1;
         foreach ($qrzItems as $i) {
             if (!isset($i['APP_QRZLOG_LOGID'])) {
-                continue;
-            }
-            if ($i['STATION_CALLSIGN'] !== $user['call']) {
                 continue;
             }
             try {
@@ -249,7 +235,7 @@ class Log extends Authenticatable
                 $name =             $i['NAME'] ?? '';
                 $name =             (strtoupper($name) === $name ? ucwords(strtolower($name)) : $name);
                 $items[] = [
-                    'logNum' =>     $logNum,
+                    'logNum' =>     0,
                     'userId' =>     $user['id'],
                     'qrzId' =>      $i['APP_QRZLOG_LOGID'],
                     'date' =>       substr($i['QSO_DATE'], 0, 4) . '-' . substr($i['QSO_DATE'], 4, 2) . '-' . substr($i['QSO_DATE'], 6, 2),
@@ -271,15 +257,21 @@ class Log extends Authenticatable
                     'deg' =>        $deg,
                     'conf' =>       ($i['APP_QRZLOG_STATUS'] ?? '') === 'C' ? 'Y' : ''
                 ];
-                $logNum++;
             } catch (\Exception $e) {
-                $user->setAttribute('qrz_last_data_pull', null);
-                $user->setAttribute('qrz_last_result', $e->getMessage());
+                $user->setAttribute('qrz_last_result', 'Server Error - ' . substr($e->getMessage(), 0, 240));
                 $user->save();
                 return false;
             }
         }
         if ($items) {
+            // To deal with logs uploaded to QRZ out of order
+            usort($items, function ($a, $b) {
+                return $a['date'] . $a['time'] <=> $b['date'] . $b['time'];
+            });
+            $lognum = 1;
+            foreach ($items as &$item) {
+                $item['logNum'] = $lognum++;
+            }
             try {
                 Log::deleteLogsForUserId($user->id);
                 //log::insert($items);
@@ -287,14 +279,16 @@ class Log extends Authenticatable
                     $chunk = array_slice($items, $i, self::MAXBATCHINSERT);
                     Log::insert($chunk);
                 }
+
                 $last = Log::where('userId','=',$user->id)->orderBy('date', 'desc')->orderBy('time', 'desc')->first();
+                $user->setAttribute('qrz_last_result', 'OK');
                 $user->setAttribute('qrz_last_data_pull', time());
                 $user->setAttribute('last_log', $last->date . ' ' . $last->time);
                 $user->setAttribute('log_count', count($items));
                 $user->save();
                 return true;
             } catch (\Exception $e) {
-                $user->setAttribute('qrz_last_result', $e->getMessage());
+                $user->setAttribute('qrz_last_result', 'Server Error - ' . substr($e->getMessage(), 0, 240));
                 $user->save();
                 return false;
             }
@@ -304,7 +298,10 @@ class Log extends Authenticatable
 
     public static function getLogsForUser(User $user): array
     {
-        if (!$user->qrz_last_data_pull || $user->qrz_last_data_pull->addMinutes(self::MAX_AGE)->isPast()) {
+        if ($user->active && (
+            !$user->qrz_last_data_pull
+            || $user->qrz_last_data_pull->addMinutes(self::MAX_AGE)->isPast()
+        )) {
             static::getQRZDataForUser($user);
         }
         return Log::getDBLogsForUserId($user->id);
@@ -338,7 +335,7 @@ class Log extends Authenticatable
 
     public static function getDBLogsForUserId($userId): array
     {
-        return Log::where('userId', $userId)->get()->toArray();
+        return Log::where('userId', $userId)->orderBy('time', 'asc')->orderBy('date', 'desc')->get()->toArray();
     }
 
     public static function deleteLogsForUserId($userId): bool

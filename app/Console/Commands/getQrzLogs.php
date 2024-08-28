@@ -31,7 +31,19 @@ class getQrzLogs extends Command
     {
         $activeUsers = User::getActiveUsers();
         foreach ($activeUsers as $user) {
-            Log::getQRZDataForUser($user);
+            if (!$user->active) {
+                print "- Skipping inactive user {$user->call}\n";
+                continue;
+            }
+            if ($user->qrz_last_data_pull && !$user->qrz_last_data_pull->addMinutes(Log::MAX_AGE)->isPast()) {
+                print "- Skipping recently refreshed user {$user->call}\n";
+                continue;
+            }
+            if (Log::getQRZDataForUser($user)) {
+                print "- Refreshed user {$user->call}\n";
+            } else {
+                print "- ERROR for user {$user->call} - {$user->qrz_last_result}\n";
+            }
         }
         return Command::SUCCESS;
     }

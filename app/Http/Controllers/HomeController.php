@@ -18,8 +18,8 @@ class HomeController extends Controller
             die(500);
         }
         switch($request->action) {
-            case 'setVisible':
-                $user->is_visible = $request->value;
+            case 'setActive':
+                $user->active = $request->value;
                 $user->save();
                 break;
             case 'setAdmin':
@@ -27,6 +27,10 @@ class HomeController extends Controller
                     return Redirect::route('callsigns')->with('status', '<b>Error:</b><br>This would remove your own access.');
                 }
                 $user->admin = $request->value;
+                $user->save();
+                break;
+            case 'setVisible':
+                $user->is_visible = $request->value;
                 $user->save();
                 break;
             default:

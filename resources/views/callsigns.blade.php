@@ -38,8 +38,9 @@
                     <th>Last Fetch</th>
                     <th>QRZ</th>
                     @if(Auth::user() && Auth::user()->admin)
-                        <th>Visible</th>
+                        <th>Active</th>
                         <th>Admin</th>
+                        <th>Visible</th>
                      @endif
                 </tr>
             </thead>
@@ -54,19 +55,20 @@
                     title="This is you"
                 @endif
             >
-                <td><a href="{{ route('logs.page', ['callsign' => $u['call']]) }}">{{ $u['call'] }}</a></td>
-                <td>{{ $u['name'] }}</td>
-                <td>{{ $u['city'] }}</td>
-                <td>{{ $u['sp'] }}</td>
-                <td>{{ $u['itu'] }}</td>
-                <td>{{ $u['gsq'] }}</td>
-                <td class="r">{{ $u['log_count'] }}</td>
+                <td><a href="{{ route('logs.page', ['callsign' => $u->call]) }}">{{ $u->call }}</a></td>
+                <td>{{ $u->name }}</td>
+                <td>{{ $u->city }}</td>
+                <td>{{ $u->sp }}</td>
+                <td>{{ $u->itu }}</td>
+                <td>{{ $u->gsq }}</td>
+                <td class="r">{{ $u->log_count }}</td>
                 <td class="r">{{ $u->getLastLog() }}</td>
-                <td class="r">{{ $u->getLastQrzPull() }}</td>
-                <td><a target="_blank" href="https://www.qrz.com/db/{{ $u['call'] }}">LINK</a></td>
+                <td class="r">@if($u->qrz_last_result !== 'OK'){{ $u->qrz_last_result }} @else {{ $u->getLastQrzPull() }} @endif </td>
+                <td><a target="_blank" href="https://www.qrz.com/db/{{ $u->call }}">LINK</a></td>
                 @if(Auth::user() && Auth::user()->admin)
-                    <td class="c u_is_visible"><a href="#">{{ $u->is_visible ? 'Yes' : 'No' }}</a></td>
+                    <td class="c u_active"><a href="#">{{ $u->active ? 'Yes' : 'No' }}</a></td>
                     <td class="c u_admin"><a href="#">{{ $u->admin ? 'Yes' : 'No' }}</a></td>
+                    <td class="c u_is_visible"><a href="#">{{ $u->is_visible ? 'Yes' : 'No' }}</a></td>
                 @endif
             </tr>
         @endforeach
