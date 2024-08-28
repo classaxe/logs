@@ -43,7 +43,7 @@ class HomeController extends Controller
     public static function callsigns()
     {
         if (Auth::user() && Auth::user()->admin) {
-            $users = User::get();
+            $users = User::getAllUsers();
         } else {
             $users = User::getActiveUsers();
         }

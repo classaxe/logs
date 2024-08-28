@@ -48,11 +48,17 @@
         @foreach($users as $u)
             <?php
                 $isYou = Auth::user() && $u['id'] === Auth::user()->id;
-                $class = ($u->is_visible ? '' : 'inactive ') . ($isYou ? 'current ' : '') . (Auth::user() && Auth::user()->admin && $u->admin ? 'admin ' : '');
+                $class = ($u->is_visible ? '' : 'invisible ')
+                    . ($u->active ? '' : ' inactive ')
+                    . ($isYou ? 'current ' : '')
+                    . (Auth::user() && Auth::user()->admin && $u->admin ? 'admin ' : '');
             ?>
             <tr data-user="{{ $u->id }}" class="<?= $class ?>"
                 @if($isYou)
                     title="This is you"
+                @endif
+                @if(!$u->active)
+                    title="This log is not actively maintained"
                 @endif
             >
                 <td><a href="{{ route('logs.page', ['callsign' => $u->call]) }}">{{ $u->call }}</a></td>

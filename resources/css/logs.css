@@ -132,11 +132,17 @@ table.list tbody tr.current a {
 }
 table.list tbody tr.inactive {
     font-style: italic;
+    color: #444 !important;
+    background-color: #ccc !important;
+}
+table.list tbody tr.invisible {
+    visibility: visible;
+    font-style: italic;
     text-decoration: line-through;
     color: #f44 !important;
     background-color: #fcc !important;
 }
-table.list tbody tr.inactive a {
+table.list tbody tr.invisible a {
     color: #844 !important;
 }
 table.list tbody tr.admin {

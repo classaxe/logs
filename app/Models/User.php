@@ -63,7 +63,12 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public static function getActiveUsers(): Collection
     {
-        return User::where('is_visible', 1)->get();
+        return User::where('is_visible', 1)->orderBy('call', 'asc')->get();
+    }
+
+    public static function getAllUsers(): Collection
+    {
+        return User::orderBy('call', 'asc')->get();
     }
 
     /**
