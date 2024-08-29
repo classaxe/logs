@@ -334,7 +334,38 @@ class Log extends Authenticatable
 
     public static function getDBLogsForUserId($userId): array
     {
-        return Log::leftJoin('iso3166', 'logs.itu', '=', 'iso3166.country')->where('userId', $userId)->orderBy('time', 'asc')->orderBy('date', 'desc')->get()->toArray();
+        /*
+         {
+        }
+         */
+        return
+            Log::Select(
+                'logs.band',
+                'logs.call',
+                'logs.conf',
+                'logs.continent',
+                'logs.county',
+                'logs.date',
+                'logs.deg',
+                'logs.gsq',
+                'logs.itu',
+                'logs.km',
+                'logs.logNum',
+                'logs.mode',
+                'logs.name',
+                'logs.pwr',
+                'logs.qth',
+                'logs.rx',
+                'logs.sp',
+                'logs.time',
+                'logs.tx',
+                'iso3166.flag'
+            )->leftJoin('iso3166', 'logs.itu', '=', 'iso3166.country')
+            ->where('userId', $userId)
+            ->orderBy('time', 'asc')
+            ->orderBy('date', 'desc')
+            ->get()
+            ->toArray();
     }
 
     public static function deleteLogsForUserId($userId): bool

@@ -19,8 +19,43 @@ return new class extends Migration
             $table->string('flag');
             $table->timestamps();
         });
+/*
+
+SELECT
+	distinct(`logs`.`itu`),
+    `iso3166`.`flag`
+FROM
+    `logs`
+LEFT JOIN
+    `iso3166` ON `logs`.`itu` = `iso3166`.`country`
+WHERE
+    `flag` IS NULL
+ORDER BY `itu`
+
+ */
 
         $imports = [
+            ["Agalega and St Brandon", "mp"],
+            ["Ascension Island", "sh"],
+            ["Alaska", "us"],
+            ["Asiatic Russia", "ru"],
+            ["Auckland, Campbell Islands", "nz"],
+            ["Austral Islands", "pf"],
+            ["Azores", "pt"], // QRZ uses PZ https://www.qrz.com/flags
+            ["Bahamas", "bs"],
+            ["Baker and Howland Islands", "us"],
+            ["Balearic Islands", "es"],
+            ["Bolivia", "bo"],
+            ["Bonaire", "bq"],
+            ["British Virgin Islands", "vg"],
+            ["Cape Verde", "cv"],
+            ["Canary Islands", "es"],
+            ["Cayman Islands", "ky"],
+            ["Netherlands", "nl"],
+            ["Northern Ireland", "gb"],
+            ["USA", "us"],
+            ["US Virgin Islands", "vi"],
+
             ["Afghanistan", "af"],
             ["Albania", "al"],
             ["Algeria", "dz"],
@@ -36,7 +71,6 @@ return new class extends Migration
             ["Australia", "au"],
             ["Austria", "at"],
             ["Azerbaijan", "az"],
-            ["Bahamas (the)", "bs"],
             ["Bahrain", "bh"],
             ["Bangladesh", "bd"],
             ["Barbados", "bb"],
@@ -46,8 +80,6 @@ return new class extends Migration
             ["Benin", "bj"],
             ["Bermuda", "bm"],
             ["Bhutan", "bt"],
-            ["Bolivia (Plurinational State of)", "bo"],
-            ["Bonaire, Sint Eustatius and Saba", "bq"],
             ["Bosnia and Herzegovina", "ba"],
             ["Botswana", "bw"],
             ["Bouvet Island", "bv"],
@@ -57,11 +89,9 @@ return new class extends Migration
             ["Bulgaria", "bg"],
             ["Burkina Faso", "bf"],
             ["Burundi", "bi"],
-            ["Cabo Verde", "cv"],
             ["Cambodia", "kh"],
             ["Cameroon", "cm"],
             ["Canada", "ca"],
-            ["Cayman Islands (the)", "ky"],
             ["Central African Republic (the)", "cf"],
             ["Chad", "td"],
             ["Chile", "cl"],
@@ -176,7 +206,6 @@ return new class extends Migration
             ["Namibia", "na"],
             ["Nauru", "nr"],
             ["Nepal", "np"],
-            ["Netherlands (the)", "nl"],
             ["New Caledonia", "nc"],
             ["New Zealand", "nz"],
             ["Nicaragua", "ni"],
@@ -256,14 +285,11 @@ return new class extends Migration
             ["United Arab Emirates (the)", "ae"],
             ["United Kingdom of Great Britain and Northern Ireland (the)", "gb"],
             ["United States Minor Outlying Islands (the)", "um"],
-            ["United States of America (the)", "us"],
             ["Uruguay", "uy"],
             ["Uzbekistan", "uz"],
             ["Vanuatu", "vu"],
             ["Venezuela (Bolivarian Republic of)", "ve"],
             ["Viet Nam", "vn"],
-            ["Virgin Islands (British)", "vg"],
-            ["Virgin Islands (U.S.)", "vi"],
             ["Wallis and Futuna", "wf"],
             ["Western Sahara", "eh"],
             ["Yemen", "ye"],
