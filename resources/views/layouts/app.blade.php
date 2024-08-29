@@ -14,6 +14,8 @@
         <!-- Images -->
         <link rel="prefetch" href="/images/loader.gif" />
 
+        <link href="/flag-icons/css/flag-icons.css" rel="stylesheet" />
+
         <!-- Scripts -->
         @vite([
             'resources/css/app.css',

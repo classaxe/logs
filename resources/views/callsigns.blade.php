@@ -65,7 +65,7 @@
                 <td>{{ $u->name }}</td>
                 <td>{{ $u->city }}</td>
                 <td>{{ $u->sp }}</td>
-                <td>{{ $u->itu }}</td>
+                <td>{{ $u->itu }} <span class="fi fi-{{ $u->itu }}"></span></td>
                 <td>{{ $u->gsq }}</td>
                 <td class="r">{{ $u->log_count }}</td>
                 <td class="r">{{ $u->getLastLog() }}</td>

@@ -202,7 +202,6 @@ class Log extends Authenticatable
         $adif = new adif(trim('<EOH>' . $data));
         $qrzItems = $adif->parser();
         $items = [];
-        $logNum = 1;
         foreach ($qrzItems as $i) {
             if (!isset($i['APP_QRZLOG_LOGID'])) {
                 continue;
@@ -335,7 +334,7 @@ class Log extends Authenticatable
 
     public static function getDBLogsForUserId($userId): array
     {
-        return Log::where('userId', $userId)->orderBy('time', 'asc')->orderBy('date', 'desc')->get()->toArray();
+        return Log::leftJoin('iso3166', 'logs.itu', '=', 'iso3166.country')->where('userId', $userId)->orderBy('time', 'asc')->orderBy('date', 'desc')->get()->toArray();
     }
 
     public static function deleteLogsForUserId($userId): bool
