@@ -308,7 +308,7 @@ var frm = {
                 '<td>' + log.qth + '</td>' +
                 '<td class="not-compact">' + log.countyName + '</td>' +
                 '<td data-link="sp">' + log.sp + '</td>' +
-                '<td data-link="itu">' + (log.flag ?  '<span class="fi fi-' + log.flag +'"></span>' : '') + log.itu + '</td>' +
+                '<td class="nowrap" data-link="itu">' + (log.flag ?  '<span class="fi fi-' + log.flag +'"></span>' : '') + log.itu + '</td>' +
                 '<td data-link="cont">' + log.continent + '</td>' +
                 '<td class="not-compact" data-link="gsq">' + log.gsq + '</td>' +
                 '<td class="r">' + (typeof log.km === 'number' ? log.km : '') + '</td>' +

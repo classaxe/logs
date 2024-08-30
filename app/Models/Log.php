@@ -334,10 +334,6 @@ class Log extends Authenticatable
 
     public static function getDBLogsForUserId($userId): array
     {
-        /*
-         {
-        }
-         */
         return
             Log::Select(
                 'logs.band',
