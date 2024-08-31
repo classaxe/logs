@@ -310,9 +310,9 @@ var frm = {
                 '<td data-link="sp">' + log.sp + '</td>' +
                 '<td class="nowrap" data-link="itu">' + (log.flag ?  '<span class="fi fi-' + log.flag +'"></span>' : '') + log.itu + '</td>' +
                 '<td data-link="cont">' + log.continent + '</td>' +
-                '<td class="not-compact" data-link="gsq">' + log.gsq + '</td>' +
+                '<td data-link="gsq">' + log.gsq + '</td>' +
                 '<td class="r">' + (typeof log.km === 'number' ? log.km : '') + '</td>' +
-                '<td class="r">' + (typeof log.deg === 'number' ? log.deg : '') + '</td>' +
+                '<td class="r not-compact">' + (typeof log.deg === 'number' ? log.deg : '') + '</td>' +
                 '<td class="r">' + log.conf + '</td>'
             )
         });
