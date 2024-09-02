@@ -4,6 +4,7 @@ var filters = {
     conf: '',
     cont: '',
     call: '',
+    myQth: '',
     sp: '',
     itu: '',
     gsq: ''
@@ -67,6 +68,7 @@ var frm = {
             filters.modes.push($(this).data('mode'));
         });
         filters.conf =  $('input[name=conf]:checked').val();
+        filters.myQth = $('select[name=myQth]').val();
         filters.call =  $('input[name=call]').val();
         filters.sp =    $('input[name=sp]').val();
         filters.itu =   $('input[name=itu]').val().replace(' ','');
@@ -203,6 +205,9 @@ var frm = {
         if (filters.call.length && filters.call.toLowerCase() !== log.call.toLowerCase().substring(0, filters.call.length)) {
             return false;
         }
+        if (filters.myQth && filters.myQth.length && filters.myQth !== log.myQth) {
+            return false;
+        }
         if (filters.sp.length && filters.sp.toLowerCase() !== log.sp.toLowerCase()) {
             return false;
         }
@@ -296,6 +301,8 @@ var frm = {
             html.push(
                 '<tr' + (bonus ? " class='bonus' title='Bonus Entity for some QRZ Awards'" : "") + ">" +
                 '<td class="r">' + (log.logNum)+ '</td>' +
+                '<td class="not-compact multi-qth">' + log.myGsq + '</td>' +
+                '<td class="not-compact multi-qth nowrap">' + log.myQth + '</td>' +
                 '<td class="nowrap">' + log.date + '</td>' +
                 '<td class="nowrap">' + log.time + '</td>' +
                 '<td data-link="call">' + log.call + '</td>' +
@@ -365,6 +372,10 @@ var frm = {
             COOKIE.set('compact', $(this).val(), '/');
             frm.compact();
         })
+        $('select[name=myQth]').change(function() {
+            $(this).blur();
+            frm.update();
+        });
         $('input[name=call]').keyup(function() {
             frm.update();
         });

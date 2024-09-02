@@ -20,6 +20,8 @@ class Log extends Authenticatable
 
     const COLUMNS = [
         'logNum' =>     ['lbl' =>   'Log',          'class' => ''],
+        'myQsq' =>      ['lbl' =>   'My GSQ',       'class' => 'not-compact multi-qth'],
+        'myQth' =>      ['lbl' =>   'My QTH',       'class' => 'not-compact multi-qth'],
         'date' =>       ['lbl' =>   'Date',         'class' => ''],
         'time' =>       ['lbl' =>   'UTC',          'class' => ''],
         'call' =>       ['lbl' =>   'Callsign',     'class' => ''],
@@ -40,6 +42,17 @@ class Log extends Authenticatable
         'conf' =>       ['lbl' =>   'Conf',         'class' => 'r']
     ];
 
+    const QTH_SUBSTITUTES = [
+        1 => [
+            'Aurora, ON, L4G3N3' =>             'Home:  Sandusky, Aurora',
+            'Aurora, ON, L4G7N8' =>             'Home:  Millcliff, Aurora',
+            '12125 Yonge Street (Rover)' =>     'Rover: St Johns Church',
+            'POTA CA-1368' =>                   'POTA:  CA-1368',
+        ],
+        3 => [
+
+        ]
+    ];
     /**
      * The attributes that are mass assignable.
      *
@@ -228,15 +241,22 @@ class Log extends Authenticatable
                         $county = '';
                         break;
                 }
-                $log_gsq =          $i['GRIDSQUARE'] ?? '';
-                $qth_gsq =          $i['MY_GRIDSQUARE'] ?? $user['gsq'];
+                $log_gsq =          strtoupper($i['GRIDSQUARE'] ?? '');
+                $qth_gsq =          strtoupper(substr($i['MY_GRIDSQUARE'] ?? $user['gsq'], 0, 6));
+                $my_qth =           $i['MY_CITY'] ?? $user['qth'];
+                if (isset(self::QTH_SUBSTITUTES[$user['id']][$my_qth])) {
+                    $my_qth = self::QTH_SUBSTITUTES[$user['id']][$my_qth];
+                }
                 $deg =              Log::getBearing($qth_gsq, $log_gsq);
                 $name =             $i['NAME'] ?? '';
                 $name =             (strtoupper($name) === $name ? ucwords(strtolower($name)) : $name);
+
                 $items[] = [
                     'logNum' =>     0,
                     'userId' =>     $user['id'],
                     'qrzId' =>      $i['APP_QRZLOG_LOGID'],
+                    'myGsq' =>      $qth_gsq,
+                    'myQth' =>      $my_qth,
                     'date' =>       substr($i['QSO_DATE'], 0, 4) . '-' . substr($i['QSO_DATE'], 4, 2) . '-' . substr($i['QSO_DATE'], 6, 2),
                     'time' =>       substr($i['TIME_ON'], 0, 2) . ':' . substr($i['TIME_ON'], 2, 2),
                     'call' =>       $i['CALL'],
@@ -268,9 +288,14 @@ class Log extends Authenticatable
                 return $a['date'] . $a['time'] <=> $b['date'] . $b['time'];
             });
             $lognum = 1;
+            $qths = [];
             foreach ($items as &$item) {
                 $item['logNum'] = $lognum++;
+                if (!isset($qths[$item['myQth']])) {
+                    $qths[$item['myQth']] = true;
+                }
             }
+
             try {
                 Log::deleteLogsForUserId($user->id);
                 //log::insert($items);
@@ -284,6 +309,7 @@ class Log extends Authenticatable
                 $user->setAttribute('qrz_last_data_pull', time());
                 $user->setAttribute('last_log', $last->date . ' ' . $last->time);
                 $user->setAttribute('log_count', count($items));
+                $user->setAttribute('qth_count', count(array_keys($qths)));
                 $user->save();
                 return true;
             } catch (\Exception $e) {
@@ -308,27 +334,49 @@ class Log extends Authenticatable
 
     public static function getBandsForUserId($userId): array
     {
-        $bands = Log::distinct()->where('userId', $userId)->get(['band'])->toArray();
+        $items = Log::distinct()->where('userId', $userId)->get(['band'])->toArray();
         $out = [];
-        foreach ($bands as $band) {
-            $b =        $band['band'];
+        foreach ($items as $item) {
+            $b =        $item['band'];
             $num =      preg_replace('/[^0-9]/', '', $b);
             $units =    preg_replace('/[^a-zA-Z]/', '', $b);
             $v =        ($num ? $num * (strtolower($units) === 'm' ? 1000 : 1) : $b);
-            $out[$v] =  $band['band'];
+            $out[$v] =  $item['band'];
         }
         krsort($out);
         return array_values($out);
     }
 
-    public static function getModesForUserId($userId): array
+    public static function getGsqsForUserId($userId): array
     {
-        $modes = Log::distinct()->where('userId', $userId)->get(['mode'])->toArray();
+        $items = Log::distinct()->where('userId', $userId)->get(['myGsq'])->toArray();
         $out = [];
-        foreach($modes as $mode) {
-            $out[] = $mode['mode'];
+        foreach($items as $item) {
+            $out[] = $item['myGsq'];
         }
         sort($out);
+        return $out;
+    }
+
+    public static function getModesForUserId($userId): array
+    {
+        $items = Log::distinct()->where('userId', $userId)->get(['mode'])->toArray();
+        $out = [];
+        foreach($items as $item) {
+            $out[] = $item['mode'];
+        }
+        sort($out);
+        return $out;
+    }
+
+    public static function getQthsForUserId($userId): array
+    {
+        $items = Log::selectRaw('count(*) as num, myQth')->where('userId', $userId)->groupBy('myQth')->get()->toArray();
+        $out = [];
+        foreach($items as $item) {
+            $out[$item['myQth']] = $item['num'];
+        }
+        ksort($out);
         return $out;
     }
 
@@ -348,6 +396,8 @@ class Log extends Authenticatable
                 'logs.km',
                 'logs.logNum',
                 'logs.mode',
+                'logs.myGsq',
+                'logs.myQth',
                 'logs.name',
                 'logs.pwr',
                 'logs.qth',

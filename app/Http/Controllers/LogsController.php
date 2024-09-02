@@ -42,8 +42,10 @@ class LogsController extends Controller
         return view('logs', [
             'bands' =>      $data['bands'],
             'columns' =>    Log::COLUMNS,
+            'gsqs' =>       $data['gsqs'],
             'lastPulled' => Carbon::parse($data['user']['qrz_last_data_pull'])->diffForHumans(),
             'modes' =>      $data['modes'],
+            'qths' =>       $data['qths'],
             'user' =>       $data['user']
         ]);
     }

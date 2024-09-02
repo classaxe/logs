@@ -29,13 +29,14 @@ class getQrzLogs extends Command
      */
     public function handle()
     {
+        $force = false;
         $activeUsers = User::getActiveUsers();
         foreach ($activeUsers as $user) {
-            if (!$user->active) {
+            if (!$force && !$user->active) {
                 print "- Skipping inactive user {$user->call}\n";
                 continue;
             }
-            if ($user->qrz_last_data_pull && !$user->qrz_last_data_pull->addMinutes(Log::MAX_AGE)->isPast()) {
+            if (!$force && $user->qrz_last_data_pull && !$user->qrz_last_data_pull->addMinutes(Log::MAX_AGE)->isPast()) {
                 print "- Skipping recently refreshed user {$user->call}\n";
                 continue;
             }

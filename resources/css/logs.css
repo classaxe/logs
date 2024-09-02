@@ -115,6 +115,20 @@ table.list {
     margin: 0 auto;
     width: 100%;
 }
+table.list thead {
+    background: #9ca3af;
+    font-size: 90%;
+    color: #fff;
+    text-align: left;
+    white-space: nowrap;
+}
+table.list thead tr:nth-child(1) th{
+    background: #9ca3af;
+    border: 1px solid #000;
+    position: sticky;
+    top: -1px;
+    z-index: 10;
+}
 table.list tbody tr:nth-child(odd) {
     background-color: #f0f8ff;
 }
@@ -152,13 +166,6 @@ table.list tbody tr.admin {
 }
 table.list tbody tr.admin a {
     color: #00F !important;
-}
-table.list thead {
-    background: #9ca3af;
-    font-size: 90%;
-    color: #fff;
-    text-align: left;
-    white-space: nowrap;
 }
 table tbody td { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}
 table.list th,

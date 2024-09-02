@@ -33,6 +33,18 @@
             <label><input type="radio" id="conf_N" name="conf" value="N">N</label>
             <label><input type="radio" id="conf_All" name="conf" value="" checked="checked">All</label>
         </div><br>
+        @if(count($qths) > 1)
+        <div class="group">
+            <label class="b">My QTH
+                <select name="myQth">
+                    <option></option>
+                    @foreach($qths as $label => $count)
+                        <option value="{{ $label }}">{{ $label }}</option>
+                    @endforeach
+                </select>
+            </label>
+        </div>
+        @endif
         <div class="group">
             <label class="b">Call:
                 <input type="text" name="call" size="8" value="">

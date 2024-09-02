@@ -9,6 +9,13 @@
     var callsign = "{{ $user['call'] }}";
     document.body.classList.add("loading");
 </script>
+@if($user['qth_count'] < 2)
+<style>
+.multi-qth {
+    display: none !important;
+}
+</style>
+@endif
 <div class="flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
     @include('components.logs-form')
     @include('components.logs-stats')

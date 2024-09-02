@@ -91,6 +91,8 @@ class User extends Authenticatable implements MustVerifyEmail
         return [
             'bands' =>  Log::getBandsForUserId($user['id']),
             'modes' =>  Log::getModesForUserId($user['id']),
+            'gsqs' =>   Log::getGsqsForUserId($user['id']),
+            'qths' =>   Log::getQthsForUserId($user['id']),
             'user' =>   $user
         ];
     }

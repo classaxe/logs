@@ -29,7 +29,8 @@
                 <tr>
                     <th>Callsign</th>
                     <th>Name</th>
-                    <th>QTH</th>
+                    <th>Main QTH</th>
+                    <th>QTHs</th>
                     <th>S/P</th>
                     <th>ITU</th>
                     <th>GSQ</th>
@@ -64,6 +65,7 @@
                 <td><a href="{{ route('logs.page', ['callsign' => $u->call]) }}">{{ $u->call }}</a></td>
                 <td>{{ $u->name }}</td>
                 <td>{{ $u->city }}</td>
+                <td>{{ $u->qth_count }}</td>
                 <td>{{ $u->sp }}</td>
                 <td>{{ $u->itu }} <span class="fi fi-{{ $u->itu }}"></span></td>
                 <td>{{ $u->gsq }}</td>
