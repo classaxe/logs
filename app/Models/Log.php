@@ -46,7 +46,6 @@ class Log extends Authenticatable
         1 => [
             'Aurora, ON, L4G3N3' =>             'Home:  Sandusky, Aurora',
             'Aurora, ON, L4G7N8' =>             'Home:  Millcliff, Aurora',
-            '12125 Yonge Street (Rover)' =>     'Rover: St Johns Church',
             'POTA CA-1368' =>                   'POTA:  CA-1368',
         ],
         3 => [

@@ -249,7 +249,7 @@ var LMap = {
             map: LMap.map,
             icon: {
                 scaledSize: new google.maps.Size(30,30),
-                url: base_image + '/red-pushpin.png'
+                url: base_image + '/purple-pushpin.png'
             },
             title: qth.callsign,
             zIndex: 100
