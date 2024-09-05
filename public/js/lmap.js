@@ -212,6 +212,8 @@ var LMap = {
             );
         }
         $('#gsqs tbody').html(html);
+        $('.show_map_bands').show();
+        $('.show_map_calls').hide();
 
         $('#gsqs tbody tr').on('click',function() {
             var id = $(this).data('id');
@@ -226,17 +228,23 @@ var LMap = {
 
     drawGridSquareList: (idx, gsq) => {
         let bands = LMap.getUniqueArrayValues(gsq.bands).sort(LMap.sortBands);
-        let calls = LMap.getUniqueArrayValues(gsq.calls);
+        let calls = LMap.getUniqueArrayValues(gsq.calls).sort(LMap.sortCalls);
         let bands_html = '';
         for (let i=0; i<bands.length; i++) {
             bands_html += "<span class='band band" + bands[i] + "'>" + bands[i] + "</span>";
         }
+        let calls_arr = [];
+        for (let i=0; i<calls.length; i++) {
+            calls_arr.push(calls[i]);
+        }
         return "<tr data-id='" + idx + "'>" +
             "<td>" + gsq.gsq +"</td>" +
-            "<td>" + bands_html +"</td>" +
-            "<td class='r'>" + gsq.logs.length +"</td>" +
-            "<td class='r' title='(" + calls.join(' ') + ")'>" + calls.length +"</td>" +
-            "<td class='r'>" + gsq.conf +"</td>" +
+            "<td class='show_map_bands'>" + bands_html + "</td>" +
+            "<td class='show_map_calls'>" + calls_arr.join(', ') + "</td>" +
+            "<td class='r show_map_calls'>" + bands.length + "</td>" +
+            "<td class='r show_map_bands'>" + calls.length + "</td>" +
+            "<td class='r'>" + gsq.logs.length + "</td>" +
+            "<td class='r'>" + gsq.conf + "</td>" +
             "</tr>";
     },
 
@@ -440,10 +448,26 @@ var LMap = {
             layers['qth'].setMap($('#layer_qth').prop('checked') ? LMap.map : null);
             LMap.fitToBox();
         });
+
+        $('#trigger_show_map_bands').click(() => {
+            $('.show_map_calls').hide();
+            $('.show_map_bands').show();
+            return false;
+        });
+
+        $('#trigger_show_map_calls').click(() => {
+            $('.show_map_bands').hide();
+            $('.show_map_calls').show();
+            return false;
+        });
     },
 
-     sortBands: (a,b) => {
+    sortBands: (a,b) => {
         return (parseInt(a) * (a.indexOf('cm') !== -1 ? 1 : 1000)) > (parseInt(b) * (b.indexOf('cm') !== -1 ? 1 : 1000)) ? -1 : 1;
+    },
+
+    sortCalls: (a,b) => {
+        return ((a > b) ? -1 : ((a < b) ? 1 : 0));
     },
 
     sortGrids: (sortField, sortZa) => {

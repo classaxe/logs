@@ -640,3 +640,11 @@ div.scroll div table.results img {
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
 }
+#trigger_show_map_bands,
+#trigger_show_map_calls {
+    text-decoration: underline;
+}
+#trigger_show_map_bands:hover,
+#trigger_show_map_calls:hover {
+    color: #ffff00;
+}
