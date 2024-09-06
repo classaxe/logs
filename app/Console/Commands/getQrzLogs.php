@@ -36,7 +36,7 @@ class getQrzLogs extends Command
                 print "- Skipping inactive user {$user->call}\n";
                 continue;
             }
-            if (!$force && $user->qrz_last_data_pull && !$user->qrz_last_data_pull->addMinutes(Log::MAX_AGE)->isPast()) {
+            if (!$force && $user->qrz_last_data_pull && !$user->qrz_last_data_pull->addMinutes(getEnv('LOGS_MIN_AGE'))->isPast()) {
                 print "- Skipping recently refreshed user {$user->call}\n";
                 continue;
             }

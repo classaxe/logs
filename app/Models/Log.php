@@ -13,7 +13,6 @@ class Log extends Authenticatable
 {
     use HasFactory, Notifiable;
 
-    const MAX_AGE = 60;
     const MAXBATCHINSERT = 250;
 
     const APIURL = "https://logbook.qrz.com/api";
@@ -324,7 +323,7 @@ class Log extends Authenticatable
     {
         if ($user->active && (
             !$user->qrz_last_data_pull
-            || $user->qrz_last_data_pull->addMinutes(self::MAX_AGE)->isPast()
+            || $user->qrz_last_data_pull->addMinutes(getEnv('LOGS_MAX_AGE'))->isPast()
         )) {
             static::getQRZDataForUser($user);
         }
