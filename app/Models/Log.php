@@ -155,8 +155,8 @@ class Log extends Authenticatable
         try {
             $url = self::APIURL . '?KEY=' . $user['qrz_api_key'] . '&ACTION=STATUS';
             $raw = file_get_contents($url);
-            print $url ."\n";
-            print $raw . "\n";
+//            print $url ."\n";
+//            print $raw . "\n";
         } catch (\Exception $e) {
             return false;
         }
