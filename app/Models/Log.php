@@ -155,6 +155,8 @@ class Log extends Authenticatable
         try {
             $url = self::APIURL . '?KEY=' . $user['qrz_api_key'] . '&ACTION=STATUS';
             $raw = file_get_contents($url);
+            print $url ."\n";
+            print $raw . "\n";
         } catch (\Exception $e) {
             return false;
         }
@@ -163,11 +165,6 @@ class Log extends Authenticatable
         foreach ($pairs as $pair) {
             list($key, $value) = explode('=', $pair, 2);
             $status[$key] = $value;
-        }
-        if ($status['CALLSIGN'] !== $user->call) {
-            $user->setAttribute('qrz_last_result', 'Wrong Call for key');
-            $user->save();
-            return false;
         }
         if ($status['RESULT'] === "OK") {
             return $status;
@@ -179,6 +176,11 @@ class Log extends Authenticatable
         }
         if (str_contains($status['REASON'], 'user does not have a valid QRZ subscription')) {
             $user->setAttribute('qrz_last_result', 'Not XML Subscriber');
+            $user->save();
+            return false;
+        }
+        if ($status['CALLSIGN'] !== $user->call) {
+            $user->setAttribute('qrz_last_result', 'Wrong Call for key');
             $user->save();
             return false;
         }
