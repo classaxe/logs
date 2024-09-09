@@ -28,9 +28,13 @@ class ChangesController extends Controller
 
         $changelog = explode("\n", `git log main --pretty=format:"%ad %H %s" --date=short`);
         $commits = [];
+        $first = null;
         foreach ($changelog as &$entry) {
             $bits =     explode(' ', $entry);
             $date =     array_shift($bits);
+            if ($first === null) {
+                $first = $date;
+            }
             $new =      round(
                     $datediff = (time() - strtotime($date)) / (60 * 60 * 24)
                 ) <= static::NEW_DAYS;
@@ -47,6 +51,10 @@ class ChangesController extends Controller
                 . '</li>';
         }
         $changes = str_replace($tweaks[0], $tweaks[1], implode("\n", $commits));
-        return view('changes', ['changes' => $changes]);
+        return view('changes', [
+            'changes' =>    $changes,
+            'count' =>      count($commits),
+            'first' =>      $first
+        ]);
     }
 }
