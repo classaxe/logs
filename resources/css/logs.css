@@ -527,12 +527,18 @@ div.scroll div table.results img {
 }
 .results thead th.sort:hover,
 .results thead th.sorted {
-    border-bottom: 3px solid #FCC247 !important;
+    border-bottom: 3px solid #86fc47 !important;
     background: #665d4b;
     cursor: pointer;
 }
 .results thead th.sorted {
-    color: #ffe4b3;
+    color: #86fc47;
+}
+.results thead th.sorted.desc {
+    border-bottom: 3px solid #ffc0c0 !important;
+}
+.results thead th.sorted.desc {
+    color: #ffc0c0;
 }
 .results thead th b {
     background: #ffffa0;

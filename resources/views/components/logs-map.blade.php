@@ -68,13 +68,13 @@ window.addEventListener("DOMContentLoaded", () => {
                     <table id="gsqs" class="results">
                         <thead>
                         <tr>
-                            <th class="sort sorted" style="width: 3.25em">GSQ</th>
-                            <th class="sort show_map_bands"><a href="#" id="trigger_show_map_calls">Bands<br><i>(Click to show calls)</i></a></th>
-                            <th class="sort show_map_calls"><a href="#" id="trigger_show_map_bands">Calls<br><i>(Click to show bands)</i></a></th>
-                            <th class="sort txt_vertical show_map_calls"><div>Bands</div></th>
-                            <th class="sort txt_vertical show_map_bands"><div>Calls</div></th>
-                            <th class="sort txt_vertical"><div>Logs</div></th>
-                            <th class="sort txt_vertical"><div>Conf</div></th>
+                            <th class="sort sorted" style="width: 3.25em" data-field="gsq">GSQ</th>
+                            <th class="sort show_map_bands" data-field="bands_html"><a href="#" id="trigger_show_map_calls">Bands<br><i>(Click to show calls)</i></a></th>
+                            <th class="sort show_map_calls" data-field="calls_html"><a href="#" id="trigger_show_map_bands">Calls<br><i>(Click to show bands)</i></a></th>
+                            <th class="sort txt_vertical show_map_calls" data-field="bands_count"><div>Bands</div></th>
+                            <th class="sort txt_vertical show_map_bands" data-field="calls_count"><div>Calls</div></th>
+                            <th class="sort txt_vertical" data-field="logs_count"><div>Logs</div></th>
+                            <th class="sort txt_vertical" data-field="conf"><div>Conf</div></th>
                         </tr>
                         </thead>
                         <tbody>

@@ -92,7 +92,11 @@ var frm = {
                     latlon = frm.gsq_deg(gsq);
                     gsqs_tmp[gsq] = {
                         bands: [],
+                        bands_count: 0,
+                        bands_html: '',
                         calls: [],
+                        calls_count: 0,
+                        calls_html: '',
                         conf: '',
                         deg: 0,
                         gsq: gsq,
@@ -100,6 +104,7 @@ var frm = {
                         lat: latlon.lat,
                         lon: latlon.lon,
                         logs: [],
+                        logs_count: 0,
                         marker: null
                     };
                     if (latlon.lat > lat_max) {
@@ -131,6 +136,19 @@ var frm = {
             }
         });
         for (let gsq in gsqs_tmp) {
+            gsqs_tmp[gsq].logs_count = gsqs_tmp[gsq].logs.length;
+            gsqs_tmp[gsq].bands = LMap.getUniqueArrayValues(gsqs_tmp[gsq].bands).sort(LMap.sortBands);
+            gsqs_tmp[gsq].bands_count = gsqs_tmp[gsq].bands.length;
+            for (let i=0; i < gsqs_tmp[gsq].bands.length; i++) {
+                gsqs_tmp[gsq].bands_html += "<span class='band band" + gsqs_tmp[gsq].bands[i] + "'>" + gsqs_tmp[gsq].bands[i] + "</span>";
+            }
+            gsqs_tmp[gsq].calls = LMap.getUniqueArrayValues(gsqs_tmp[gsq].calls).sort(LMap.sortCalls);
+            gsqs_tmp[gsq].calls_count = gsqs_tmp[gsq].calls.length
+            let calls_arr = [];
+            for (let i=0; i <gsqs_tmp[gsq].calls.length; i++) {
+                calls_arr.push(gsqs_tmp[gsq].calls[i]);
+            }
+            gsqs_tmp[gsq].calls_html = calls_arr.join(', ');
             gsqs.push(gsqs_tmp[gsq]);
         }
         LMap.fitToBox();

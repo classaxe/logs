@@ -197,7 +197,10 @@ var LMap = {
             layers.squareLabels[i].setMap(null);
         }
         layers.squareLabels = [];
-        LMap.sortGrids('gsq', false);
+        let sortField = $('#gsqs .sorted').data('field');
+        let sortZa = $('#gsqs .sorted.desc').length;
+        LMap.sortGrids(sortField, sortZa);
+        console.log('sorting by ' + sortField);
         for (i in gsqs) {
             gsqs[i].marker = LMap.drawGridSquare(
                 i,
@@ -205,7 +208,7 @@ var LMap = {
                 LMap.gsq4Bounds(gsqs[i].gsq),
                 gsqs[i].conf === 'Y'
             );
-            html += LMap.drawGridSquareList(
+            html += LMap.drawGridSquareListEntry(
                 i,
                 gsqs[i],
             );
@@ -225,24 +228,14 @@ var LMap = {
         });
     },
 
-    drawGridSquareList: (idx, gsq) => {
-        let bands = LMap.getUniqueArrayValues(gsq.bands).sort(LMap.sortBands);
-        let calls = LMap.getUniqueArrayValues(gsq.calls).sort(LMap.sortCalls);
-        let bands_html = '';
-        for (let i=0; i<bands.length; i++) {
-            bands_html += "<span class='band band" + bands[i] + "'>" + bands[i] + "</span>";
-        }
-        let calls_arr = [];
-        for (let i=0; i<calls.length; i++) {
-            calls_arr.push(calls[i]);
-        }
+    drawGridSquareListEntry: (idx, gsq) => {
         return "<tr data-id='" + idx + "'>" +
             "<td>" + gsq.gsq +"</td>" +
-            "<td class='show_map_bands'>" + bands_html + "</td>" +
-            "<td class='show_map_calls'>" + calls_arr.join(', ') + "</td>" +
-            "<td class='r show_map_calls'>" + bands.length + "</td>" +
-            "<td class='r show_map_bands'>" + calls.length + "</td>" +
-            "<td class='r'>" + gsq.logs.length + "</td>" +
+            "<td class='show_map_bands'>" + gsq.bands_html + "</td>" +
+            "<td class='show_map_calls'>" + gsq.calls_html + "</td>" +
+            "<td class='r show_map_calls'>" + gsq.bands_count + "</td>" +
+            "<td class='r show_map_bands'>" + gsq.calls_count + "</td>" +
+            "<td class='r'>" + gsq.logs_count + "</td>" +
             "<td class='r'>" + gsq.conf + "</td>" +
             "</tr>";
     },
@@ -350,7 +343,7 @@ var LMap = {
         let infoHtml =
             "<div class=\"map_info\">" +"" +
             "<h3>" +
-            "<b>Grid Square <strong>" + data.gsq + "</strong></b> - " + data.logs.length +" logs (Square " + (data.conf === 'Y' ? "is" : "not") + " confirmed)" +
+            "<b>Grid Square <strong>" + data.gsq + "</strong></b> - " + data.logs.length +" logs in date order (Square " + (data.conf === 'Y' ? "is" : "not") + " confirmed)" +
             "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
             "</h3>" +
             "<table class='results'>" +
@@ -460,6 +453,17 @@ var LMap = {
             $('.show_map_bands').hide();
             $('.show_map_calls').show();
             return false;
+        });
+
+        $('#gsqs .sort').click(function() {
+            var $this = $(this);
+            if ($this.hasClass('sorted')) {
+                $this.toggleClass('desc', '');
+            } else {
+                $('#gsqs .sort').removeClass('sorted');
+                $this.addClass('sorted');
+            }
+            LMap.drawGridSquares();
         });
     },
 
