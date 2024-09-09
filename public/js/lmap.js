@@ -7,7 +7,6 @@ var LMap = {
     options : {},
     TxtOverlay: null,
 
-
     init: () => {
         LMap.TxtOverlay =    LMap.initMapsTxtOverlay();
         let latlng = qth.gsq;
@@ -406,12 +405,14 @@ var LMap = {
     },
 
     setActions : () => {
-        var mapDiv = $('#map');
+        let mapDiv = $('#map');
+        let listDiv = $('#scrollablelist');
         $(window).resize(() => {
-            let vspace = ('Y' === COOKIE.get('compact') ? 296 : 430);
+            let vspace = ('Y' === COOKIE.get('compact') ? 296 : 480);
             mapDiv.height($(window).height() - vspace);
-            mapDiv.width($(window).width() - 390);
-            $('#scrollablelist').height(mapDiv.height() + 40);
+            mapDiv.width($(window).width() - 440);
+            listDiv.height(mapDiv.height() + 40);
+            listDiv.width(410);
         })
         .trigger('resize');
 

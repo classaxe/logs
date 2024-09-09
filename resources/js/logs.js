@@ -371,6 +371,7 @@ var frm = {
             $(this).blur();
             COOKIE.set('compact', $(this).val(), '/');
             frm.compact();
+            LMap.fitToBox();
         })
         $('select[name=myQth]').change(function() {
             $(this).blur();
