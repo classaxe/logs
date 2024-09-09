@@ -170,7 +170,7 @@ class Log extends Authenticatable
             return $status;
         }
         if (str_contains($status['REASON'], 'invalid api key')) {
-            $user->setAttribute('qrz_last_result', 'Invalid QRZ API Key');
+            $user->setAttribute('qrz_last_result', 'Invalid QRZ Key');
             $user->save();
             return false;
         }

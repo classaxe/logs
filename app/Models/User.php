@@ -100,7 +100,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function getLastLog(): string
     {
         if ($this['last_log'] === null) {
-            return 'Never';
+            return 'None';
         }
         if (Carbon::parse($this['last_log'])->diffInDays() >= self::RECENTDAYS) {
             return substr($this['last_log'], 0, 16);

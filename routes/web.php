@@ -44,7 +44,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::post('/', [HomeController::class, 'update']
-    )->name('callsigns');
+    )->name('callsign.state');
 });
 
 require __DIR__.'/auth.php';

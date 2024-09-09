@@ -30,11 +30,11 @@
                     <th>Callsign</th>
                     <th>Name</th>
                     <th>Main QTH</th>
-                    <th>QTHs</th>
                     <th>S/P</th>
                     <th>ITU</th>
                     <th>GSQ</th>
                     <th>Logs</th>
+                    <th>QTHs</th>
                     <th>Last Log</th>
                     <th>Last Fetch</th>
                     <th>QRZ</th>
@@ -65,11 +65,11 @@
                 <td><a href="{{ route('logs.page', ['callsign' => $u->call]) }}">{{ $u->call }}</a></td>
                 <td>{{ $u->name }}</td>
                 <td>{{ $u->city }}</td>
-                <td>{{ $u->qth_count }}</td>
                 <td>{{ $u->sp }}</td>
                 <td>{{ $u->itu }} <span class="fi fi-{{ $u->itu }}"></span></td>
                 <td>{{ $u->gsq }}</td>
                 <td class="r">{{ $u->log_count }}</td>
+                <td class="r">{{ $u->qth_count }}</td>
                 <td class="r">{{ $u->getLastLog() }}</td>
                 <td class="r">@if($u->qrz_last_result !== 'OK'){{ $u->qrz_last_result }} @else {{ $u->getLastQrzPull() }} @endif </td>
                 <td><a target="_blank" href="https://www.qrz.com/db/{{ $u->call }}">LINK</a></td>
