@@ -43,12 +43,16 @@ class Log extends Authenticatable
 
     const QTH_SUBSTITUTES = [
         1 => [
-            'Aurora, ON, L4G3N3' =>             'Home:  Sandusky, Aurora',
-            'Aurora, ON, L4G7N8' =>             'Home:  Millcliff, Aurora',
-            'POTA CA-1368' =>                   'POTA:  CA-1368',
+            'FN03GX' => 'Home: Sandusky, Aurora',
+            'FN03GW' => 'Rover: St Johns Church',
+            'FN04GA' => 'Home: Millcliff, Aurora',
+            'FN03FV' => 'POTA: CA-1368',
+            'FN04IH' => 'POTA: CA-0388'
         ],
         3 => [
-
+            'FN85II' => 'Home: Truro, NS',
+            'FN85IJ' => 'Home: Upper Onslow, NS',
+            'FN84EP' => 'Other: Halifax, NS'
         ]
     ];
     /**
@@ -242,12 +246,12 @@ class Log extends Authenticatable
                         break;
                 }
                 $log_gsq =          strtoupper($i['GRIDSQUARE'] ?? '');
-                $qth_gsq =          strtoupper(substr($i['MY_GRIDSQUARE'] ?? $user['gsq'], 0, 6));
+                $my_gsq =           strtoupper(substr($i['MY_GRIDSQUARE'] ?? $user['gsq'], 0, 6));
                 $my_qth =           $i['MY_CITY'] ?? $user['qth'];
-                if (isset(self::QTH_SUBSTITUTES[$user['id']][$my_qth])) {
-                    $my_qth = self::QTH_SUBSTITUTES[$user['id']][$my_qth];
+                if (isset(self::QTH_SUBSTITUTES[$user['id']][$my_gsq])) {
+                    $my_qth = self::QTH_SUBSTITUTES[$user['id']][$my_gsq];
                 }
-                $deg =              Log::getBearing($qth_gsq, $log_gsq);
+                $deg =              Log::getBearing($my_gsq, $log_gsq);
                 $name =             $i['NAME'] ?? '';
                 $name =             (strtoupper($name) === $name ? ucwords(strtolower($name)) : $name);
 
@@ -255,7 +259,7 @@ class Log extends Authenticatable
                     'logNum' =>     0,
                     'userId' =>     $user['id'],
                     'qrzId' =>      $i['APP_QRZLOG_LOGID'],
-                    'myGsq' =>      $qth_gsq,
+                    'myGsq' =>      $my_gsq,
                     'myQth' =>      $my_qth,
                     'date' =>       substr($i['QSO_DATE'], 0, 4) . '-' . substr($i['QSO_DATE'], 4, 2) . '-' . substr($i['QSO_DATE'], 6, 2),
                     'time' =>       substr($i['TIME_ON'], 0, 2) . ':' . substr($i['TIME_ON'], 2, 2),
