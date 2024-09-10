@@ -2,7 +2,8 @@
 @vite([
     'resources/js/logs.js'
 ])
-<script src="/js/lmap.js"></script>
+
+<script src="/js/lmap.js?v={{ exec('git describe --tags') }}"></script>
 <script>
     var callsign = "{{ $user['call'] }}";
     document.body.classList.add("loading");
