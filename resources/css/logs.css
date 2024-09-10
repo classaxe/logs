@@ -388,23 +388,23 @@ th.sortable:hover::after {
     font-size: 10pt;
     display: block;
 }
-.map_info .info-body {
+.map_info {
     padding: 0;
     margin: 2px 0;
-    border: 1px solid #ccc;
 }
-.map_info .info-body tbody {
+.map_info tbody {
     padding: 2px;
     margin: 0;
 }
-.map_info .info-body tbody th {
+.map_info tbody th {
     vertical-align: top;
     padding: 3px;
     font-size: 8pt;
     text-align: left;
     width: 10em;
 }
-.map_info .info-body tbody td {
+.map_info tbody td {
+    white-space: nowrap;
     vertical-align: top;
     padding: 3px;
     font-size: 10pt;
@@ -577,6 +577,10 @@ div.scroll div table.results img {
 }
 .map_info h3 {
     margin-bottom: 0.25em;
+    background: #fff;
+    position: sticky;
+    top: -1px;
+    border: none;
 }
 .map_info #close {
     font-size: 8px;
@@ -594,6 +598,13 @@ div.scroll div table.results img {
     height: 2em !important;
     max-height: 2em !important;
 }
+.map_info .results thead th {
+    position: sticky;
+    top: 16px;
+    border-top: none;
+    border-bottom: none;
+}
+
 .map_info h3:after {
     content: '';
     display: block;

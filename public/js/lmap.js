@@ -188,7 +188,8 @@ var LMap = {
     },
 
     drawGridSquares: () => {
-        let gsq, html= '', i, old;
+        let html= '', i, show_map_calls;
+        show_map_calls = $('.show_map_calls:visible').length;
         for (i in layers.squares) {
             layers.squares[i].setMap(null);
         }
@@ -214,8 +215,13 @@ var LMap = {
             );
         }
         $('#gsqs tbody').html(html);
-        $('.show_map_bands').show();
-        $('.show_map_calls').hide();
+        if (show_map_calls) {
+            $('.show_map_bands').hide();
+            $('.show_map_calls').show();
+        } else {
+            $('.show_map_bands').show();
+            $('.show_map_calls').hide();
+        }
 
         $('#gsqs tbody tr').on('click',function() {
             var id = $(this).data('id');
@@ -462,6 +468,13 @@ var LMap = {
             } else {
                 $('#gsqs .sort').removeClass('sorted');
                 $this.addClass('sorted');
+                switch ($this.data('field')) {
+                    case 'bands_count':
+                    case 'calls_count':
+                    case 'logs_count':
+                        $this.addClass('desc');
+                        break;
+                }
             }
             LMap.drawGridSquares();
         });
