@@ -43,16 +43,16 @@ class Log extends Authenticatable
 
     const QTH_SUBSTITUTES = [
         1 => [
-            'FN03GX' => 'Home: Sandusky, Aurora',
-            'FN03GW' => 'Rover: St Johns Church',
-            'FN04GA' => 'Home: Millcliff, Aurora',
+            'FN03GX' => 'HOME: Sandusky, Aurora',
+            'FN03GW' => 'TEMP: St Johns Church',
+            'FN04GA' => 'HOME: Millcliff, Aurora',
             'FN03FV' => 'POTA: CA-1368',
             'FN04IH' => 'POTA: CA-0388'
         ],
         3 => [
-            'FN85II' => 'Home: Truro, NS',
-            'FN85IJ' => 'Home: Upper Onslow, NS',
-            'FN84EP' => 'Other: Halifax, NS'
+            'FN85II' => 'HOME: Truro, NS',
+            'FN85IJ' => 'HOME: Upper Onslow, NS',
+            'FN84EP' => 'TEMP: Halifax, NS'
         ]
     ];
     /**

@@ -331,6 +331,7 @@ footer a {
 }
 .logs input[type=text],
 .logs select {
+    font-family: "Courier New", monospace;
     font-size: 80%;
     padding: 0.125em 0.5em;
     border-radius: 0.25em;
