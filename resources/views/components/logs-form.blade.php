@@ -1,7 +1,4 @@
 <div class="bands mt-6 text-center">
-    <h1 style="display: inline-block">Showing logs for <a href="{{ url('/logs', ['callsign' => $user['call']]) }}">{{ $user['call'] }}</a></h1>
-    <h2 style="display: inline-block; margin-left: 2em"><strong>{{ $user['name'] }}</strong>, {{ $user['gsq'] }} {{ $user['sp'] }} {{ $user['itu' ]}}</h2>
-    <h3 style="display: inline-block; margin-left: 2em"><span id="logCount">Showing all <b>{{ $user['log_count']}}</b> logs</span> (updated: <span id="logUpdated">{{ $user->getLastQrzPull() }}</span>)</h3><br>
     <fieldset class="logs prevent-select">
         <div class="group">
             <label class="b" title="Hold the SHIFT key while you click to select just that one band" style="cursor: help">
@@ -17,6 +14,7 @@
             @endforeach
             <label><input type="checkbox" checked class="bandsAll"> All</label>
         </div><br>
+
         <div class="group">
             <label class="b" title="Hold the SHIFT key while you click to select just that one mode" style="cursor: help">
                 <span>&#9432;</span>
@@ -33,18 +31,7 @@
             <label><input type="radio" id="conf_N" name="conf" value="N">N</label>
             <label><input type="radio" id="conf_All" name="conf" value="" checked="checked">All</label>
         </div><br>
-        @if(count($qths) > 1)
-        <div class="group">
-            <label class="b">My QTH
-                <select name="myQth">
-                    <option></option>
-                    @foreach($qths as $label => $count)
-                        <option value="{{ $label }}">{{ $label }}</option>
-                    @endforeach
-                </select>
-            </label>
-        </div>
-        @endif
+
         <div class="group">
             <label class="b">Call:
                 <input type="text" name="call" size="8" value="">
@@ -70,7 +57,20 @@
                 <input type="text" name="gsq" size="4" maxlength="4">
             </label>
         </div><br>
-        <div class="group">
+
+        @if(count($qths) > 1)
+            <div class="group">
+                <label class="b">My QTH
+                    <select name="myQth">
+                        <option></option>
+                        @foreach($qths as $label => $count)
+                            <option value="{{ $label }}">{{ $label }}</option>
+                        @endforeach
+                    </select>
+                </label>
+            </div>
+        @endif
+        <div class="group" style="margin: 0 1em">
             <label class="b">Sort By
                 <select name="sortField" style="width: 10em">
                     @foreach($columns as $field => $conf)
@@ -80,7 +80,7 @@
             </label>
             <label><input type="checkbox" name="sortZA" value="1" checked="checked"> Z-A</label>
         </div>
-        <div class="group" style="margin: 0 2em">
+        <div class="group" style="margin: 0 1em">
             <label class="b">Compact View:</label>
             <label><input type="radio" id="compact_Y" name="compact" value="Y">Y</label>
             <label><input type="radio" id="compact_N" name="compact" value="N">N</label>

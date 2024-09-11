@@ -407,7 +407,7 @@ var LMap = {
         let mapDiv = $('#map');
         let listDiv = $('#scrollablelist');
         $(window).resize(() => {
-            let vspace = ($('main').hasClass('compact') ? 296 : 480);
+            let vspace = ($('main').hasClass('compact') ? 270 : 420);
             mapDiv.height($(window).height() - vspace);
             mapDiv.width($(window).width() - 440);
             listDiv.height(mapDiv.height() + 40);
