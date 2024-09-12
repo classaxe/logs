@@ -33,6 +33,12 @@
         </div><br>
 
         <div class="group">
+            <div class="group" style="margin-right: 1em">
+                <label class="b">Dates:
+                    <input type="text" name="dateFrom" size="10" maxlength="10" value="{{ substr($user->first_log, 0, 10) }}"> -
+                    <input type="text" name="dateTo" size="10" maxlength="10" value="{{ substr($user->last_log, 0, 10) }}">
+                </label>
+            </div>
             <label class="b">Call:
                 <input type="text" name="call" size="8" value="">
             </label>

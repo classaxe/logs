@@ -308,9 +308,11 @@ class Log extends Authenticatable
                     Log::insert($chunk);
                 }
 
+                $first = Log::where('userId','=',$user->id)->orderBy('date', 'asc')->orderBy('time', 'asc')->first();
                 $last = Log::where('userId','=',$user->id)->orderBy('date', 'desc')->orderBy('time', 'desc')->first();
                 $user->setAttribute('qrz_last_result', 'OK');
                 $user->setAttribute('qrz_last_data_pull', time());
+                $user->setAttribute('first_log', $first->date . ' ' . $first->time);
                 $user->setAttribute('last_log', $last->date . ' ' . $last->time);
                 $user->setAttribute('log_count', count($items));
                 $user->setAttribute('qth_count', count(array_keys($qths)));

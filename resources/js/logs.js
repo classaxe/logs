@@ -4,6 +4,8 @@ var filters = {
     conf: '',
     cont: '',
     call: '',
+    dateFrom: '',
+    dateTo: '',
     myQth: '',
     sp: '',
     itu: '',
@@ -67,13 +69,15 @@ var frm = {
         $('.mode input:checked').each(function () {
             filters.modes.push($(this).data('mode'));
         });
-        filters.conf =  $('input[name=conf]:checked').val();
-        filters.myQth = $('select[name=myQth]').val();
-        filters.call =  $('input[name=call]').val();
-        filters.sp =    $('input[name=sp]').val();
-        filters.itu =   $('input[name=itu]').val().replace(' ','');
-        filters.cont =  $('select[name=cont]').val();
-        filters.gsq =   $('input[name=gsq]').val();
+        filters.conf =      $('input[name=conf]:checked').val();
+        filters.myQth =     $('select[name=myQth]').val();
+        filters.call =      $('input[name=call]').val();
+        filters.dateFrom =  $('input[name=dateFrom]').val();
+        filters.dateTo =    $('input[name=dateTo]').val();
+        filters.sp =        $('input[name=sp]').val();
+        filters.itu =       $('input[name=itu]').val().replace(' ','');
+        filters.cont =      $('select[name=cont]').val();
+        filters.gsq =       $('input[name=gsq]').val();
     },
 
     getGridSquares: ()  => {
@@ -221,6 +225,12 @@ var frm = {
             return false;
         }
         if (filters.call.length && filters.call.toLowerCase() !== log.call.toLowerCase().substring(0, filters.call.length)) {
+            return false;
+        }
+        if (filters.dateFrom.length && filters.dateFrom > log.date.substring(0, filters.dateFrom.length)) {
+            return false;
+        }
+        if (filters.dateTo.length && filters.dateTo < log.date.substring(0, filters.dateTo.length)) {
             return false;
         }
         if (filters.myQth && filters.myQth.length && filters.myQth !== log.myQth) {
@@ -391,8 +401,10 @@ var frm = {
             frm.compact();
             LMap.fitToBox();
         })
-        $('select[name=myQth]').change(function() {
-            $(this).blur();
+        $('input[name=dateFrom]').change(function() {
+            frm.update();
+        });
+        $('input[name=dateTo]').change(function() {
             frm.update();
         });
         $('input[name=call]').keyup(function() {
@@ -409,6 +421,10 @@ var frm = {
             frm.update();
         });
         $('input[name=gsq]').keyup(function() {
+            frm.update();
+        });
+        $('select[name=myQth]').change(function() {
+            $(this).blur();
             frm.update();
         });
         $('select[name=sortField]').change(function() {

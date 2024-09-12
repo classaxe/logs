@@ -35,6 +35,7 @@
                     <th>GSQ</th>
                     <th>Logs</th>
                     <th>QTHs</th>
+                    <th>First Log</th>
                     <th>Last Log</th>
                     <th>Last Fetch</th>
                     <th>QRZ</th>
@@ -70,7 +71,8 @@
                 <td>{{ $u->gsq }}</td>
                 <td class="r">{{ $u->log_count }}</td>
                 <td class="r">{{ $u->qth_count }}</td>
-                <td class="r">{{ $u->getLastLog() }}</td>
+                <td class="r">{{ substr($u->first_log, 0, 10) }}</td>
+                <td class="r">{{ substr($u->last_log, 0, 10) }}</td>
                 <td class="r">@if($u->qrz_last_result !== 'OK'){{ $u->qrz_last_result }} @else {{ $u->getLastQrzPull() }} @endif </td>
                 <td><a target="_blank" href="https://www.qrz.com/db/{{ $u->call }}">LINK</a></td>
                 @if(Auth::user() && Auth::user()->admin)
