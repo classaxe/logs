@@ -55,6 +55,11 @@ class Log extends Authenticatable
             'FN84EP' => 'TEMP: Halifax, NS'
         ]
     ];
+    const GSQ_SUBSTITUTES = [
+        3 => [
+            'VK0IR' => 'MD66' // Heard Island operator who placed wrong GSQ in Antarctica mainland
+        ]
+    ];
     /**
      * The attributes that are mass assignable.
      *
@@ -246,6 +251,9 @@ class Log extends Authenticatable
                         break;
                 }
                 $log_gsq =          strtoupper($i['GRIDSQUARE'] ?? '');
+                if (isset(self::GSQ_SUBSTITUTES[$user['id']][$i['CALL']])) {
+                    $log_gsq = self::GSQ_SUBSTITUTES[$user['id']][$i['CALL']];
+                }
                 $my_gsq =           strtoupper(substr($i['MY_GRIDSQUARE'] ?? $user['gsq'], 0, 6));
                 $my_qth =           $i['MY_CITY'] ?? $user['qth'];
                 if (isset(self::QTH_SUBSTITUTES[$user['id']][$my_gsq])) {
