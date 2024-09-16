@@ -24,6 +24,7 @@ class ProfileUpdateRequest extends FormRequest
             'sp' => ['required', 'string', 'max:2'],
             'itu' => ['required', 'string', 'max:3'],
             'gsq' => ['required', 'string', 'max:8'],
+            'qth_names' => ['string'],
             'qrz_api_key' => ['required', 'string', 'min:19, max:19'],
         ];
     }

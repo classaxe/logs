@@ -34,6 +34,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'call',
         'qrz_api_key',
         'qrz_last_data_pull',
+        'qth_names',
         'is_visible',
         'log_count'
     ];
@@ -89,11 +90,12 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         $user = static::getUserByCallsign($callsign);
         return [
-            'bands' =>  Log::getBandsForUserId($user['id']),
-            'modes' =>  Log::getModesForUserId($user['id']),
-            'gsqs' =>   Log::getGsqsForUserId($user['id']),
-            'qths' =>   Log::getQthsForUserId($user['id']),
-            'user' =>   $user
+            'bands' =>      Log::getBandsForUserId($user['id']),
+            'modes' =>      Log::getModesForUserId($user['id']),
+            'gsqs' =>       Log::getGsqsForUserId($user['id']),
+            'qths' =>       Log::getQthsForUserId($user['id']),
+            'qth_names' =>  $user['qth_names'],
+            'user' =>       $user
         ];
     }
 

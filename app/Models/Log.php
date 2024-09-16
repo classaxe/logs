@@ -224,6 +224,16 @@ class Log extends Authenticatable
         $adif = new adif(trim('<EOH>' . $data));
         $qrzItems = $adif->parser();
         $items = [];
+        $qthNames = [];
+        if ($user['qth_names']) {
+            $qthNamesTemp =     explode("\r\n", $user['qth_names']);
+            foreach ($qthNamesTemp as $qthName) {
+                $bits = explode('=', $qthName);
+                if (isset($bits[1])) {
+                    $qthNames[trim($bits[0])] = trim($bits[1]);
+                }
+            }
+        }
         foreach ($qrzItems as $i) {
             if (!isset($i['APP_QRZLOG_LOGID'])) {
                 continue;
@@ -254,10 +264,13 @@ class Log extends Authenticatable
                 if (isset(self::GSQ_SUBSTITUTES[$user['id']][$i['CALL']])) {
                     $log_gsq = self::GSQ_SUBSTITUTES[$user['id']][$i['CALL']];
                 }
-                $my_gsq =           strtoupper(substr($i['MY_GRIDSQUARE'] ?? $user['gsq'], 0, 6));
+                $my_gsq =           trim(strtoupper(substr($i['MY_GRIDSQUARE'] ?? $user['gsq'], 0, 6)));
                 $my_qth =           $i['MY_CITY'] ?? $user['qth'];
-                if (isset(self::QTH_SUBSTITUTES[$user['id']][$my_gsq])) {
-                    $my_qth = self::QTH_SUBSTITUTES[$user['id']][$my_gsq];
+                if (isset($qthNamesTemp[$my_gsq])) {
+                    $my_qth = $qthNamesTemp[$my_gsq][$my_gsq];
+                }
+                if ($my_gsq && !isset($qthNames[$my_gsq])) {
+                    $qthNames[$my_gsq] = $my_gsq . " = " . $my_qth;
                 }
                 $deg =              Log::getBearing($my_gsq, $log_gsq);
                 $name =             $i['NAME'] ?? '';
@@ -318,12 +331,17 @@ class Log extends Authenticatable
 
                 $first = Log::where('userId','=',$user->id)->orderBy('date', 'asc')->orderBy('time', 'asc')->first();
                 $last = Log::where('userId','=',$user->id)->orderBy('date', 'desc')->orderBy('time', 'desc')->first();
+
+                dd($qthNames);
+                $qthNames = array_values($qthNames);
+                sort($qthNames);
                 $user->setAttribute('qrz_last_result', 'OK');
                 $user->setAttribute('qrz_last_data_pull', time());
                 $user->setAttribute('first_log', $first->date . ' ' . $first->time);
                 $user->setAttribute('last_log', $last->date . ' ' . $last->time);
                 $user->setAttribute('log_count', count($items));
                 $user->setAttribute('qth_count', count(array_keys($qths)));
+                $user->setAttribute('qth_names', implode("\r\n", $qthNames));
                 $user->save();
                 return true;
             } catch (\Exception $e) {

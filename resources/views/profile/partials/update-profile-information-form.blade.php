@@ -18,14 +18,14 @@
         @method('patch')
 
         <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" name="name" type="text" class="mt-1 block w-full" :value="old('name', $user->name)" required autofocus autocomplete="name" />
+            <x-input-label for="name" class="w-3/12 inline-block" :value="__('Name')" />
+            <x-text-input id="name" name="name" type="text" class="mt-1 w-8/12" :value="old('name', $user->name)" required autofocus autocomplete="name" />
             <x-input-error class="mt-2" :messages="$errors->get('name')" />
         </div>
 
         <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" name="email" type="email" class="mt-1 block w-full" :value="old('email', $user->email)" required autocomplete="username" />
+            <x-input-label for="email" class="w-3/12 inline-block" :value="__('Email')" />
+            <x-text-input id="email" name="email" type="email" class="mt-1 w-8/12" :value="old('email', $user->email)" required autocomplete="username" />
             <x-input-error class="mt-2" :messages="$errors->get('email')" />
 
             @if ($user instanceof \Illuminate\Contracts\Auth\MustVerifyEmail && ! $user->hasVerifiedEmail())
@@ -48,40 +48,46 @@
         </div>
 
         <div>
-            <x-input-label for="call" :value="__('Callsign')" />
-            <x-text-input id="call" name="call" type="text" class="mt-1 block w-full" :value="old('call', $user->call)" required autofocus autocomplete="callsign" />
+            <x-input-label for="call" class="w-3/12 inline-block" :value="__('Callsign')" />
+            <x-text-input id="call" name="call" type="text" class="mt-1 w-8/12" :value="old('call', $user->call)" required autofocus autocomplete="callsign" />
             <x-input-error class="mt-2" :messages="$errors->get('call')" />
         </div>
 
         <div>
-            <x-input-label for="qth" :value="__('Address')" />
-            <x-text-input id="qth" name="qth" type="text" class="mt-1 block w-full" :value="old('qth', $user->qth)" required autofocus autocomplete="qth" />
+            <x-input-label for="qth" class="w-3/12 inline-block" :value="__('Address')" />
+            <x-text-input id="qth" name="qth" type="text" class="mt-1 w-8/12" :value="old('qth', $user->qth)" required autofocus autocomplete="qth" />
             <x-input-error class="mt-2" :messages="$errors->get('qth')" />
         </div>
 
         <div>
-            <x-input-label for="city" :value="__('Town / City')" />
-            <x-text-input id="city" name="city" type="text" class="mt-1 block w-full" :value="old('city', $user->city)" required autofocus autocomplete="city" />
+            <x-input-label for="city" class="w-3/12 inline-block" :value="__('Town / City')" />
+            <x-text-input id="city" name="city" type="text" class="mt-1 w-8/12" :value="old('city', $user->city)" required autofocus autocomplete="city" />
             <x-input-error class="mt-2" :messages="$errors->get('city')" />
         </div>
 
         <div>
-            <x-input-label for="sp" :value="__('State / Province')" />
-            <x-text-input id="sp" name="sp" type="text" class="mt-1 block w-full" :value="old('sp', $user->sp)" required autofocus autocomplete="sp" />
+            <x-input-label for="sp" class="w-3/12 inline-block" :value="__('State / Province')" />
+            <x-text-input id="sp" name="sp" type="text" class="mt-1 w-8/12" :value="old('sp', $user->sp)" required autofocus autocomplete="sp" />
             <x-input-error class="mt-2" :messages="$errors->get('sp')" />
         </div>
 
         <div>
-            <x-input-label for="itu" :value="__('Country')" />
-            <x-text-input id="itu" name="itu" type="text" class="mt-1 block w-full" :value="old('sp', $user->itu)" required autofocus autocomplete="itu" />
+            <x-input-label for="itu" class="w-3/12 inline-block" :value="__('Country')" />
+            <x-text-input id="itu" name="itu" type="text" class="mt-1 w-8/12" :value="old('sp', $user->itu)" required autofocus autocomplete="itu" />
             <x-input-error class="mt-2" :messages="$errors->get('itu')" />
         </div>
 
         <!-- Gridsquare -->
         <div class="mt-4">
-            <x-input-label for="gsq" :value="__('Gridsquare  (Format: AB12cd)')" />
-            <x-text-input id="gsq" class="block mt-1 w-full" type="text" name="gsq" :value="old('gsq', $user->gsq)" required autocomplete="gsq" />
+            <x-input-label for="gsq" class="w-3/12 inline-block" :value="__('Gridsquare (Format: AB12cd)')" />
+            <x-text-input id="gsq" class="mt-1 w-8/12" type="text" name="gsq" :value="old('gsq', $user->gsq)" required autocomplete="gsq" />
             <x-input-error :messages="$errors->get('gsq')" class="mt-2" />
+        </div>
+
+        <div class="mt-4">
+            <x-input-label for="qth_names" :value="__('Log QTHs - (GSQ = Name)')" />
+            <x-textarea id="qth_names" rows="8" class="font-mono block mt-1 w-full" name="qth_names" :value="old('qth_names', $user->qth_names)" autocomplete="qth_names" />
+            <x-input-error :messages="$errors->get('qth_names')" class="mt-2" />
         </div>
 
         <!-- QRZ API Key -->
