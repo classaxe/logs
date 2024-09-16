@@ -40,21 +40,6 @@ class Log extends Authenticatable
         'deg' =>        ['lbl' =>   'Deg',          'class' => 'r not-compact'],
         'conf' =>       ['lbl' =>   'Conf',         'class' => 'r']
     ];
-
-    const QTH_SUBSTITUTES = [
-        1 => [
-            'FN03GX' => 'HOME: Sandusky, Aurora',
-            'FN03GW' => 'TEMP: St Johns Church',
-            'FN04GA' => 'HOME: Millcliff, Aurora',
-            'FN03FV' => 'POTA: CA-1368',
-            'FN04IH' => 'POTA: CA-0388'
-        ],
-        3 => [
-            'FN85II' => 'HOME: Truro, NS',
-            'FN85IJ' => 'HOME: Upper Onslow, NS',
-            'FN84EP' => 'TEMP: Halifax, NS'
-        ]
-    ];
     const GSQ_SUBSTITUTES = [
         3 => [
             'VK0IR' => 'MD66' // Heard Island operator who placed wrong GSQ in Antarctica mainland

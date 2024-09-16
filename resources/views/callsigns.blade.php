@@ -29,6 +29,10 @@
                 <tr>
                     <th>Callsign</th>
                     <th>Name</th>
+                    @if(Auth::user() && Auth::user()->admin)
+                        <th>Email</th>
+                        <th>Email Verified</th>
+                    @endif
                     <th>Main QTH</th>
                     <th>S/P</th>
                     <th>ITU</th>
@@ -65,6 +69,10 @@
             >
                 <td><a href="{{ route('logs.page', ['callsign' => $u->call]) }}">{{ $u->call }}</a></td>
                 <td>{{ $u->name }}</td>
+                @if(Auth::user() && Auth::user()->admin)
+                    <td>{{ $u->email }}</td>
+                    <td>{{ $u->email_verified_at }}</td>
+                @endif
                 <td>{{ $u->city }}</td>
                 <td>{{ $u->sp }}</td>
                 <td>{{ $u->itu }} <span class="fi fi-{{ $u->itu }}"></span></td>
