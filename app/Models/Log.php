@@ -205,6 +205,16 @@ class Log extends Authenticatable
         if (!$status) {
             return;
         }
+        $qthNames = [];
+        if ($user['qth_names']) {
+            $qthNamesTemp =     explode("\r\n", $user['qth_names']);
+            foreach ($qthNamesTemp as $qthName) {
+                $bits = explode('=', $qthName);
+                if (isset($bits[1])) {
+                    $qthNames[trim($bits[0])] = trim($bits[1]);
+                }
+            }
+        }
         // https://logbook.qrz.com/api?KEY=YOURQRZAPIKEY&ACTION=FETCH&OPTION=MODSINCE:2024-08-18
         try {
             $url = self::APIURL . '?KEY=' . $user['qrz_api_key'] . '&ACTION=FETCH&OPTION=ALL';
@@ -224,16 +234,6 @@ class Log extends Authenticatable
         $adif = new adif(trim('<EOH>' . $data));
         $qrzItems = $adif->parser();
         $items = [];
-        $qthNames = [];
-        if ($user['qth_names']) {
-            $qthNamesTemp =     explode("\r\n", $user['qth_names']);
-            foreach ($qthNamesTemp as $qthName) {
-                $bits = explode('=', $qthName);
-                if (isset($bits[1])) {
-                    $qthNames[trim($bits[0])] = trim($bits[1]);
-                }
-            }
-        }
         foreach ($qrzItems as $i) {
             if (!isset($i['APP_QRZLOG_LOGID'])) {
                 continue;
@@ -264,13 +264,10 @@ class Log extends Authenticatable
                 if (isset(self::GSQ_SUBSTITUTES[$user['id']][$i['CALL']])) {
                     $log_gsq = self::GSQ_SUBSTITUTES[$user['id']][$i['CALL']];
                 }
-                $my_gsq =           trim(strtoupper(substr($i['MY_GRIDSQUARE'] ?? $user['gsq'], 0, 6)));
+                $my_gsq =           strtoupper(substr($i['MY_GRIDSQUARE'] ?? $user['gsq'], 0, 6));
                 $my_qth =           $i['MY_CITY'] ?? $user['qth'];
-                if (isset($qthNamesTemp[$my_gsq])) {
-                    $my_qth = $qthNamesTemp[$my_gsq][$my_gsq];
-                }
-                if ($my_gsq && !isset($qthNames[$my_gsq])) {
-                    $qthNames[$my_gsq] = $my_gsq . " = " . $my_qth;
+                if (isset($qthNames[$my_gsq])) {
+                    $my_qth = $qthNames[$my_gsq];
                 }
                 $deg =              Log::getBearing($my_gsq, $log_gsq);
                 $name =             $i['NAME'] ?? '';
@@ -331,17 +328,24 @@ class Log extends Authenticatable
 
                 $first = Log::where('userId','=',$user->id)->orderBy('date', 'asc')->orderBy('time', 'asc')->first();
                 $last = Log::where('userId','=',$user->id)->orderBy('date', 'desc')->orderBy('time', 'desc')->first();
+                $qthsForUser = Log::getLogQthsForUser($user->id);
+                $qthNames = implode(
+                    "\r\n",
+                    array_map(
+                        function ($item) {
+                            return $item['myGsq'] . ' = ' .$item['myQth'];
+                        },
+                        $qthsForUser
+                    )
+                );
 
-                dd($qthNames);
-                $qthNames = array_values($qthNames);
-                sort($qthNames);
                 $user->setAttribute('qrz_last_result', 'OK');
                 $user->setAttribute('qrz_last_data_pull', time());
                 $user->setAttribute('first_log', $first->date . ' ' . $first->time);
                 $user->setAttribute('last_log', $last->date . ' ' . $last->time);
                 $user->setAttribute('log_count', count($items));
                 $user->setAttribute('qth_count', count(array_keys($qths)));
-                $user->setAttribute('qth_names', implode("\r\n", $qthNames));
+                $user->setAttribute('qth_names', $qthNames);
                 $user->save();
                 return true;
             } catch (\Exception $e) {
@@ -362,6 +366,21 @@ class Log extends Authenticatable
             static::getQRZDataForUser($user);
         }
         return Log::getDBLogsForUserId($user->id);
+    }
+
+    public static function getLogQthsForUser($userId): array
+    {
+        return
+            Log::Select(
+                'logs.myGsq',
+                'logs.myQth'
+            )
+            ->groupBy('myGsq','myQth')
+            ->where('userId', $userId)
+            ->orderBy('myGsq', 'asc')
+            ->orderBy('myQth', 'asc')
+            ->get()
+            ->toArray();
     }
 
     public static function getBandsForUserId($userId): array

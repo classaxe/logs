@@ -335,6 +335,10 @@ footer a {
     padding: 0.125em 0.5em;
     border-radius: 0.25em;
 }
+.logs select {
+    padding: 0.125em 2em 0.125em 0.5em !important;
+}
+
 /* Table sort indicators */
 
 th.sortable {
