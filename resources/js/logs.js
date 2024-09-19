@@ -447,6 +447,7 @@ var frm = {
             $('input[name=itu]').val('');
             $('select[name=cont]').val('');
             $('input[name=gsq]').val('');
+            $('select[name=myQth]').val('');
             $('select[name=sortField]').val('logNum');
             $('input[name=sortZA]').prop('checked', 'checked');
             $('.sortable').removeClass('asc').removeClass('desc');
