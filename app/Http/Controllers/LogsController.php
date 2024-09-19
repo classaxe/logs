@@ -33,7 +33,7 @@ class LogsController extends Controller
         if (Log::getQRZDataForUser(Auth::user())) {
             return redirect()->route('logs.page', ['callsign' => Auth::user()->call]);
         }
-        return redirect()->route('callsigns')->with('status', '<b>Error:</b><br>' . Auth::user()->qrz_last_result);
+        return redirect()->route('home')->with('status', '<b>Error:</b><br>' . Auth::user()->qrz_last_result);
     }
 
     public static function logsPage(string $callsign)

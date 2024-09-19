@@ -1,7 +1,7 @@
 <x-app-layout>
 @if(Auth::user() && Auth::user()->admin)
     @vite([ 'resources/js/callsigns.js'])
-    <form id="form" method="POST">
+    <form id="form" method="POST" action="/user/patch">
         @csrf
         <input type="hidden" name="action" value="">
         <input type="hidden" name="target" value="">
@@ -27,6 +27,9 @@
         <table class="list">
             <thead>
                 <tr>
+                    @if(Auth::user() && Auth::user()->admin)
+                        <th>&nbsp</th>
+                    @endif
                     <th>Callsign</th>
                     <th>Name</th>
                     @if(Auth::user() && Auth::user()->admin)
@@ -67,6 +70,9 @@
                     title="This log is not actively maintained"
                 @endif
             >
+                @if(Auth::user() && Auth::user()->admin)
+                    <td><a href="{{ route('user.edit', ['id' => $u->id]) }}">Edit</a></td>
+                @endif
                 <td><a href="{{ route('logs.page', ['callsign' => $u->call]) }}">{{ $u->call }}</a></td>
                 <td>{{ $u->name }}</td>
                 @if(Auth::user() && Auth::user()->admin)

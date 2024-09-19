@@ -16,9 +16,17 @@ class UserUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'target' => ['required', 'int'],
-            'action' => ['required', 'string'],
-            'value' => ['required', 'int'],
+            'id' => ['required', 'integer', Rule::exists(User::class, 'id')],
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->id)],
+            'call' => ['required', 'string', 'max:12'],
+            'qth' => ['required', 'string', 'max:40'],
+            'city' => ['required', 'string', 'max:40'],
+            'sp' => ['nullable', 'string', 'max:2'],
+            'itu' => ['required', 'string', 'size:3'],
+            'gsq' => ['required', 'string', 'max:8'],
+            'qth_names' => ['nullable', 'string'],
+            'qrz_api_key' => ['required', 'string', 'min:19, max:19'],
         ];
     }
 }

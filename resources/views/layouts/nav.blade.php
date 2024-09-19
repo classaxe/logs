@@ -1,5 +1,5 @@
 <nav>
-    <a href="{{ route('callsigns') }}"{{ Route::currentRouteName() === 'callsigns' ? "class=is-active" : '' }}>Home</a>
+    <a href="{{ route('home') }}"{{ Route::currentRouteName() === 'home' ? "class=is-active" : '' }}>Home</a>
     @auth
         <a href="{{ route('profile.edit') }}"{{
             Route::currentRouteName() === 'profile.edit' ? "class=is-active" : ''

@@ -4,6 +4,7 @@ use App\Http\Controllers\ChangesController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LogsController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,24 +18,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [HomeController::class, 'callsigns']
-)->name('callsigns');
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/changes', [ChangesController::class, 'index'])->name('changes');
 
-Route::get('/changes', [ChangesController::class, 'index']
-)->name('changes');
+Route::get('/logs/fetch', [LogsController::class, 'logsFetch'])->middleware(['auth', 'verified'])->name('logs.fetch');
 
-Route::get('/logs/fetch', [LogsController::class, 'logsFetch']
-)->middleware(['auth', 'verified'])->name('logs.fetch');
+Route::get('/logs/{callsign}', [LogsController::class, 'logsPage'])->name('logs.page');
 
-Route::get('/logs/{callsign}', [LogsController::class, 'logsPage']
-)->name('logs.page');
+Route::get('/logs/{callsign}/logs', [LogsController::class, 'logs'])->name('logs');
 
-Route::get('/logs/{callsign}/logs', [LogsController::class, 'logs']
-)->name('logs');
-
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', function () { return view('dashboard'); })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -43,8 +36,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
-    Route::post('/', [HomeController::class, 'update']
-    )->name('callsign.state');
+    Route::get('/user/{id}', [UserController::class, 'edit'])->name('user.edit');
+    Route::patch('/user/update', [UserController::class, 'update'])->name('user.update');
+    Route::post('/user/patch', [UserController::class, 'patch'])->name('user.patch');
 });
 
 require __DIR__.'/auth.php';
