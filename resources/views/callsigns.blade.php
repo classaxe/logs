@@ -27,9 +27,6 @@
         <table class="list">
             <thead>
                 <tr>
-                    @if(Auth::user() && Auth::user()->admin)
-                        <th>&nbsp</th>
-                    @endif
                     <th>Callsign</th>
                     <th>Name</th>
                     @if(Auth::user() && Auth::user()->admin)
@@ -70,11 +67,14 @@
                     title="This log is not actively maintained"
                 @endif
             >
-                @if(Auth::user() && Auth::user()->admin)
-                    <td><a href="{{ route('user.edit', ['id' => $u->id]) }}">Edit</a></td>
-                @endif
-                <td><a href="{{ route('logs.page', ['callsign' => $u->call]) }}">{{ $u->call }}</a></td>
-                <td>{{ $u->name }}</td>
+                <td><a href="{{ route('logs.page', ['callsign' => $u->call]) }}" title="View Logbook">{{ $u->call }}</a></td>
+                <td>
+                    @if(Auth::user() && Auth::user()->admin)
+                        <a href="{{ route('user.edit', ['id' => $u->id]) }}" title="Edit User Profile">{{ $u->name }}</a>
+                    @else
+                        {{ $u->name }}
+                    @endif
+                </td>
                 @if(Auth::user() && Auth::user()->admin)
                     <td>{{ $u->email }}</td>
                     <td>{{ $u->email_verified_at }}</td>
