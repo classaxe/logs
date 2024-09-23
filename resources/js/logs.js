@@ -359,6 +359,9 @@ var frm = {
             $('input#compact_Y').prop('checked','checked') :
             $('input#compact_N').prop('checked','checked')
         );
+        if (typeof presets.myQth === 'string') {
+            $('select[name=myQth]').val(presets.myQth);
+        }
         $('input[name=band]').click(function(e) {
             if (e.shiftKey) {
                 $('input[name=band]').prop('checked', false);

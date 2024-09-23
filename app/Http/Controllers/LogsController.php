@@ -39,7 +39,7 @@ class LogsController extends Controller
     public static function logsPage(string $callsign)
     {
         $data = User::getUserDataByCallsign($callsign);
-        return view('logs', [
+        return view('logs/logs', [
             'bands' =>      $data['bands'],
             'columns' =>    Log::COLUMNS,
             'gsqs' =>       $data['gsqs'],
