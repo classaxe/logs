@@ -4,18 +4,16 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Adif\adif;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class Log extends Authenticatable
 {
     use HasFactory, Notifiable;
-
-    const MAXBATCHINSERT = 250;
-
-    const APIURL = "https://logbook.qrz.com/api";
 
     const COLUMNS = [
         'logNum' =>     ['lbl' =>   'Log',          'class' => ''],
@@ -144,13 +142,18 @@ class Log extends Authenticatable
         return $deg;
     }
 
+    private static function getQRZEndpoint($apikey, $action, $option = null) {
+        if ($option) {
+            return sprintf("https://logbook.qrz.com/api?KEY=%s&ACTION=%s&OPTION=%s", $apikey, $action, $option);
+        }
+        return sprintf("https://logbook.qrz.com/api?KEY=%s&ACTION=%s", $apikey, $action);
+    }
+
     public static function getQRZStatusForUser(User $user)
     {
         try {
-            $url = self::APIURL . '?KEY=' . $user['qrz_api_key'] . '&ACTION=STATUS';
+            $url = static::getQRZEndpoint($user['qrz_api_key'], 'STATUS');
             $raw = file_get_contents($url);
-//            print $url ."\n";
-//            print $raw . "\n";
         } catch (\Exception $e) {
             return false;
         }
@@ -202,7 +205,12 @@ class Log extends Authenticatable
         }
         // https://logbook.qrz.com/api?KEY=YOURQRZAPIKEY&ACTION=FETCH&OPTION=MODSINCE:2024-08-18
         try {
-            $url = self::APIURL . '?KEY=' . $user['qrz_api_key'] . '&ACTION=FETCH&OPTION=ALL';
+            if ($user['qrz_last_data_pull']) {
+                $dateFrom = Carbon::parse($user['qrz_last_data_pull'])->subDay(1)->format('Y-m-d');
+                $url = static::getQRZEndpoint($user['qrz_api_key'], 'FETCH', 'MODSINCE:' . $dateFrom);
+            } else {
+                $url = static::getQRZEndpoint($user['qrz_api_key'], 'FETCH', 'ALL');
+            }
             $raw = file_get_contents($url);
         } catch (\Exception $e) {
             $user->setAttribute('qrz_last_result', 'Server Error - ' . substr($e->getMessage(), 0, 240));
@@ -259,7 +267,6 @@ class Log extends Authenticatable
                 $name =             (strtoupper($name) === $name ? ucwords(strtolower($name)) : $name);
 
                 $items[] = [
-                    'logNum' =>     0,
                     'userId' =>     $user['id'],
                     'qrzId' =>      $i['APP_QRZLOG_LOGID'],
                     'myGsq' =>      $my_gsq,
@@ -297,22 +304,32 @@ class Log extends Authenticatable
             $lognum = 1;
             $qths = [];
             foreach ($items as &$item) {
-                $item['logNum'] = $lognum++;
                 if (!isset($qths[$item['myQth']])) {
                     $qths[$item['myQth']] = true;
                 }
             }
 
             try {
-                Log::deleteLogsForUserId($user->id);
-                //log::insert($items);
-                for ($i=0; $i<count($items); $i += self::MAXBATCHINSERT) {
-                    $chunk = array_slice($items, $i, self::MAXBATCHINSERT);
-                    Log::insert($chunk);
+                foreach ($items as $item) {
+                    $log = Log::where('qrzId', '=', $item['qrzId'])->first();
+                    if ($log) {
+                        $log->update($item);
+                    } else {
+                        Log::insert($item);
+                    }
                 }
+
+                // Renumber logNum values
+                DB::statement('SET @logNum := 0;');
+                DB::statement(
+                    'UPDATE logs SET logNum = @logNum := @logNum+1 WHERE userId=? ORDER BY `date` ASC, `time` ASC',
+                    [$user->id]
+                );
 
                 $first = Log::where('userId','=',$user->id)->orderBy('date', 'asc')->orderBy('time', 'asc')->first();
                 $last = Log::where('userId','=',$user->id)->orderBy('date', 'desc')->orderBy('time', 'desc')->first();
+                $logCount = Log::where('userId', '=', $user->id)->count();
+                $qthCount = Log::where('userId', '=', $user->id)->count(DB::raw('DISTINCT myQth'));
                 $qthsForUser = Log::getLogQthsForUser($user->id);
                 $qthNames = implode(
                     "\r\n",
@@ -323,13 +340,12 @@ class Log extends Authenticatable
                         $qthsForUser
                     )
                 );
-
                 $user->setAttribute('qrz_last_result', 'OK');
                 $user->setAttribute('qrz_last_data_pull', time());
                 $user->setAttribute('first_log', $first->date . ' ' . $first->time);
                 $user->setAttribute('last_log', $last->date . ' ' . $last->time);
-                $user->setAttribute('log_count', count($items));
-                $user->setAttribute('qth_count', count(array_keys($qths)));
+                $user->setAttribute('log_count', $logCount);
+                $user->setAttribute('qth_count', $qthCount);
                 $user->setAttribute('qth_names', $qthNames);
                 $user->save();
                 return true;
