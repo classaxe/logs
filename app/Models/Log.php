@@ -217,6 +217,12 @@ class Log extends Authenticatable
             $user->save();
             return false;
         }
+        if (str_contains($raw, 'RESULT=FAIL') && str_contains($raw, 'COUNT=0')) {
+            $user->setAttribute('qrz_last_result', 'OK');
+            $user->setAttribute('qrz_last_data_pull', time());
+            $user->save();
+            return true;
+        }
         if (!(substr($raw, 0, 5) === 'ADIF=' || str_contains($raw, 'RESULT=OK'))) {
             $user->setAttribute('qrz_last_result', substr($raw, 0, 250));
             $user->save();
