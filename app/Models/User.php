@@ -93,7 +93,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'bands' =>      Log::getBandsForUserId($user['id']),
             'modes' =>      Log::getModesForUserId($user['id']),
             'gsqs' =>       Log::getGsqsForUserId($user['id']),
-            'qths' =>       Log::getQthsForUserId($user['id']),
+            'qths' =>       Log::getQthsForUser($user),
             'qth_names' =>  $user['qth_names'],
             'user' =>       $user
         ];
@@ -131,4 +131,18 @@ class User extends Authenticatable implements MustVerifyEmail
         );
     }
 
+    public static function getQthNamesForUser(User $user)
+    {
+        $qthNames = [];
+        if ($user['qth_names']) {
+            $qthNamesArr =     explode("\r\n", $user['qth_names']);
+            foreach ($qthNamesArr as $qthName) {
+                $bits = explode('=', $qthName);
+                if (isset($bits[1])) {
+                    $qthNames[trim($bits[0])] = trim($bits[1]);
+                }
+            }
+        }
+        return $qthNames;
+    }
 }
