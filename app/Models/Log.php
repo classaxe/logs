@@ -149,7 +149,7 @@ class Log extends Authenticatable
         return sprintf("https://logbook.qrz.com/api?KEY=%s&ACTION=%s", $apikey, $action);
     }
 
-    public static function getQRZStatusForUser(User $user)
+    public static function getQRZStatusFromServer(User $user)
     {
         try {
             $url = static::getQRZEndpoint($user['qrz_api_key'], 'STATUS');
@@ -216,78 +216,34 @@ class Log extends Authenticatable
     public static function getQRZDataForUser(User $user)
     {
         ini_set('max_execution_time', 600);
-        if (!self::getQRZStatusForUser($user)) {
+        if (!self::getQRZStatusFromServer($user)) {
             return;
         }
         if ($user['qrz_last_data_pull']) {
+            $dateNow = date('Y-m-d');
             $dateFrom = Carbon::parse($user['qrz_last_data_pull'])->subDay(1)->format('Y-m-d');
-            $qrzItems = self::getQRZDataFromServer($user, 'MODSINCE:' . $dateFrom);
+            $qrzItems1 = self::getQRZDataFromServer($user, 'BETWEEN:' . $dateFrom . '+' . $dateNow);
+            $qrzItems2 = self::getQRZDataFromServer($user, 'MODSINCE:' . $dateFrom);
+            $qrzItems = array_merge($qrzItems1, $qrzItems2);
         } else {
             $qrzItems = self::getQRZDataFromServer($user, 'ALL');
         }
         if (!$qrzItems) {
             return true;
         }
-        $items = self::parseQrzLogData($user, $qrzItems);
-        if ($items) {
-            // To deal with logs uploaded to QRZ out of order
-            usort($items, function ($a, $b) {
-                return $a['date'] . $a['time'] <=> $b['date'] . $b['time'];
-            });
-            $qths = [];
-            foreach ($items as &$item) {
-                if (!isset($qths[$item['myQth']])) {
-                    $qths[$item['myQth']] = true;
-                }
-            }
-
-            try {
-                foreach ($items as $item) {
-                    $log = Log::where('qrzId', '=', $item['qrzId'])->first();
-                    if ($log) {
-                        $log->update($item);
-                    } else {
-                        Log::insert($item);
-                    }
-                }
-
-                // Renumber logNum values
-                DB::statement('SET @logNum := 0;');
-                DB::statement(
-                    'UPDATE logs SET logNum = @logNum := @logNum+1 WHERE userId=? ORDER BY `date` ASC, `time` ASC',
-                    [$user->id]
-                );
-
-                $first = Log::where('userId','=',$user->id)->orderBy('date', 'asc')->orderBy('time', 'asc')->first();
-                $last = Log::where('userId','=',$user->id)->orderBy('date', 'desc')->orderBy('time', 'desc')->first();
-                $logCount = Log::where('userId', '=', $user->id)->count();
-                $qthCount = Log::where('userId', '=', $user->id)->count(DB::raw('DISTINCT myQth'));
-                $qthsForUser = Log::getLogQthsForUser($user);
-                $qthNames = implode(
-                    "\r\n",
-                    array_map(
-                        function ($item) {
-                            return $item['myGsq'] . ' = ' .$item['myQth'];
-                        },
-                        $qthsForUser
-                    )
-                );
-                $user->setAttribute('qrz_last_result', 'OK');
-                $user->setAttribute('qrz_last_data_pull', time());
-                $user->setAttribute('first_log', $first->date . ' ' . $first->time);
-                $user->setAttribute('last_log', $last->date . ' ' . $last->time);
-                $user->setAttribute('log_count', $logCount);
-                $user->setAttribute('qth_count', $qthCount);
-                $user->setAttribute('qth_names', $qthNames);
-                $user->save();
-                return true;
-            } catch (\Exception $e) {
-                $user->setAttribute('qrz_last_result', 'Server Error - ' . substr($e->getMessage(), 0, 240));
-                $user->save();
-                return false;
-            }
+        if (!$items = self::parseQrzLogData($user, $qrzItems)) {
+            return false;
         }
-        return false;
+        try {
+            self::insertOrUpdateLogs($items);
+            self::renumberLogsForUser($user);
+            self::updateUserStats($user);
+            return true;
+        } catch (\Exception $e) {
+            $user->setAttribute('qrz_last_result', 'Server Error - ' . substr($e->getMessage(), 0, 240));
+            $user->save();
+            return false;
+        }
     }
 
     public static function getLogsForUser(User $user): array
@@ -502,6 +458,55 @@ class Log extends Authenticatable
                 return false;
             }
         }
+        usort($items, function ($a, $b) {
+            return $a['date'] . $a['time'] <=> $b['date'] . $b['time'];
+        });
         return $items;
+    }
+
+    public static function insertOrUpdateLogs($logs) {
+        foreach ($logs as $item) {
+            $log = Log::where('qrzId', '=', $item['qrzId'])->first();
+            if ($log) {
+                $log->update($item);
+            } else {
+                Log::insert($item);
+            }
+        }
+    }
+
+    public static function renumberLogsForUser(User $user) {
+        // Renumber logNum values
+        DB::statement('SET @logNum := 0;');
+        DB::statement(
+            'UPDATE logs SET logNum = @logNum := @logNum+1 WHERE userId=? ORDER BY `date` ASC, `time` ASC',
+            [$user->id]
+        );
+    }
+
+    public static function updateUserStats(User $user) {
+        $first = Log::where('userId','=',$user->id)->orderBy('date', 'asc')->orderBy('time', 'asc')->first();
+        $last = Log::where('userId','=',$user->id)->orderBy('date', 'desc')->orderBy('time', 'desc')->first();
+        $logCount = Log::where('userId', '=', $user->id)->count();
+        $qthCount = Log::where('userId', '=', $user->id)->count(DB::raw('DISTINCT myQth'));
+        $user->setAttribute('qrz_last_result', 'OK');
+        $user->setAttribute('qrz_last_data_pull', time());
+        $user->setAttribute('first_log', $first->date . ' ' . $first->time);
+        $user->setAttribute('last_log', $last->date . ' ' . $last->time);
+        $user->setAttribute('log_count', $logCount);
+        $user->setAttribute('qth_count', $qthCount);
+        $qthsForUser = Log::getLogQthsForUser($user);
+        $qthNames = implode(
+            "\r\n",
+            array_map(
+                function ($item) {
+                    return $item['myGsq'] . ' = ' .$item['myQth'];
+                },
+                $qthsForUser
+            )
+        );
+        $user->setAttribute('qth_names', $qthNames);
+        $user->save();
+
     }
 }
