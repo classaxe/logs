@@ -45,7 +45,7 @@
         </div>
 
         <div>
-            <x-input-label for="call" class="w-3/12 inline-block" :value="__('Callsign')" />
+            <x-input-label for="call" class="w-3/12 inline-block" :value="__('* Callsign')" />
             <x-text-input id="call" name="call" type="text" class="mt-1 w-8/12" :value="old('call', $user->call)" required autofocus autocomplete="callsign" />
             <x-input-error class="mt-2" :messages="$errors->get('call')" />
         </div>
@@ -57,7 +57,7 @@
         </div>
 
         <div>
-            <x-input-label for="city" class="w-3/12 inline-block" :value="__('Town / City')" />
+            <x-input-label for="city" class="w-3/12 inline-block" :value="__('* Town / City')" />
             <x-text-input id="city" name="city" type="text" class="mt-1 w-8/12" :value="old('city', $user->city)" required autofocus autocomplete="city" />
             <x-input-error class="mt-2" :messages="$errors->get('city')" />
         </div>
@@ -69,14 +69,14 @@
         </div>
 
         <div>
-            <x-input-label for="itu" class="w-3/12 inline-block" :value="__('Country')" />
+            <x-input-label for="itu" class="w-3/12 inline-block" :value="__('* Country')" />
             <x-text-input id="itu" name="itu" type="text" class="mt-1 w-8/12" :value="old('itu', $user->itu)" required autofocus autocomplete="itu" />
             <x-input-error class="mt-2" :messages="$errors->get('itu')" />
         </div>
 
         <!-- Gridsquare -->
         <div class="mt-4">
-            <x-input-label for="gsq" class="w-3/12 inline-block" :value="__('Gridsquare (Format: AB12cd)')" />
+            <x-input-label for="gsq" class="w-3/12 inline-block" :value="__('* Gridsquare (Format: AB12cd)')" />
             <x-text-input id="gsq" class="mt-1 w-8/12" type="text" name="gsq" :value="old('gsq', $user->gsq)" required autocomplete="gsq" />
             <x-input-error :messages="$errors->get('gsq')" class="mt-2" />
         </div>
@@ -90,7 +90,7 @@
 
         <!-- QRZ API Key -->
         <div class="mt-4">
-            <x-input-label for="qrz_api_key" :value="__('QRZ API Key (Format: XXXX-XXXX-XXXX-XXXX)')" />
+            <x-input-label for="qrz_api_key" :value="__('* QRZ API Key (Format: XXXX-XXXX-XXXX-XXXX)')" />
             <x-text-input id="qrz_api_key" class="block mt-1 w-full" type="text" name="qrz_api_key" :value="old('qrz_api_key', $user->qrz_api_key)"
                           pattern="[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}" length="19" maxlen="19" required />
             <x-input-error :messages="$errors->get('qrz_api_key')" class="mt-2" />
