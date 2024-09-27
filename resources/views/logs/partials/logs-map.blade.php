@@ -2,54 +2,25 @@
 $latlon = Log::convertGsqToDegrees($user['gsq']);
 ?>
 <script>
-    var msg = {
-        gsq: "GSQ",
-        heard_in: "Heard In",
-        id: "ID",
-        itu: "ITU",
-        khz: "KHz",
-        last_logged: "Last Logged",
-        lat_lon: "Lat / Lon",
-        logged: "Logged",
-        name_qth: "'Name' and Location",
-        no: "No",
-        power: "Power",
-        sec_format: "Secs / Format",
-        sidebands: "Sidebands",
-        type: "Type",
-        yes: "Yes",
-    }
-    var center = {
-        lat: 27.25,
-        lon: -88.99985
-    }
-    var box = [{
-        lat: -25.4792,
-        lon: -142.458
-    }, {
-        lat: 79.9792,
-        lon: -35.5417
-    }];
-    var base_image = '/images';
-    var base_url = '/';
-    var gridColor = '#800000';
-    var gridOpacity = 0.35;
-    var layers = {
-        grid: [],
-        squares: [],
-        squareLabels: []
-    };
-    var qth = {
-        lat: {{ $latlon['lat'] }},
-        lng: {{ $latlon['lon'] }},
-        gsq: "{{ $user['gsq'] }}",
-        call: "{{ $user['call'] }}",
-        name: "{{ $user['name'] }}",
-        qth: "{{ $user['qth'] }}, {{ $user['city'] }}, {{ $user['sp'] }}, {{ $user['itu'] }}"
-    }
-
-    var gsqs = [];
-    var markers = [];
+var base_image = '/images';
+var box = [{}, {}];
+var center = {}
+var gridColor = '#800000';
+var gridOpacity = 0.35;
+var gsqs = [];
+var layers = {
+    grid: [],
+    squares: [],
+    squareLabels: []
+};
+var qth = {
+    lat: {{ $latlon['lat'] }},
+    lng: {{ $latlon['lon'] }},
+    gsq: "{{ $user['gsq'] }}",
+    call: "{{ $user['call'] }}",
+    name: "{{ $user['name'] }}",
+    qth: "{{ $user['qth'] }}, {{ $user['city'] }}, {{ $user['sp'] }}, {{ $user['itu'] }}"
+}
 </script>
 <script>
 window.addEventListener("DOMContentLoaded", () => {
