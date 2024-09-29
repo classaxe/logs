@@ -87,7 +87,9 @@
                 <td class="r">{{ $u->qth_count }}</td>
                 <td class="r">{{ substr($u->first_log, 0, 10) }}</td>
                 <td class="r">{{ substr($u->last_log, 0, 10) }}</td>
-                <td class="r">@if($u->qrz_last_result !== 'OK'){{ $u->qrz_last_result }} @else {{ $u->getLastQrzPull() }} @endif </td>
+                <td class="r" @if(Auth::user() && Auth::user()->admin && $u->qrz_last_data_pull_debug)
+                    style="cursor:pointer;text-decoration: underline" title="{{ $u->qrz_last_data_pull_debug }}"
+                @endif>@if($u->qrz_last_result !== 'OK'){{ $u->qrz_last_result }} @else {{ $u->getLastQrzPull() }} @endif </td>
                 <td><a target="_blank" href="https://www.qrz.com/db/{{ $u->call }}">LINK</a></td>
                 @if(Auth::user() && Auth::user()->admin)
                     <td class="c u_active"><a href="#">{{ $u->active ? 'Yes' : 'No' }}</a></td>

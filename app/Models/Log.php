@@ -226,7 +226,7 @@ class Log extends Authenticatable
             $qrzItems1 = self::getQRZDataFromServer($user, 'BETWEEN:' . $dateFrom . '+' . $dateNow);
             $qrzItems2 = self::getQRZDataFromServer($user, 'MODSINCE:' . $dateFrom);
             $qrzItems = array_merge($qrzItems1, $qrzItems2);
-            $debug[] = "QRZ records added or modified from $dateFrom to $dateNow";
+            $debug[] = "QRZ changes $dateFrom to $dateNow";
         } else {
             $qrzItems = self::getQRZDataFromServer($user, 'ALL');
             $debug[] = "QRZ records for all time";
@@ -237,15 +237,15 @@ class Log extends Authenticatable
             $user->save();
             return true;
         }
-        $debug[] = "QRZ records found: " . count($qrzItems);
+        $debug[] = "Records found: " . count($qrzItems);
         if (!$items = self::parseQrzLogData($user, $qrzItems)) {
             $debug[] = "No parseable records - exiting";
             $user->setAttribute('qrz_last_data_pull_debug', implode("\n", $debug));
             $user->save();
             return false;
         }
+        $debug[] = "Records parsed: " . count($qrzItems);
         try {
-            $debug[] = print_r($items, true);
             self::insertOrUpdateLogs($items);
             self::renumberLogsForUser($user);
             self::updateUserStats($user);
