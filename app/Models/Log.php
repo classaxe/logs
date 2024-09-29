@@ -215,6 +215,7 @@ class Log extends Authenticatable
 
     public static function getQRZDataForUser(User $user)
     {
+        $debug = [];
         ini_set('max_execution_time', 600);
         if (!self::getQRZStatusFromServer($user)) {
             return;
@@ -225,22 +226,37 @@ class Log extends Authenticatable
             $qrzItems1 = self::getQRZDataFromServer($user, 'BETWEEN:' . $dateFrom . '+' . $dateNow);
             $qrzItems2 = self::getQRZDataFromServer($user, 'MODSINCE:' . $dateFrom);
             $qrzItems = array_merge($qrzItems1, $qrzItems2);
+            $debug[] = "QRZ records added or modified from $dateFrom to $dateNow";
         } else {
             $qrzItems = self::getQRZDataFromServer($user, 'ALL');
+            $debug[] = "QRZ records for all time";
         }
+        $debug[] = "QRZ records found: " . count($qrzItems);
         if (!$qrzItems) {
+            $debug[] = "No records - exiting";
+            $user->setAttribute('qrz_last_data_pull_debug', implode("\n", $debug));
+            $user->save();
             return true;
         }
         if (!$items = self::parseQrzLogData($user, $qrzItems)) {
+            $debug[] = "No parseable records - exiting";
+            $user->setAttribute('qrz_last_data_pull_debug', implode("\n", $debug));
+            $user->save();
             return false;
         }
         try {
+            $debug[] = print_r($items, true);
             self::insertOrUpdateLogs($items);
             self::renumberLogsForUser($user);
             self::updateUserStats($user);
+            $user->setAttribute('qrz_last_data_pull_debug', implode("\n", $debug));
+            $user->save();
+            die();
             return true;
         } catch (\Exception $e) {
             $user->setAttribute('qrz_last_result', 'Server Error - ' . substr($e->getMessage(), 0, 240));
+            $debug[] = "Error:" . substr($e->getMessage(), 0, 240);
+            $user->setAttribute('qrz_last_data_pull_debug', implode("\n", $debug));
             $user->save();
             return false;
         }
