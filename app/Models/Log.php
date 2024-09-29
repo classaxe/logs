@@ -231,13 +231,13 @@ class Log extends Authenticatable
             $qrzItems = self::getQRZDataFromServer($user, 'ALL');
             $debug[] = "QRZ records for all time";
         }
-        $debug[] = "QRZ records found: " . count($qrzItems);
         if (!$qrzItems) {
             $debug[] = "No records - exiting";
             $user->setAttribute('qrz_last_data_pull_debug', implode("\n", $debug));
             $user->save();
             return true;
         }
+        $debug[] = "QRZ records found: " . count($qrzItems);
         if (!$items = self::parseQrzLogData($user, $qrzItems)) {
             $debug[] = "No parseable records - exiting";
             $user->setAttribute('qrz_last_data_pull_debug', implode("\n", $debug));
@@ -251,7 +251,6 @@ class Log extends Authenticatable
             self::updateUserStats($user);
             $user->setAttribute('qrz_last_data_pull_debug', implode("\n", $debug));
             $user->save();
-            die();
             return true;
         } catch (\Exception $e) {
             $user->setAttribute('qrz_last_result', 'Server Error - ' . substr($e->getMessage(), 0, 240));
