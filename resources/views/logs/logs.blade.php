@@ -1,45 +1,57 @@
 <x-app-layout>
-@vite([
-    'resources/js/logs.js'
-])
+    @vite([
+        'resources/js/logs.js'
+    ])
 
-<script src="/js/lmap.js?v={{ exec('git describe --tags') }}"></script>
-<script>
-var callsign = "{{ $user['call'] }}";
-<?php
-$presets = [];
-if ($_GET['presets']??[]) {
-    foreach ($_GET['presets'] as $preset) {
-        if (!$preset) {
-            continue;
+    <script src="/js/lmap.js?v={{ exec('git describe --tags') }}"></script>
+    <script>
+        var callsign = "{{ $user['call'] }}";
+        var base_image = '/images';
+        var box = [{}, {}];
+        var center = {}
+        var gridColor = '#800000';
+        var gridOpacity = 0.35;
+        var gsqs = [];
+        var layers = {
+            grid: [],
+            squares: [],
+            squareLabels: []
+        };
+        var qth = {
+            lat: {{ $user['lat'] }},
+            lng: {{ $user['lon'] }},
+            gsq: "{{ $user['gsq'] }}",
+            call: "{{ $user['call'] }}",
+            name: "{{ $user['name'] }}",
+            qth: "{{ $user['qth'] }}, {{ $user['city'] }}, {{ $user['sp'] }}, {{ $user['itu'] }}"
         }
-        $keyval = explode('|', $preset);
-        if (count($keyval) === 2) {
-            $presets[] = $keyval[0] . ": '" . $keyval[1] . "'";
-        }
-    }
-}
-?>
-var presets = {
-    {!! implode(",\n    ", $presets) !!}
-};
-document.body.classList.add("loading");
-</script>
-@if($user['qth_count'] < 2)
-<style>
-.multi-qth {
-    display: none !important;
-}
-</style>
-@endif
-<div class="flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
-    @include('logs.partials.logs-form')
-    @include('logs.partials.logs-stats')
-    @include('logs.partials.logs-tips')
-</div>
-@include('logs.partials.logs-tabs')
-<div id="content">
-    @include('logs.partials.logs-list')
-    @include('logs.partials.logs-map')
-</div>
+        var presets = {
+            {!! implode(",\n    ", $presets) !!}
+        };
+        document.body.classList.add("loading");
+
+        window.addEventListener("DOMContentLoaded", () => {
+            let script = document.createElement("script");
+            script.loading = 'async';
+            script.src = "https://maps.googleapis.com/maps/api/js?key={{ getEnv('GOOGLE_MAPS_API_KEY') }}&loading=async&callback=LMap.init";
+            document.head.appendChild(script);
+        });
+    </script>
+    @if($user['qth_count'] < 2)
+        <style>
+            .multi-qth {
+                display: none !important;
+            }
+        </style>
+    @endif
+    <div class="flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
+        @include('logs.partials.logs-form')
+        @include('logs.partials.logs-stats')
+        @include('logs.partials.logs-tips')
+    </div>
+    @include('logs.partials.logs-tabs')
+    <div id="content">
+        @include('logs.partials.logs-list')
+        @include('logs.partials.logs-map')
+    </div>
 </x-app-layout>

@@ -1,35 +1,3 @@
-<?php use App\Models\Log;
-$latlon = Log::convertGsqToDegrees($user['gsq']);
-?>
-<script>
-var base_image = '/images';
-var box = [{}, {}];
-var center = {}
-var gridColor = '#800000';
-var gridOpacity = 0.35;
-var gsqs = [];
-var layers = {
-    grid: [],
-    squares: [],
-    squareLabels: []
-};
-var qth = {
-    lat: {{ $latlon['lat'] }},
-    lng: {{ $latlon['lon'] }},
-    gsq: "{{ $user['gsq'] }}",
-    call: "{{ $user['call'] }}",
-    name: "{{ $user['name'] }}",
-    qth: "{{ $user['qth'] }}, {{ $user['city'] }}, {{ $user['sp'] }}, {{ $user['itu'] }}"
-}
-</script>
-<script>
-window.addEventListener("DOMContentLoaded", () => {
-    let script = document.createElement("script");
-    script.loading = 'async';
-    script.src = "https://maps.googleapis.com/maps/api/js?key={{ getEnv('GOOGLE_MAPS_API_KEY') }}&loading=async&callback=LMap.init";
-    document.head.appendChild(script);
-});
-</script>
 <table class="map map_layout" style="display: none">
     <tbody style="background: transparent">
     <tr>

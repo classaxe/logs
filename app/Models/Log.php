@@ -17,7 +17,7 @@ class Log extends Authenticatable
 
     const COLUMNS = [
         'logNum' =>     ['lbl' =>   'Log',          'class' => ''],
-        'myQsq' =>      ['lbl' =>   'My GSQ',       'class' => 'not-compact multi-qth'],
+        'myGsq' =>      ['lbl' =>   'My GSQ',       'class' => 'not-compact multi-qth'],
         'myQth' =>      ['lbl' =>   'My QTH',       'class' => 'not-compact multi-qth'],
         'date' =>       ['lbl' =>   'Date',         'class' => ''],
         'time' =>       ['lbl' =>   'UTC',          'class' => ''],

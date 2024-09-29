@@ -264,7 +264,7 @@ var LMap = {
         qthInfo = new google.maps.InfoWindow({
             content:
                 "<div class=\"map_info\">" +
-                "<h3><b>" + qth.call + "</b> - " + qth.name +
+                "<h3><b>" + qth.call + "</b> - " + qth.name + " @ <b>" + qth.gsq + "</b>" +
                 "<a id='close' href='#' onclick=\"qthInfo.close()\">X</a>" +
                 "</h3>" +
                 "<p>" + qth.qth + "</p>" +

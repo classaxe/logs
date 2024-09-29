@@ -39,12 +39,25 @@ class LogsController extends Controller
     public static function logsPage(string $callsign)
     {
         $data = User::getUserDataByCallsign($callsign);
+        $presets = [];
+        if ($_GET['presets'] ?? []) {
+            foreach ($_GET['presets'] as $preset) {
+                if (!$preset) {
+                    continue;
+                }
+                $keyval = explode('|', $preset);
+                if (count($keyval) === 2) {
+                    $presets[] = $keyval[0] . ": '" . $keyval[1] . "'";
+                }
+            }
+        }
         return view('logs/logs', [
             'bands' =>      $data['bands'],
             'columns' =>    Log::COLUMNS,
             'gsqs' =>       $data['gsqs'],
             'lastPulled' => Carbon::parse($data['user']['qrz_last_data_pull'])->diffForHumans(),
             'modes' =>      $data['modes'],
+            'presets' =>    $presets,
             'qths' =>       $data['qths'],
             'user' =>       $data['user']
         ]);
