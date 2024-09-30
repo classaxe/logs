@@ -149,12 +149,23 @@ class Log extends Authenticatable
         return sprintf("https://logbook.qrz.com/api?KEY=%s&ACTION=%s", $apikey, $action);
     }
 
+    private static function sanitizeErrorMessage($message)
+    {
+        return substr(
+            preg_replace('/KEY=([^\&]*)\&/', 'KEY=XXXX-XXXX-XXXX-XXXX&', html_entity_decode($message)),
+            0,
+            240
+        );
+    }
+
     public static function getQRZStatusFromServer(User $user)
     {
         try {
             $url = static::getQRZEndpoint($user['qrz_api_key'], 'STATUS');
             $raw = file_get_contents($url);
         } catch (\Exception $e) {
+            $user->setAttribute('qrz_last_result', 'Server Error - ' . self::sanitizeErrorMessage($e->getMessage()));
+            $user->save();
             return false;
         }
         $status = [];
@@ -192,7 +203,7 @@ class Log extends Authenticatable
         try {
             $raw = file_get_contents($url);
         } catch (\Exception $e) {
-            $user->setAttribute('qrz_last_result', 'Server Error - ' . substr($e->getMessage(), 0, 240));
+            $user->setAttribute('qrz_last_result', 'Server Error - ' . self::sanitizeErrorMessage($e->getMessage()));
             $user->save();
             return [];
         }
