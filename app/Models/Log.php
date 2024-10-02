@@ -43,6 +43,16 @@ class Log extends Authenticatable
             'VK0IR' => 'MD66' // Heard Island operator who placed wrong GSQ in Antarctica mainland
         ]
     ];
+
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
+    protected function casts(): array {
+        return [];
+    }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -81,14 +91,45 @@ class Log extends Authenticatable
     ];
 
     /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
+     * @param $qthGSQ
+     * @param $logGSQ
+     * @return int|null
      */
-    protected function casts(): array {
-        return [];
+    public static function calculateBearing($qthGSQ, $logGSQ)
+    {
+        $qth = static::convertGsqToDegrees($qthGSQ);
+        $log = static::convertGsqToDegrees($logGSQ);
+        if ($qth === false || $log === false) {
+            return null;
+        }
+        if ($qth['lat'] === $log['lat'] && $qth['lon'] === $log['lon']) {
+            return 0;
+        }
+        $qth_lat_r = deg2rad($qth['lat']);
+        $qth_lon_r = deg2rad($qth['lon']);
+        $log_lat_r = deg2rad($log['lat']);
+        $log_lon_r = deg2rad($log['lon']);
+        $diff_lon = ($log['lon'] - $qth['lon']);
+        if (abs($diff_lon) > 180) {
+            $diff_lon = (360 - abs($diff_lon)) * (0 - ($diff_lon / abs($diff_lon)));
+        }
+        $diff_lon_r = deg2rad($diff_lon);
+        $deg = (
+                rad2deg(
+                    atan2(
+                        SIN($log_lon_r - $qth_lon_r) * COS($log_lat_r),
+                        COS($qth_lat_r) * SIN($log_lat_r) - SIN($qth_lat_r) * COS($log_lat_r) * COS($diff_lon_r)
+                    )
+                ) + 360
+            ) % 360;
+//        dump([$qth, $log, $deg]);
+        return $deg;
     }
 
+    /**
+     * @param $GSQ
+     * @return false|array[]
+     */
     public static function convertGsqToDegrees($GSQ) {
         $GSQ =      substr(strToUpper($GSQ), 0, 6);
         $offset =   (strlen($GSQ)==6 ? 1/48 : 0);
@@ -112,92 +153,158 @@ class Log extends Authenticatable
         ];
     }
 
-    public static function getBearing($qthGSQ, $logGSQ) {
-        $qth = static::convertGsqToDegrees($qthGSQ);
-        $log = static::convertGsqToDegrees($logGSQ);
-        if ($qth === false || $log === false) {
-            return null;
-        }
-        if ($qth['lat'] === $log['lat'] && $qth['lon'] === $log['lon']) {
-            return 0;
-        }
-        $qth_lat_r =    deg2rad($qth['lat']);
-        $qth_lon_r =    deg2rad($qth['lon']);
-        $log_lat_r =    deg2rad($log['lat']);
-        $log_lon_r =    deg2rad($log['lon']);
-        $diff_lon =     ($log['lon'] - $qth['lon']);
-        if (abs($diff_lon) > 180) {
-            $diff_lon = (360 - abs($diff_lon)) * (0 - ($diff_lon / abs($diff_lon)));
-        }
-        $diff_lon_r =   deg2rad($diff_lon);
-        $deg = (
-            rad2deg(
-                atan2(
-                    SIN($log_lon_r - $qth_lon_r) * COS($log_lat_r),
-                    COS($qth_lat_r) * SIN($log_lat_r) - SIN($qth_lat_r) * COS($log_lat_r) * COS($diff_lon_r)
-                )
-            ) + 360
-        ) % 360;
-//        dump([$qth, $log, $deg]);
-        return $deg;
-    }
-
-    private static function getQRZEndpoint($apikey, $action, $option = null) {
-        if ($option) {
-            return sprintf("https://logbook.qrz.com/api?KEY=%s&ACTION=%s&OPTION=%s", $apikey, $action, $option);
-        }
-        return sprintf("https://logbook.qrz.com/api?KEY=%s&ACTION=%s", $apikey, $action);
-    }
-
-    private static function sanitizeErrorMessage($message)
+    public static function deleteLogsForUser(User $user): bool
     {
-        return substr(
-            preg_replace('/KEY=([^\&]*)\&/', 'KEY=XXXX-XXXX-XXXX-XXXX&', html_entity_decode($message)),
-            0,
-            240
-        );
+        return Log::where('userId', $user['id'])->delete();
     }
 
-    public static function getQRZStatusFromServer(User $user)
+    /**
+     * @param User $user
+     * @return array
+     */
+    public static function getBandsForUser(User $user): array
     {
-        try {
-            $url = static::getQRZEndpoint($user['qrz_api_key'], 'STATUS');
-            $raw = file_get_contents($url);
-        } catch (\Exception $e) {
-            $user->setAttribute('qrz_last_result', 'Server Error - ' . self::sanitizeErrorMessage($e->getMessage()));
-            $user->save();
-            return false;
+        $items = Log::distinct()->where('userId', $user['id'])->get(['band'])->toArray();
+        $out = [];
+        foreach ($items as $item) {
+            $b =        $item['band'];
+            $num =      preg_replace('/[^0-9]/', '', $b);
+            $units =    preg_replace('/[^a-zA-Z]/', '', $b);
+            $v =        ($num ? $num * (strtolower($units) === 'm' ? 1000 : 1) : $b);
+            $out[$v] =  $item['band'];
         }
-        $status = [];
-        $pairs = explode('&', $raw);
-        foreach ($pairs as $pair) {
-            list($key, $value) = explode('=', $pair, 2);
-            $status[$key] = $value;
-        }
-        if ($status['RESULT'] === "OK") {
-            return $status;
-        }
-        if (str_contains($status['REASON'], 'invalid api key')) {
-            $user->setAttribute('qrz_last_result', 'Invalid QRZ Key');
-            $user->save();
-            return false;
-        }
-        if (str_contains($status['REASON'], 'user does not have a valid QRZ subscription')) {
-            $user->setAttribute('qrz_last_result', 'Not XML Subscriber');
-            $user->save();
-            return false;
-        }
-        if ($status['CALLSIGN'] !== $user->call) {
-            $user->setAttribute('qrz_last_result', 'Wrong Call for key');
-            $user->save();
-            return false;
-        }
-        $user->setAttribute('qrz_last_result', 'QRZ Server error');
-        $user->save();
-        return false;
+        krsort($out);
+        return array_values($out);
     }
 
-    public static function getQRZDataFromServer(User $user, $option)
+    /**
+     * @param User $user
+     * @return array
+     */
+    public static function getDBLogsForUser(User $user): array
+    {
+        $hide = [];
+        $locations = User::getQthNamesForUser($user);
+        foreach ($locations as $gsq => $name) {
+            if (strtoupper($name) === 'HIDE') {
+                $hide[] = $gsq;
+            }
+        }
+        return
+            Log::Select(
+                'logs.band',
+                'logs.call',
+                'logs.conf',
+                'logs.continent',
+                'logs.county',
+                'logs.date',
+                'logs.deg',
+                'logs.gsq',
+                'logs.itu',
+                'logs.km',
+                'logs.logNum',
+                'logs.mode',
+                'logs.myGsq',
+                'logs.myQth',
+                'logs.name',
+                'logs.pwr',
+                'logs.qth',
+                'logs.rx',
+                'logs.sp',
+                'logs.time',
+                'logs.tx',
+                'iso3166.flag'
+            )->leftJoin(
+                'iso3166',
+                'logs.itu',
+                '=',
+                'iso3166.country'
+            )
+            ->where('userId', $user->id)
+            ->whereNotIn('myGsq', $hide)
+            ->orderBy('time', 'asc')
+            ->orderBy('date', 'desc')
+            ->get()
+            ->toArray();
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public static function getGsqsForUser(User $user): array
+    {
+        $items = Log::distinct()->where('userId', $user['id'])->get(['myGsq'])->toArray();
+        $out = [];
+        foreach($items as $item) {
+            $out[] = $item['myGsq'];
+        }
+        sort($out);
+        return $out;
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public static function getLogQthsForUser(User $user): array
+    {
+        $existing = User::getQthNamesForUser($user);
+        $result =
+            Log::Select(
+                'logs.myGsq',
+                'logs.myQth'
+            )
+            ->groupBy('myGsq','myQth')
+            ->where('userId', $user->id)
+            ->orderBy('myGsq', 'asc')
+            ->orderBy('myQth', 'asc')
+            ->get()
+            ->toArray();
+        foreach ($result as &$item) {
+            if (isset($existing[$item['myGsq']]) && $existing[$item['myGsq']] !== $item['myQth']) {
+                $item['myQth'] = $existing[$item['myGsq']];
+            }
+        }
+        return $result;
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public static function getLogsForUser(User $user): array
+    {
+        if ($user->active && (
+                !$user->qrz_last_data_pull
+                || $user->qrz_last_data_pull->addMinutes(getEnv('LOGS_MAX_AGE'))->isPast()
+            )) {
+            static::getQRZDataForUser($user);
+        }
+        return Log::getDBLogsForUser($user);
+    }
+
+    /**
+     * @param User $user
+     * @return array
+     */
+    public static function getModesForUser(User $user): array
+    {
+        $items = Log::distinct()->where('userId', $user['id'])->get(['mode'])->toArray();
+        $out = [];
+        foreach($items as $item) {
+            $out[] = $item['mode'];
+        }
+        sort($out);
+        return $out;
+    }
+
+    /**
+     * @param User $user
+     * @param string $option
+     * @return array
+     */
+    public static function getQRZDataFromServer(User $user, string $option)
     {
         $url = static::getQRZEndpoint($user['qrz_api_key'], 'FETCH', $option);
         try {
@@ -224,6 +331,10 @@ class Log extends Authenticatable
         return $adif->parser();
     }
 
+    /**
+     * @param User $user
+     * @return bool|void
+     */
     public static function getQRZDataForUser(User $user)
     {
         $debug = [];
@@ -272,76 +383,66 @@ class Log extends Authenticatable
         }
     }
 
-    public static function getLogsForUser(User $user): array
-    {
-        if ($user->active && (
-            !$user->qrz_last_data_pull
-            || $user->qrz_last_data_pull->addMinutes(getEnv('LOGS_MAX_AGE'))->isPast()
-        )) {
-            static::getQRZDataForUser($user);
+    /**
+     * @param string $apikey
+     * @param string $action
+     * @param string|null $option
+     * @return string
+     */
+    private static function getQRZEndpoint(string $apikey, string $action, string $option = null) {
+        if ($option) {
+            return sprintf("https://logbook.qrz.com/api?KEY=%s&ACTION=%s&OPTION=%s", $apikey, $action, $option);
         }
-        return Log::getDBLogsForUser($user);
+        return sprintf("https://logbook.qrz.com/api?KEY=%s&ACTION=%s", $apikey, $action);
     }
 
-    public static function getLogQthsForUser(User $user): array
+    /**
+     * @param User $user
+     * @return array|false
+     */
+    public static function getQRZStatusFromServer(User $user)
     {
-        $existing = User::getQthNamesForUser($user);
-        $result =
-            Log::Select(
-                'logs.myGsq',
-                'logs.myQth'
-            )
-            ->groupBy('myGsq','myQth')
-            ->where('userId', $user->id)
-            ->orderBy('myGsq', 'asc')
-            ->orderBy('myQth', 'asc')
-            ->get()
-            ->toArray();
-        foreach ($result as &$item) {
-            if (isset($existing[$item['myGsq']]) && $existing[$item['myGsq']] !== $item['myQth']) {
-                $item['myQth'] = $existing[$item['myGsq']];
-            }
+        try {
+            $url = static::getQRZEndpoint($user['qrz_api_key'], 'STATUS');
+            $raw = file_get_contents($url);
+        } catch (\Exception $e) {
+            $user->setAttribute('qrz_last_result', 'Server Error - ' . self::sanitizeErrorMessage($e->getMessage()));
+            $user->save();
+            return false;
         }
-        return $result;
+        $status = [];
+        $pairs = explode('&', $raw);
+        foreach ($pairs as $pair) {
+            list($key, $value) = explode('=', $pair, 2);
+            $status[$key] = $value;
+        }
+        if ($status['RESULT'] === "OK") {
+            return $status;
+        }
+        if (str_contains($status['REASON'], 'invalid api key')) {
+            $user->setAttribute('qrz_last_result', 'Invalid QRZ Key');
+            $user->save();
+            return false;
+        }
+        if (str_contains($status['REASON'], 'user does not have a valid QRZ subscription')) {
+            $user->setAttribute('qrz_last_result', 'Not XML Subscriber');
+            $user->save();
+            return false;
+        }
+        if ($status['CALLSIGN'] !== $user->call) {
+            $user->setAttribute('qrz_last_result', 'Wrong Call for key');
+            $user->save();
+            return false;
+        }
+        $user->setAttribute('qrz_last_result', 'QRZ Server error');
+        $user->save();
+        return false;
     }
 
-    public static function getBandsForUserId($userId): array
-    {
-        $items = Log::distinct()->where('userId', $userId)->get(['band'])->toArray();
-        $out = [];
-        foreach ($items as $item) {
-            $b =        $item['band'];
-            $num =      preg_replace('/[^0-9]/', '', $b);
-            $units =    preg_replace('/[^a-zA-Z]/', '', $b);
-            $v =        ($num ? $num * (strtolower($units) === 'm' ? 1000 : 1) : $b);
-            $out[$v] =  $item['band'];
-        }
-        krsort($out);
-        return array_values($out);
-    }
-
-    public static function getGsqsForUserId($userId): array
-    {
-        $items = Log::distinct()->where('userId', $userId)->get(['myGsq'])->toArray();
-        $out = [];
-        foreach($items as $item) {
-            $out[] = $item['myGsq'];
-        }
-        sort($out);
-        return $out;
-    }
-
-    public static function getModesForUserId($userId): array
-    {
-        $items = Log::distinct()->where('userId', $userId)->get(['mode'])->toArray();
-        $out = [];
-        foreach($items as $item) {
-            $out[] = $item['mode'];
-        }
-        sort($out);
-        return $out;
-    }
-
+    /**
+     * @param User $user
+     * @return array
+     */
     public static function getQthsForUser(User $user): array
     {
         $hide = [];
@@ -365,53 +466,26 @@ class Log extends Authenticatable
         return $out;
     }
 
-    public static function getDBLogsForUser(User $user): array
-    {
-        $hide = [];
-        $locations = User::getQthNamesForUser($user);
-        foreach ($locations as $gsq => $name) {
-            if (strtoupper($name) === 'HIDE') {
-                $hide[] = $gsq;
+    /**
+     * @param $logs
+     * @return void
+     */
+    public static function insertOrUpdateLogs($logs) {
+        foreach ($logs as $item) {
+            $log = Log::where('qrzId', '=', $item['qrzId'])->first();
+            if ($log) {
+                $log->update($item);
+            } else {
+                Log::insert($item);
             }
         }
-        return
-            Log::Select(
-                'logs.band',
-                'logs.call',
-                'logs.conf',
-                'logs.continent',
-                'logs.county',
-                'logs.date',
-                'logs.deg',
-                'logs.gsq',
-                'logs.itu',
-                'logs.km',
-                'logs.logNum',
-                'logs.mode',
-                'logs.myGsq',
-                'logs.myQth',
-                'logs.name',
-                'logs.pwr',
-                'logs.qth',
-                'logs.rx',
-                'logs.sp',
-                'logs.time',
-                'logs.tx',
-                'iso3166.flag'
-            )->leftJoin('iso3166', 'logs.itu', '=', 'iso3166.country')
-            ->where('userId', $user->id)
-            ->whereNotIn('myGsq', $hide)
-            ->orderBy('time', 'asc')
-            ->orderBy('date', 'desc')
-            ->get()
-            ->toArray();
     }
 
-    public static function deleteLogsForUserId($userId): bool
-    {
-        return Log::where('userId', $userId)->delete();
-    }
-
+    /**
+     * @param User $user
+     * @param $qrzItems
+     * @return array
+     */
     public static function parseQrzLogData(User $user, $qrzItems): array {
         $qthNames = User::getQthNamesForUser($user);
         $items = [];
@@ -450,7 +524,7 @@ class Log extends Authenticatable
                 if (isset($qthNames[$my_gsq])) {
                     $my_qth = $qthNames[$my_gsq];
                 }
-                $deg =              Log::getBearing($my_gsq, $log_gsq);
+                $deg =              Log::calculateBearing($my_gsq, $log_gsq);
                 $name =             $i['NAME'] ?? '';
                 $name =             (strtoupper($name) === $name ? ucwords(strtolower($name)) : $name);
 
@@ -490,17 +564,10 @@ class Log extends Authenticatable
         return $items;
     }
 
-    public static function insertOrUpdateLogs($logs) {
-        foreach ($logs as $item) {
-            $log = Log::where('qrzId', '=', $item['qrzId'])->first();
-            if ($log) {
-                $log->update($item);
-            } else {
-                Log::insert($item);
-            }
-        }
-    }
-
+    /**
+     * @param User $user
+     * @return void
+     */
     public static function renumberLogsForUser(User $user) {
         // Renumber logNum values
         DB::statement('SET @logNum := 0;');
@@ -510,6 +577,23 @@ class Log extends Authenticatable
         );
     }
 
+    /**
+     * @param $message
+     * @return string
+     */
+    private static function sanitizeErrorMessage($message)
+    {
+        return substr(
+            preg_replace('/KEY=([^\&]*)\&/', 'KEY=XXXX-XXXX-XXXX-XXXX&', html_entity_decode($message)),
+            0,
+            240
+        );
+    }
+
+    /**
+     * @param User $user
+     * @return void
+     */
     public static function updateUserStats(User $user) {
         $first = Log::where('userId','=',$user->id)->orderBy('date', 'asc')->orderBy('time', 'asc')->first();
         $last = Log::where('userId','=',$user->id)->orderBy('date', 'desc')->orderBy('time', 'desc')->first();
@@ -533,6 +617,5 @@ class Log extends Authenticatable
         );
         $user->setAttribute('qth_names', $qthNames);
         $user->save();
-
     }
 }

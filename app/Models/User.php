@@ -94,9 +94,9 @@ class User extends Authenticatable implements MustVerifyEmail
         $user['lon'] = $latlon['lon'];
 
         return [
-            'bands' =>      Log::getBandsForUserId($user['id']),
-            'modes' =>      Log::getModesForUserId($user['id']),
-            'gsqs' =>       Log::getGsqsForUserId($user['id']),
+            'bands' =>      Log::getBandsForUser($user),
+            'modes' =>      Log::getModesForUser($user),
+            'gsqs' =>       Log::getGsqsForUser($user),
             'qths' =>       Log::getQthsForUser($user),
             'qth_names' =>  $user['qth_names'],
             'user' =>       $user
