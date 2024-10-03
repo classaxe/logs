@@ -8,13 +8,9 @@
 
         <title>{{ config('app.name', 'Laravel') }}</title>
 
-        <!-- Fonts -->
-        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet" />
-
-        <!-- Images -->
-        <link rel="prefetch" href="/images/loader.gif" />
-
-        <link href="/flag-icons/css/flag-icons.css" rel="stylesheet" />
+        <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+        <link rel="prefetch" href="/images/loader.gif">
+        <link href="/flag-icons/css/flag-icons.css" rel="stylesheet">
 
         <!-- Scripts -->
         @vite([
