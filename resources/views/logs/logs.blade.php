@@ -23,7 +23,7 @@
             gsq: "{{ $user['gsq'] }}",
             call: "{{ $user['call'] }}",
             name: "{{ $user['name'] }}",
-            qth: "{{ $user['qth'] }}, {{ $user['city'] }}, {{ $user['sp'] }}, {{ $user['itu'] }}"
+            loc: "{{ $user['qth'] }}, {{ $user['city'] }}, {{ $user['sp'] }}, {{ $user['itu'] }}"
         }
         var presets = {
             {!! implode(",\n    ", $presets) !!}

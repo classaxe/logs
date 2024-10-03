@@ -68,9 +68,11 @@
             <div class="group">
                 <label class="b">My QTH
                     <select name="myQth">
-                        <option></option>
-                        @foreach($qths as $label => $count)
-                            <option value="{{ $label }}">{{ $label }}</option>
+                        <option data-lat="{{ $user['lat'] }}" data-lng="{{ $user['lon'] }}" data-gsq="{{ $user['gsq'] }}" data-loc="DEFAULT: {{ $user['qth'] }}, {{ $user['city'] }}, {{ $user['sp'] }}, {{ $user['itu'] }}" ></option>
+                        @foreach($qths as $label => $data)
+                            <option value="{{ $label }}" title="GSQ {{ $data['gsq'] }} with {{ $data['logs'] }} logs"
+                                data-lat="{{ $data['lat'] }}" data-lng="{{ $data['lon'] }}" data-gsq="{{ $data['gsq'] }}" data-loc="{{ $label }}"
+                            >{{ $label }}</option>
                         @endforeach
                     </select>
                 </label>

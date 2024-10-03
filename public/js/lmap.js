@@ -9,7 +9,6 @@ var LMap = {
 
     init: () => {
         LMap.TxtOverlay =    LMap.initMapsTxtOverlay();
-        let latlng = qth.gsq;
         LMap.options = {
             'zoom': 7,
             'center': new google.maps.LatLng(qth.lat, qth.lng),
@@ -247,11 +246,26 @@ var LMap = {
     },
 
     drawQTH : () => {
+        if (typeof layers.qth !== 'undefined' ) {
+            layers.qth.setMap(null);
+        }
         if (typeof qth === 'undefined') {
             return;
         }
+        let lat = qth.lat;
+        let lng = qth.lng;
+        let gsq = qth.gsq;
+        let loc = qth.loc;
+
+        let _qth = $('select[name=myQth] option:selected');
+        if (_qth.length) {
+            lat = _qth.data('lat');
+            lng = _qth.data('lng');
+            gsq = _qth.data('gsq');
+            loc = _qth.data('loc');
+        }
         layers.qth = new google.maps.Marker({
-            position: { lat: qth.lat, lng: qth.lng },
+            position: { lat: lat, lng: lng },
             map: LMap.map,
             icon: {
                 scaledSize: new google.maps.Size(30,30),
@@ -264,10 +278,10 @@ var LMap = {
         qthInfo = new google.maps.InfoWindow({
             content:
                 "<div class=\"map_info\">" +
-                "<h3><b>" + qth.call + "</b> - " + qth.name + " @ <b>" + qth.gsq + "</b>" +
+                "<h3><b>" + qth.call + "</b> - " + qth.name + " @ <b>" + gsq + "</b>" +
                 "<a id='close' href='#' onclick=\"qthInfo.close()\">X</a>" +
                 "</h3>" +
-                "<p>" + qth.qth + "</p>" +
+                "<p>" + loc + "</p>" +
                 "</div>"
         });
 

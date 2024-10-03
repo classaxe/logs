@@ -92,7 +92,6 @@ class User extends Authenticatable implements MustVerifyEmail
         $latlon = Log::convertGsqToDegrees($user['gsq']);
         $user['lat'] = $latlon['lat'];
         $user['lon'] = $latlon['lon'];
-
         return [
             'bands' =>      Log::getBandsForUser($user),
             'modes' =>      Log::getModesForUser($user),

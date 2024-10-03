@@ -115,22 +115,22 @@ class Log extends Authenticatable
         }
         $diff_lon_r = deg2rad($diff_lon);
         $deg = (
-                rad2deg(
-                    atan2(
-                        SIN($log_lon_r - $qth_lon_r) * COS($log_lat_r),
-                        COS($qth_lat_r) * SIN($log_lat_r) - SIN($qth_lat_r) * COS($log_lat_r) * COS($diff_lon_r)
-                    )
-                ) + 360
-            ) % 360;
-//        dump([$qth, $log, $deg]);
+            rad2deg(
+                atan2(
+                    SIN($log_lon_r - $qth_lon_r) * COS($log_lat_r),
+                    COS($qth_lat_r) * SIN($log_lat_r) - SIN($qth_lat_r) * COS($log_lat_r) * COS($diff_lon_r)
+                )
+            ) + 360
+        ) % 360;
         return $deg;
     }
 
     /**
      * @param $GSQ
-     * @return false|array[]
+     * @return false|array
      */
-    public static function convertGsqToDegrees($GSQ) {
+    public static function convertGsqToDegrees($GSQ): bool|array
+    {
         $GSQ =      substr(strToUpper($GSQ), 0, 6);
         $offset =   (strlen($GSQ)==6 ? 1/48 : 0);
         if (strlen($GSQ) == 4) {
@@ -148,8 +148,8 @@ class Log extends Authenticatable
         $lat_s = ord(substr($GSQ, 5, 1))-65;
 
         return [
-            "lat" => (int)round(($lat_d*10 + $lat_m + $lat_s/24 + $offset - 90)*10000)/10000,
-            "lon" => (int)round((2 * ($lon_d*10 + $lon_m + $lon_s/24 + $offset) - 180)*10000)/10000
+            "lat" => round($lat_d*10 + $lat_m + $lat_s/24 + $offset - 90, 4),
+            "lon" => round(2 * ($lon_d*10 + $lon_m + $lon_s/24 + $offset) - 180, 4)
         ];
     }
 
@@ -460,7 +460,13 @@ class Log extends Authenticatable
             ->toArray();
         $out = [];
         foreach($items as $item) {
-            $out[$item['myQth']] = $item['num'];
+            $latlon = self::convertGsqToDegrees($item['myGsq']);
+            $out[$item['myQth']] = [
+                'gsq' =>    $item['myGsq'],
+                'lat' =>    $latlon['lat'],
+                'lon' =>    $latlon['lon'],
+                'logs' =>   $item['num']
+            ];
         }
         ksort($out);
         return $out;

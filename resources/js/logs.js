@@ -429,6 +429,7 @@ var frm = {
         $('select[name=myQth]').change(function() {
             $(this).blur();
             frm.update();
+            LMap.drawQTH();
         });
         $('select[name=sortField]').change(function() {
             frm.update();
