@@ -13,11 +13,13 @@
         <link href="/flag-icons/css/flag-icons.css" rel="stylesheet">
 
         <!-- Scripts -->
+<?php ob_start() ?>
         @vite([
             'resources/css/app.css',
             'resources/css/logs.css',
             'resources/js/app.js'
         ])
+        <?php echo str_replace(' /><', ">\n        <", ob_get_clean()) ?>
     </head>
     <body class="font-sans antialiased">
         <div class="min-h-screen bg-gray-100 pt-1">

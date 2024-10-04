@@ -1,7 +1,8 @@
 <x-app-layout>
-@if(Auth::user() && Auth::user()->admin)
+@if(Auth::user() && Auth::user()->admin)<?php ob_start() ?>
     @vite([ 'resources/js/callsigns.js'])
-    <form id="form" method="POST" action="/user/patch">
+            <?php echo str_replace(' />', ">\n", ob_get_clean()) ?>
+        <form id="form" method="POST" action="/user/patch">
         @csrf
         <input type="hidden" name="action" value="">
         <input type="hidden" name="target" value="">

@@ -1,7 +1,5 @@
 <x-app-layout>
-    @vite([
-        'resources/js/logs.js'
-    ])
+    <?php ob_start() ?>@vite(['resources/js/logs.js'])<?php echo str_replace(' /><', ">\n        <", ob_get_clean()) ?>
 
     <script src="/js/lmap.js?v={{ exec('git describe --tags') }}"></script>
     <script>

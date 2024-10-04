@@ -35,9 +35,9 @@
         <div class="group">
             <div class="group" style="margin-right: 1em">
                 <label class="b">Dates:
-                    <input type="text" name="dateFrom" size="10" maxlength="10" value="{{ substr($user->first_log, 0, 10) }}"> -
-                    <input type="text" name="dateTo" size="10" maxlength="10" value="{{ substr($user->last_log, 0, 10) }}">
-                </label>
+                    <input type="text" name="dateFrom" size="10" maxlength="10" value="{{ substr($user->first_log, 0, 10) }}">
+                </label> -
+                <input type="text" name="dateTo" size="10" maxlength="10" value="{{ substr($user->last_log, 0, 10) }}">
             </div>
             <label class="b">Call:
                 <input type="text" name="call" size="8" value="">
@@ -50,7 +50,7 @@
             </label>
             <label class="b">Cont:
                 <select name="cont">
-                    <option value=""></option>
+                    <option value="">(All)</option>
                     <option value="AF">Africa</option>
                     <option value="AS">Asia</option>
                     <option value="EU">Europe</option>
@@ -68,7 +68,7 @@
             <div class="group">
                 <label class="b">My QTH
                     <select name="myQth">
-                        <option value="" title="All locations ({{ $user['log_count'] }} logs)" data-lat="{{ $user['lat'] }}" data-lng="{{ $user['lon'] }}" data-gsq="{{ $user['gsq'] }}" data-loc="DEFAULT: {{ $user['qth'] }}, {{ $user['city'] }}, {{ $user['sp'] }}, {{ $user['itu'] }}" ></option>
+                        <option value="" title="All locations ({{ $user['log_count'] }} logs)" data-lat="{{ $user['lat'] }}" data-lng="{{ $user['lon'] }}" data-gsq="{{ $user['gsq'] }}" data-loc="DEFAULT: {{ $user['qth'] }}, {{ $user['city'] }}, {{ $user['sp'] }}, {{ $user['itu'] }}" >(All)</option>
                         @foreach($qths as $label => $data)
                             <option value="{{ $label }}" title="GSQ {{ $data['gsq'] }} ({{ $data['logs'] }} logs)"
                                 data-lat="{{ $data['lat'] }}" data-lng="{{ $data['lon'] }}" data-gsq="{{ $data['gsq'] }}" data-loc="{{ $label }}"
