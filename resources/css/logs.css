@@ -70,8 +70,7 @@ div.group label > * {
 }
 #tabs .button .tabicon {
     display: inline;
-    width: 1.5em;
-    height: 1.5em;
+    height: 1.25em;
     text-decoration: none;
 }
 #tabs .button:hover span,
