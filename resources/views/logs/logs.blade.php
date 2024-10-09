@@ -44,12 +44,13 @@
     @endif
     <div class="flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
         @include('logs.partials.logs-form')
-        @include('logs.partials.logs-stats')
+        @include('logs.partials.logs-summary')
         @include('logs.partials.logs-tips')
     </div>
     @include('logs.partials.logs-tabs')
     <div id="content">
         @include('logs.partials.logs-list')
         @include('logs.partials.logs-map')
+        @include('logs.partials.logs-stats')
     </div>
 </x-app-layout>

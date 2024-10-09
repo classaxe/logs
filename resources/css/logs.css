@@ -204,30 +204,33 @@ table.list a:hover {
     color: red;
     text-decoration: underline;
 }
-.stats {
+.summary {
     margin: 0 auto 0.75em;
 }
-.stats table {
+.summary table {
     border: 1px solid #282;
     border-collapse: collapse;
 }
-.stats table tbody {
+.summary table tbody {
     text-align: right;
     color: #040;
     background: #cfc;
 }
-.stats table thead {
+.summary table thead {
     color: #fff;
     background: #6a6;
 }
-.stats table th,
-.stats table td {
+.summary table th,
+.summary table td {
     white-space: nowrap;
     min-width: 7em;
     padding: 0.25em 0.5em;
     border: 1px solid #080;
     font-size: 80%;
     margin: 0 auto;
+}
+.stats h1 {
+    text-align: left;
 }
 
 h1 a {

@@ -460,18 +460,22 @@ var frm = {
             frm.update();
             $(this).blur();
         });
-        $('#show_list').click(function() {
-            $('#show_list').removeClass('is-inactive').addClass('is-active');
-            $('#show_map').removeClass('is-active').addClass('is-inactive');
-            $('.map').hide();
-            $('.list').show();
-        });
-        $('#show_map').click(function() {
-            LMap.drawGridSquares();
-            $('#show_list').removeClass('is-active').addClass('is-inactive');
-            $('#show_map').removeClass('is-inactive').addClass('is-active');
-            $('.list').hide();
-            $('.map').show();
+        $('#show_list, #show_map, #show_stats').click(function() {
+            let id = $(this).attr('id');
+            $(['show_list','show_map', 'show_stats']).each(
+                function(idx, val) {
+                    if (val === 'show_map') {
+                        LMap.drawGridSquares();
+                    }
+                    if (val === id) {
+                        $('#' + val).removeClass('is-inactive').addClass('is-active');
+                        $('.' + val.substring(5)).show();
+                    } else {
+                        $('#' + val).removeClass('is-active').addClass('is-inactive');
+                        $('.' + val.substring(5)).hide();
+                    }
+                }
+            );
         });
         var $sortable = $('.sortable');
         $sortable.on('click', function(){
