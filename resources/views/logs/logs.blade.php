@@ -15,6 +15,7 @@
             squares: [],
             squareLabels: []
         };
+        var logDates = ['{{ substr($user->first_log, 0, 10) }}', '{{ substr($user->last_log, 0, 10) }}'];
         var qth = {
             lat: {{ $user['lat'] }},
             lng: {{ $user['lon'] }},

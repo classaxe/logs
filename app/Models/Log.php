@@ -525,7 +525,7 @@ class Log extends Authenticatable
                 if (isset(self::GSQ_SUBSTITUTES[$user['id']][$i['CALL']])) {
                     $log_gsq = self::GSQ_SUBSTITUTES[$user['id']][$i['CALL']];
                 }
-                $my_gsq =           strtoupper(substr($i['MY_GRIDSQUARE'] ?? $user['gsq'], 0, 6));
+                $my_gsq =           strtoupper($i['MY_GRIDSQUARE'] ?? $user['gsq']);
                 $my_qth =           $i['MY_CITY'] ?? $user['qth'];
                 if (isset($qthNames[$my_gsq])) {
                     $my_qth = $qthNames[$my_gsq];

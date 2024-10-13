@@ -158,6 +158,13 @@ var frm = {
         LMap.fitToBox();
     },
 
+    getStats: () => {
+        $.each(logs, function(idx, log) {
+
+        });
+        console.log(logs.length);
+    },
+
     getUniqueValues: (field) => {
         let idx;
         let tmp = [];
@@ -464,8 +471,13 @@ var frm = {
             let id = $(this).attr('id');
             $(['show_list','show_map', 'show_stats']).each(
                 function(idx, val) {
-                    if (val === 'show_map') {
-                        LMap.drawGridSquares();
+                    switch(val) {
+                        case 'show_map':
+                            LMap.drawGridSquares();
+                            break;
+                        case 'show_stats':
+                            frm.getStats();
+                            break;
                     }
                     if (val === id) {
                         $('#' + val).removeClass('is-inactive').addClass('is-active');
@@ -612,5 +624,6 @@ var COOKIE = {
             ('string' === typeof path ? path : '/');
     },
 }
+
 
 frm._init();
