@@ -628,8 +628,7 @@ class Log extends Authenticatable
         foreach ($qthsCombined as $gsq => $qth) {
             $qthNames[] = $gsq . ' = ' . $qth;
         }
-        //dd([$qthsFromLogs, $qthNamesForUser, $qthsCombined, $qthNames]);
-
+//        dd([$qthsFromLogs, $qthNamesForUser, $qthsCombined, $qthNames]);
         $user->setAttribute('qth_names', implode("\r\n", $qthNames));
         $user->save();
     }

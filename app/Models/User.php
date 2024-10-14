@@ -142,7 +142,7 @@ class User extends Authenticatable implements MustVerifyEmail
             foreach ($qthNamesArr as $qthName) {
                 $bits = explode('=', $qthName);
                 if (isset($bits[1])) {
-                    $qthNames[trim($bits[0])] = strtoupper(trim($bits[1]));
+                    $qthNames[strtoupper(trim($bits[0]))] = trim($bits[1]);
                 }
             }
         }
