@@ -250,7 +250,7 @@ class Log extends Authenticatable
     public static function getLogQthsForUser(User $user): array
     {
         $existing = User::getQthNamesForUser($user);
-        $result =
+        $rows =
             Log::Select(
                 'logs.myGsq',
                 'logs.myQth'
@@ -261,10 +261,14 @@ class Log extends Authenticatable
             ->orderBy('myQth', 'asc')
             ->get()
             ->toArray();
-        foreach ($result as &$item) {
+        foreach ($rows as &$item) {
             if (isset($existing[$item['myGsq']]) && $existing[$item['myGsq']] !== $item['myQth']) {
                 $item['myQth'] = $existing[$item['myGsq']];
             }
+        }
+        $result = [];
+        foreach ($rows as $row) {
+            $result[$row['myGsq']] = $row['myQth'];
         }
         return $result;
     }
@@ -499,6 +503,12 @@ class Log extends Authenticatable
             if (!isset($i['APP_QRZLOG_LOGID'])) {
                 continue;
             }
+            if (isset($i['MY_GRIDSQUARE'])
+                && isset($qthNames[strtoupper($i['MY_GRIDSQUARE'])])
+                && $qthNames[strtoupper($i['MY_GRIDSQUARE'])] === 'HIDE'
+            ) {
+                continue;
+            }
             try {
                 $itu =      $i['COUNTRY'];
                 $sp =       $i['STATE'] ?? '';
@@ -611,17 +621,16 @@ class Log extends Authenticatable
         $user->setAttribute('last_log', $last->date . ' ' . $last->time);
         $user->setAttribute('log_count', $logCount);
         $user->setAttribute('qth_count', $qthCount);
-        $qthsForUser = Log::getLogQthsForUser($user);
-        $qthNames = implode(
-            "\r\n",
-            array_map(
-                function ($item) {
-                    return $item['myGsq'] . ' = ' .$item['myQth'];
-                },
-                $qthsForUser
-            )
-        );
-        $user->setAttribute('qth_names', $qthNames);
+        $qthsFromLogs = Log::getLogQthsForUser($user);
+        $qthNamesForUser = User::getQthNamesForUser($user);
+        $qthsCombined = $qthsFromLogs + $qthNamesForUser;
+        $qthNames = [];
+        foreach ($qthsCombined as $gsq => $qth) {
+            $qthNames[] = $gsq . ' = ' . $qth;
+        }
+        //dd([$qthsFromLogs, $qthNamesForUser, $qthsCombined, $qthNames]);
+
+        $user->setAttribute('qth_names', implode("\r\n", $qthNames));
         $user->save();
     }
 }

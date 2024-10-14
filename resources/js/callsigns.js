@@ -32,6 +32,17 @@ window.addEventListener("DOMContentLoaded", function() {
             alert('Operation cancelled');
         }
     });
+    $('.u_logs_purge').click((e) => {
+        e.preventDefault();
+        if (confirm('Purge all logs for this user?')) {
+            $('[name=action]').val('purgeLogs');
+            $('[name=target]').val($(e.target).parent().parent().data('user'));
+            $('[name=value]').val('1');
+            $('#form').submit();
+        } else {
+            alert('Operation cancelled');
+        }
+    });
     $( "#status" ).delay(2500).fadeOut( 500, function() {
         // Animation complete.
     })

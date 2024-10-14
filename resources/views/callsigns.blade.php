@@ -38,7 +38,7 @@
                     <th>S/P</th>
                     <th>ITU</th>
                     <th>GSQ</th>
-                    <th>Logs</th>
+                    <th @if(Auth::user() && Auth::user()->admin) colspan="2" style="text-align: center"@endif>Logs</th>
                     <th>QTHs</th>
                     <th>First Log</th>
                     <th>Last Log</th>
@@ -85,6 +85,9 @@
                 <td>{{ $u->itu }} <span class="fi fi-{{ $u->itu }}"></span></td>
                 <td>{{ $u->gsq }}</td>
                 <td class="r">{{ $u->log_count }}</td>
+                @if(Auth::user() && Auth::user()->admin)
+                    <td class="c u_logs_purge"><a href="#">Purge</a></td>
+                @endif
                 <td class="r">{{ $u->qth_count }}</td>
                 <td class="r">{{ substr($u->first_log, 0, 10) }}</td>
                 <td class="r">{{ substr($u->last_log, 0, 10) }}</td>

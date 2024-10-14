@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserPatchRequest;
 use App\Http\Requests\UserUpdateRequest;
+use App\Models\Log;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -43,6 +44,18 @@ class UserController extends Controller
             die(500);
         }
         switch($request->action) {
+            case 'purgeLogs':
+                $user->first_log = null;
+                $user->last_log = null;
+                $user->qrz_last_data_pull = null;
+                $user->qrz_last_data_pull_debug = '';
+                $user->qrz_last_result = null;
+                $user->qth_count = 0;
+                $user->log_count = 0;
+                $user->save();
+                Log::deleteLogsForUser($user);
+                return Redirect::route('home')
+                    ->with('status', sprintf('<b>Success</b><br>Logs for <i>%s</i> have been purged.', $user->name));
             case 'setActive':
                 $user->active = $request->value;
                 $user->save();
