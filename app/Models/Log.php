@@ -456,7 +456,7 @@ class Log extends Authenticatable
                 $hide[] = $gsq;
             }
         }
-        $items = Log::selectRaw('COUNT(*) as num, myGsq, myQth')
+        $items = Log::selectRaw('COUNT(*) as logCount, MIN(date) as logFirst, MAX(date) as logLast, COUNT(DISTINCT date) as logDays, myGsq, myQth')
             ->where('userId', $user->id)
             ->whereNotIn('myGsq', $hide)
             ->groupBy('myQth', 'myGsq')
@@ -466,10 +466,13 @@ class Log extends Authenticatable
         foreach($items as $item) {
             $latlon = self::convertGsqToDegrees($item['myGsq']);
             $out[$item['myQth']] = [
-                'gsq' =>    $item['myGsq'],
-                'lat' =>    $latlon['lat'],
-                'lon' =>    $latlon['lon'],
-                'logs' =>   $item['num']
+                'gsq' =>        $item['myGsq'],
+                'lat' =>        $latlon['lat'],
+                'lon' =>        $latlon['lon'],
+                'logs' =>       $item['logCount'],
+                'logDays' =>    $item['logDays'],
+                'logFirst' =>   $item['logFirst'],
+                'logLast' =>    $item['logLast']
             ];
         }
         ksort($out);

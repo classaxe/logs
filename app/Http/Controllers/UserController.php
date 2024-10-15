@@ -6,6 +6,7 @@ use App\Http\Requests\UserPatchRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Models\Log;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -17,6 +18,17 @@ class UserController extends Controller
         $user = User::where('id', '=', $id)->firstOrFail();
         return view('user.edit', ['user' => $user]);
 
+    }
+
+    public function userJs(string $callsign, string $mode) {
+        $data = User::getUserDataByCallsign($callsign);
+        return view('user/js/qths', [
+            'qths' =>       $data['qths'],
+            'user' =>       $data['user']
+        ]);
+
+        dump([$callsign, $mode]);
+        dd($data);
     }
 
     public function update(UserUpdateRequest $request) {
