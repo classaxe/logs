@@ -12,7 +12,9 @@
                     {{ __("Welcome") }} <strong>{{ Auth::user()->name }}</strong><br>
                     {{ __("You're logged in!") }}
                     <br><br>
-                    To embed your log locations in another site, paste this code where you want the information to appear:<br><br>
+                    <h2>Embed your Log Info on another site</h2>
+                    Unfortunately, you cannot embed JavaScript code in your profile page at QRZ.com.<br>
+                    However, to embed your log locations in another site, paste this code where you want the information to appear:<br><br>
 <textarea style="width: 600px;height: 4em; overflow:hidden;background:#eee;font-family: 'Courier New', monospace;font-weight: bold">
 <div id="qthinfo"></div>
 <script src="http://logs.classaxe.local/js/qthinfo/{{ Auth::user()->call }}"></script>
