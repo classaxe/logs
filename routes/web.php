@@ -19,11 +19,11 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::get('/changes', [ChangesController::class, 'index'])->name('changes');
-Route::get('/js/{mode}/{callsign}', [UserController::class, 'userJs'])->name('userJs');
-Route::get('/logs/{callsign}', [LogsController::class, 'logsPage'])->name('logs.page');
-Route::get('/logs/{callsign}/logs', [LogsController::class, 'logs'])->name('logs');
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
+    Route::get('/user/{id}', [UserController::class, 'edit'])->name('user.edit');
+    Route::patch('/user/update', [UserController::class, 'update'])->name('user.update');
+    Route::post('/user/patch', [UserController::class, 'patch'])->name('user.patch');
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard',    [DashboardController::class, 'view'])->name('dashboard');
@@ -33,10 +33,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/profile',   [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-Route::middleware(['auth', 'verified', 'admin'])->group(function () {
-    Route::get('/user/{id}', [UserController::class, 'edit'])->name('user.edit');
-    Route::patch('/user/update', [UserController::class, 'update'])->name('user.update');
-    Route::post('/user/patch', [UserController::class, 'patch'])->name('user.patch');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/changes', [ChangesController::class, 'index'])->name('changes');
+Route::get('/js/{mode}/{callsign}', [UserController::class, 'userJs'])->name('userJs');
+Route::get('/logs/{callsign}', [LogsController::class, 'logsPage'])->name('logs.page');
+Route::get('/logs/{callsign}/logs', [LogsController::class, 'logs'])->name('logs');
+Route::get('/summary/{callsign}', [UserController::class, 'summary'])->name('summary');
 
 require __DIR__.'/auth.php';

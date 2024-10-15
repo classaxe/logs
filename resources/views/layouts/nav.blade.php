@@ -4,6 +4,9 @@
         <a href="{{ route('profile.edit') }}"{{
             Route::currentRouteName() === 'profile.edit' ? " class=is-active" : ''
         }}>Profile</a>
+        <a href="{{ route('summary', ['callsign' => Auth::user()->call]) }}"{{
+            Route::currentRouteName() === 'summary' ? " class=is-active" : ''
+        }}>Summary</a>
         <a href="{{ route('dashboard') }}"{{
             Route::currentRouteName() === 'dashboard' ? " class=is-active" : ''
         }}>Dashboard</a>

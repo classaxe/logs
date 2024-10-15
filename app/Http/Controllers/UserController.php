@@ -11,6 +11,7 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\View\View;
 
 class UserController extends Controller
 {
@@ -20,6 +21,17 @@ class UserController extends Controller
         return view('user.edit', ['user' => $user]);
 
     }
+
+    public function summary(string $callsign): View
+    {
+        if (!User::getUserByCallsign($callsign)) {
+            return redirect(url('/'));
+        }
+        return view('user.summary', [
+            'callsign' =>  $callsign
+        ]);
+    }
+
 
     public function userJs(string $mode, string $callsign) {
         $data = User::getUserDataByCallsign($callsign);

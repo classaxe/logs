@@ -18,10 +18,11 @@ function qthInfo() {
     <style>
     #qthinfo h2 {
         font-family: Arial, Helvetica, sans-serif;
-        margin: 1em 0 0.25em 0;
+        margin: 1em 0 0.5em 0;
     }
     #qthinfo table {
         border-collapse: collapse;
+        margin: 0 auto;
     }
     #qthinfo table th {
         background: #888;
@@ -29,11 +30,19 @@ function qthInfo() {
     }
     #qthinfo table th,
     #qthinfo table td {
+        border: 1px solid #888;
         padding: 2px 5px;
         vertical-align: top;
     }
     #qthinfo table td.logs {
         text-align: right;
+    }
+    #qthinfo table td a {
+        color: #00f;
+    }
+    #qthinfo table td a:hover {
+        color: #f00;
+        text-decoration: underline;
     }
     </style>
     <h2>Locations and Stats for ` + name + ` - ` + callsign + `</h2>
@@ -43,6 +52,7 @@ function qthInfo() {
             <th>Grid</th>
             <th>Location</th>
             <th>Dates</th>
+            <th>Days</th>
             <th>Logs</th>
         </tr>
         </thead>
@@ -52,7 +62,8 @@ function qthInfo() {
         html += `    <tr>
         <td>` + q['gsq'] + `</td>
         <td><a href="https://logs.classaxe.com/logs/` + callsign + `?presets[]=myQth|` + q['label'] + `" target="_blank">` + q['label'] + `</a></td>
-        <td>` + q['logFirst'] + (q['logDays'] > 1 ? ` - ` + q['logLast'] + ` (` + q['logDays'] + ` days)` : '') + `</td>
+        <td>` + q['logFirst'] + (q['logDays'] > 1 ? ` - ` + q['logLast']  : '') + `</td>
+        <td>` + q['logDays'] + `</td>
         <td class="logs">` + q['logs'] + `</td>
     </tr>`
     }
