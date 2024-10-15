@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChangesController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LogsController;
 use App\Http\Controllers\ProfileController;
@@ -20,20 +21,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/changes', [ChangesController::class, 'index'])->name('changes');
-
-Route::get('/logs/fetch', [LogsController::class, 'logsFetch'])->middleware(['auth', 'verified'])->name('logs.fetch');
-
+Route::get('/js/{mode}/{callsign}', [UserController::class, 'userJs'])->name('userJs');
 Route::get('/logs/{callsign}', [LogsController::class, 'logsPage'])->name('logs.page');
-
 Route::get('/logs/{callsign}/logs', [LogsController::class, 'logs'])->name('logs');
 
-Route::get('/logs/{callsign}/js/{mode}', [UserController::class, 'userJs'])->name('userJs');
-
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', function () { return view('dashboard'); })->name('dashboard');
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/dashboard',    [DashboardController::class, 'view'])->name('dashboard');
+    Route::get('/logs/fetch',   [LogsController::class, 'logsFetch'])->name('logs.fetch');
+    Route::get('/profile',      [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile',    [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile',   [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
