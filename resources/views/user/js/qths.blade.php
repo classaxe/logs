@@ -20,6 +20,10 @@ function qthInfo() {
         font-family: Arial, Helvetica, sans-serif;
         margin: 1em 0 0.5em 0;
     }
+    #qthinfo p {
+        text-align: center;
+        margin: 0.5em auto;
+    }
     #qthinfo table {
         border-collapse: collapse;
         margin: 0 auto;
@@ -34,6 +38,7 @@ function qthInfo() {
         padding: 2px 5px;
         vertical-align: top;
     }
+    #qthinfo table td.days,
     #qthinfo table td.logs {
         text-align: right;
     }
@@ -46,6 +51,7 @@ function qthInfo() {
     }
     </style>
     <h2>Locations and Stats for ` + name + ` - ` + callsign + `</h2>
+    <p>Click the links below to view live logs and an interactive gridsquares map.</p>
     <table border="1" cellpadding="2" cellspacing="0">
         <thead>
         <tr>
@@ -63,7 +69,7 @@ function qthInfo() {
         <td>` + q['gsq'] + `</td>
         <td><a href="https://logs.classaxe.com/logs/` + callsign + `?presets[]=myQth|` + q['label'] + `" target="_blank">` + q['label'] + `</a></td>
         <td>` + q['logFirst'] + (q['logDays'] > 1 ? ` - ` + q['logLast']  : '') + `</td>
-        <td>` + q['logDays'] + `</td>
+        <td class="days">` + q['logDays'] + `</td>
         <td class="logs">` + q['logs'] + `</td>
     </tr>`
     }

@@ -43,6 +43,7 @@
                     <th>First Log</th>
                     <th>Last Log</th>
                     <th>Last Fetch</th>
+                    <th>Summary</th>
                     <th>QRZ</th>
                     @if(Auth::user() && Auth::user()->admin)
                         <th>Active</th>
@@ -94,7 +95,8 @@
                 <td class="r" @if(Auth::user() && Auth::user()->admin && $u->qrz_last_data_pull_debug)
                     style="cursor:pointer;text-decoration: underline" title="{{ $u->qrz_last_data_pull_debug }}"
                 @endif>@if($u->qrz_last_result !== 'OK'){{ $u->qrz_last_result }} @else {{ $u->getLastQrzPull() }} @endif </td>
-                <td><a target="_blank" href="https://www.qrz.com/db/{{ $u->call }}">LINK</a></td>
+                <td class="c"><a href="/summary/{{ $u->call }}">LINK</a></td>
+                <td class="c"><a target="_blank" href="https://www.qrz.com/db/{{ $u->call }}">LINK</a></td>
                 @if(Auth::user() && Auth::user()->admin)
                     <td class="c u_active"><a href="#">{{ $u->active ? 'Yes' : 'No' }}</a></td>
                     <td class="c u_admin"><a href="#">{{ $u->admin ? 'Yes' : 'No' }}</a></td>
