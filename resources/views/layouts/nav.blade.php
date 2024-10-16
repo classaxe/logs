@@ -5,7 +5,7 @@
             Route::currentRouteName() === 'profile.edit' ? " class=is-active" : ''
         }}>Profile</a>
         <a href="{{ route('summary', ['callsign' => Auth::user()->call]) }}"{{
-            Route::currentRouteName() === 'summary' ? " class=is-active" : ''
+            Route::currentRouteName() === 'summary' && request()->route('callsign') === Auth::user()->call ? " class=is-active" : ''
         }}>Summary</a>
         <a href="{{ route('dashboard') }}"{{
             Route::currentRouteName() === 'dashboard' ? " class=is-active" : ''
@@ -15,7 +15,7 @@
                 Route::currentRouteName() === 'logs.page'
                 && isset(Route::current()->parameters()['callsign'])
                 && Route::current()->parameters()['callsign'] === Auth::user()->call ? " class=is-active" : ''
-            }}>Logs</a>
+            }}>Your Logs</a>
             <a href="{{ route('logs.fetch') }}" id="fetch" title="Reloads your own logs from QRZ.com"{{
                 Route::currentRouteName() === 'logs.fetch' ? " class=is-active" : ''
             }}>Fetch Logs</a>
