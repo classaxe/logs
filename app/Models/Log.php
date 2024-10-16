@@ -2,19 +2,13 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Adif\adif;
 use Carbon\Carbon;
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 
-class Log extends Authenticatable
+class Log extends Model
 {
-    use HasFactory, Notifiable;
-
     const COLUMNS = [
         'logNum' =>     ['lbl' =>   'Log',          'class' => ''],
         'myGsq' =>      ['lbl' =>   'My GSQ',       'class' => 'not-compact multi-qth'],
