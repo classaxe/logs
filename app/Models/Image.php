@@ -5,13 +5,26 @@ namespace App\Models;
 class Image
 {
     private $colors;
+    private $fontDir;
     private $image;
+    private $imageWidth;
+    private $imageHeight;
     private $images;
     private $imageDir;
 
     public function __construct()
     {
-        $this->imageDir = public_path('images');
+        $this->imageDir = public_path('images') . '/';
+        $this->fontDir =  resource_path('fonts') . '/';
+    }
+
+    private function getPathForFont($font)
+    {
+        $path = $this->fontDir . $font;
+        if (file_exists($path)) {
+            return $path;
+        }
+        dd('Path not found - ' .$path);
     }
 
     public function ImageColorAllocate($rgb)
@@ -22,14 +35,43 @@ class Image
         return ImageColorAllocate($this->image, $r, $g, $b);
     }
 
+    public function getTextSize($points, $angle, $font, $text)
+    {
+        try {
+            $rect = imagettfbbox($points, $angle, $this->getPathForFont($font), $text);
+
+            $minX = min([$rect[0], $rect[2], $rect[4], $rect[6]]);
+            $maxX = max([$rect[0], $rect[2], $rect[4], $rect[6]]);
+            $minY = min([$rect[1], $rect[3], $rect[5], $rect[7]]);
+            $maxY = max([$rect[1], $rect[3], $rect[5], $rect[7]]);
+            return [
+                "left"   => abs($minX) - 1,
+                "top"    => abs($minY) - 1,
+                "width"  => $maxX - $minX,
+                "height" => $maxY - $minY,
+                "box"    => $rect
+            ];
+        } catch(\Exception $e) {
+            dd($e->getMessage() . " - " . $this->getPathForFont($font));
+        }
+    }
+
+    public function ImageMake($width, $height) {
+        $this->imageWidth = $width;
+        $this->imageHeight = $height;
+        $this->image = imagecreatetruecolor($this->imageWidth, $this->imageHeight);
+        $this->ImageColorAllocateAll();
+        imageFill($this->image, 0, 0, $this->colors['bg']);
+    }
+
     public function ImageColorAllocateAll()
     {
         $this->colors = [
-            'bg' =>         $this->ImageColorAllocate('#123456'),
+            'bg' =>         $this->ImageColorAllocate('#ffffff'),
             'black' =>      $this->ImageColorAllocate('#000000'),
             'white' =>      $this->ImageColorAllocate('#ffffff'),
             'darkgray' =>   $this->ImageColorAllocate('#808080'),
-            'link' =>       $this->ImageColorAllocate('#0000ff')
+            'blue' =>       $this->ImageColorAllocate('#0000ff')
         ];
     }
 
@@ -61,4 +103,36 @@ class Image
         imageline($im, $x2, $y1+$radius, $x2, $y2-$radius, $linecolor);
     }
 
+    public function ImageDrawText($points, $angle, $x, $y, $box_width, $box_height, $color, $font, $text)
+    {
+        imagettftext(
+            $this->image,
+            $points,
+            $angle,
+            $x + ($this->imageWidth / 2)  - ($box_width / 2),
+            $y + ($this->imageHeight / 2) - ($box_height / 2),
+            $this->colors[$color],
+            $this->getPathForFont($font),
+            $text
+        );
+    }
+
+    public function ImageRender($type) {
+        switch ($type) {
+            case "gif":
+                header("Content-Type: image/gif");
+                imagegif($this->image);
+                break;
+            case "jpg":
+                header("Content-Type: image/jpeg");
+                imagejpeg($this->image);
+                break;
+            case "png":
+                header("Content-Type: image/png");
+                imagepng($this->image);
+                break;
+        }
+        imagedestroy($this->image);
+        die();
+    }
 }

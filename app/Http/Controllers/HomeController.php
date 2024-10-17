@@ -14,7 +14,7 @@ class HomeController extends Controller
         if (Auth::user() && Auth::user()->admin) {
             $users = User::getAllUsers();
         } else {
-            $users = User::getActiveUsers();
+            $users = User::getVisibleUsers();
         }
         return view('callsigns', ['users' => $users]);
     }

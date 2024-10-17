@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements MustVerifyEmail
@@ -62,9 +63,14 @@ class User extends Authenticatable implements MustVerifyEmail
     /**
      * @return array
      */
-    public static function getActiveUsers(): Collection
+    public static function getVisibleUsers(): Collection
     {
         return User::where('is_visible', 1)->orderBy('call', 'asc')->get();
+    }
+
+    public static function getActiveUsers(): Collection
+    {
+        return User::where('active', 1)->orderBy('call', 'asc')->get();
     }
 
     public static function getAllUsers(): Collection
@@ -147,5 +153,51 @@ class User extends Authenticatable implements MustVerifyEmail
             }
         }
         return $qthNames;
+    }
+
+    public static function getHideGsqsForUser(User $user): array
+    {
+        $gsqs = [];
+        $locations = User::getQthNamesForUser($user);
+        foreach ($locations as $gsq => $name) {
+            if (strtoupper($name) === 'HIDE') {
+                $gsqs[] = $gsq;
+            }
+        }
+        return $gsqs;
+    }
+
+
+    /**
+     * @param User $user
+     * @return void
+     */
+    public static function updateStats(User $user) {
+        $first = Log::where('userId','=',$user->id)->orderBy('date', 'asc')->orderBy('time', 'asc')->first();
+        $last = Log::where('userId','=',$user->id)->orderBy('date', 'desc')->orderBy('time', 'desc')->first();
+        $log_days = Log::selectRaw('COUNT(DISTINCT date) as log_days')
+            ->where('userId', $user->id)
+            ->whereNotIn('myGsq', self::getHideGsqsForUser($user))
+            ->get()
+            ->value('log_days');
+        $logCount = Log::where('userId', '=', $user->id)->count();
+        $qthCount = Log::where('userId', '=', $user->id)->count(DB::raw('DISTINCT myQth'));
+        $user->setAttribute('qrz_last_result', 'OK');
+        $user->setAttribute('qrz_last_data_pull', time());
+        $user->setAttribute('first_log', $first->date . ' ' . $first->time);
+        $user->setAttribute('last_log', $last->date . ' ' . $last->time);
+        $user->setAttribute('log_days', $log_days);
+        $user->setAttribute('log_count', $logCount);
+        $user->setAttribute('qth_count', $qthCount);
+        $qthsFromLogs = Log::getLogQthsForUser($user);
+        $qthNamesForUser = User::getQthNamesForUser($user);
+        $qthsCombined = $qthsFromLogs + $qthNamesForUser;
+        $qthNames = [];
+        foreach ($qthsCombined as $gsq => $qth) {
+            $qthNames[] = $gsq . ' = ' . $qth;
+        }
+//        dd([$qthsFromLogs, $qthNamesForUser, $qthsCombined, $qthNames]);
+        $user->setAttribute('qth_names', implode("\r\n", $qthNames));
+        $user->save();
     }
 }

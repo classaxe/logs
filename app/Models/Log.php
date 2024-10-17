@@ -368,7 +368,7 @@ class Log extends Model
         try {
             self::insertOrUpdateLogs($items);
             self::renumberLogsForUser($user);
-            self::updateUserStats($user);
+            User::updateStats($user);
             $user->setAttribute('qrz_last_data_pull_debug', implode("\n", $debug));
             $user->save();
             return true;
@@ -443,16 +443,10 @@ class Log extends Model
      */
     public static function getQthsForUser(User $user): array
     {
-        $hide = [];
-        $locations = User::getQthNamesForUser($user);
-        foreach ($locations as $gsq => $name) {
-            if (strtoupper($name) === 'HIDE') {
-                $hide[] = $gsq;
-            }
-        }
+        $hideGsqs = User::getHideGsqsForUser($user);
         $items = Log::selectRaw('COUNT(*) as logCount, MIN(date) as logFirst, MAX(date) as logLast, COUNT(DISTINCT date) as logDays, myGsq, myQth')
             ->where('userId', $user->id)
-            ->whereNotIn('myGsq', $hide)
+            ->whereNotIn('myGsq', $hideGsqs)
             ->groupBy('myQth', 'myGsq')
             ->get()
             ->toArray();
@@ -601,32 +595,5 @@ class Log extends Model
             0,
             240
         );
-    }
-
-    /**
-     * @param User $user
-     * @return void
-     */
-    public static function updateUserStats(User $user) {
-        $first = Log::where('userId','=',$user->id)->orderBy('date', 'asc')->orderBy('time', 'asc')->first();
-        $last = Log::where('userId','=',$user->id)->orderBy('date', 'desc')->orderBy('time', 'desc')->first();
-        $logCount = Log::where('userId', '=', $user->id)->count();
-        $qthCount = Log::where('userId', '=', $user->id)->count(DB::raw('DISTINCT myQth'));
-        $user->setAttribute('qrz_last_result', 'OK');
-        $user->setAttribute('qrz_last_data_pull', time());
-        $user->setAttribute('first_log', $first->date . ' ' . $first->time);
-        $user->setAttribute('last_log', $last->date . ' ' . $last->time);
-        $user->setAttribute('log_count', $logCount);
-        $user->setAttribute('qth_count', $qthCount);
-        $qthsFromLogs = Log::getLogQthsForUser($user);
-        $qthNamesForUser = User::getQthNamesForUser($user);
-        $qthsCombined = $qthsFromLogs + $qthNamesForUser;
-        $qthNames = [];
-        foreach ($qthsCombined as $gsq => $qth) {
-            $qthNames[] = $gsq . ' = ' . $qth;
-        }
-//        dd([$qthsFromLogs, $qthNamesForUser, $qthsCombined, $qthNames]);
-        $user->setAttribute('qth_names', implode("\r\n", $qthNames));
-        $user->save();
     }
 }

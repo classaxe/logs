@@ -30,7 +30,7 @@ class getQrzLogs extends Command
     public function handle()
     {
         $force = false;
-        $activeUsers = User::getActiveUsers();
+        $activeUsers = User::getVisibleUsers();
         foreach ($activeUsers as $user) {
             if (!$force && !$user->active) {
                 print "- Skipping inactive user {$user->call}\n";
