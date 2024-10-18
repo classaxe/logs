@@ -35,10 +35,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/changes', [ChangesController::class, 'index'])->name('changes');
-Route::get('/js/{mode}/{callsign}', [UserController::class, 'userJs'])->name('userJs');
 Route::get('/logs/{callsign}', [LogsController::class, 'logsPage'])->name('logs.page');
 Route::get('/logs/{callsign}/logs', [LogsController::class, 'logs'])->name('logs');
-Route::get('/summary/{callsign}', [UserController::class, 'summaryHtml'])->name('summary');
-Route::get('/summaryImage/{callsign}', [UserController::class, 'summaryImage'])->name('summaryImage');
+Route::get('/summary/{callsign}', [UserController::class, 'summary'])->name('summary');
 
 require __DIR__.'/auth.php';
+
+// Embedding
+
+Route::get('/embed/{mode}/{method}/{callsign}', [UserController::class, 'embed'])->name('embed');

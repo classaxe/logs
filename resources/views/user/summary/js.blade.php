@@ -20,10 +20,6 @@ function qthInfo() {
 
     let html = `
 <style>
-#qthinfo h2 {
-    font-family: Arial, Helvetica, sans-serif;
-    margin: 1em 0 0.5em 0;
-}
 #qthinfo p {
     text-align: center;
     margin: 0.5em auto;
@@ -59,7 +55,6 @@ function qthInfo() {
     text-decoration: underline;
 }
 </style>
-<h2>Locations and Stats for ` + name + ` - ` + callsign + `</h2>
 <p>Click the links below to view live logs and an interactive gridsquares map.</p>
 <table border="1" cellpadding="2" cellspacing="0">
     <thead>

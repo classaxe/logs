@@ -92,10 +92,26 @@ div.group label > * {
     background-color: #ddf;
 }
 main h1,
-main h2 {
+main h2,
+main h3 {
     font-weight: bold;
     text-align: center;
     margin-bottom: 0.5em;
+}
+.l {
+    text-align: left;
+}
+.r {
+    text-align: right;
+}
+main p {
+    margin: 0.5em 0;
+}
+main ol {
+    list-style: decimal;
+}
+main ol li {
+    margin: 0 0 1em 0;
 }
 main:not(.compact)  {
     clear: both;

@@ -23,77 +23,84 @@ class UserController extends Controller
 
     }
 
-    public function summaryHtml(string $callsign): View
-    {
-        if (!User::getUserByCallsign($callsign)) {
-            return redirect(url('/'));
-        }
-        return view('user.summary', [
-            'callsign' =>  $callsign
-        ]);
-    }
-
-    public function summaryImage(string $callsign): View
+    public function embed(string $mode, string $method, string $callsign)
     {
         if (!$u = User::getUserByCallsign($callsign)) {
             return redirect(url('/'));
         }
-        $Image = new Image();
-        $labels = [
-            [
-                'text' =>   sprintf("Locations and Stats for %s - %s", $u->name, $u->call),
-                'font' =>   'arial.ttf',
-                'size' =>   12,
-                'color' =>  'black',
-                'ypos' =>  -5
-            ],
-            [
-                'text' =>   "Click the links below to view live logs and an interactive gridsquares map.",
-                'font' =>   'arial.ttf',
-                'size' =>   12,
-                'color' =>  'blue',
-                'y' =>  30
-            ]
-        ];
-        $padding = 10;
-        $totalWidth = 0;
-        $totalHeight = 0;
-        foreach ($labels as &$l) {
-            $l['box'] = $Image->getTextSize($l['size'],0, $l['font'], $l['text']);
-            $totalWidth = max($totalWidth, $l['box']['width']);
-        }
+        switch ($mode) {
+            case 'summary':
+                switch ($method) {
+                    case 'iframe':
+                        return view('user.summary.iframe', [
+                            'callsign' => $callsign,
+                            'user' => $u
+                        ]);
+                    case 'img':
+                        $Image = new Image();
+                        $labels = [
+                            [
+                                'text' => sprintf("Locations and Stats for %s - %s", $u->name, $u->call),
+                                'font' => 'arial.ttf',
+                                'size' => 12,
+                                'color' => 'black',
+                                'ypos' => -5
+                            ],
+                            [
+                                'text' => "Click the links below to view live logs and an interactive gridsquares map.",
+                                'font' => 'arial.ttf',
+                                'size' => 12,
+                                'color' => 'blue',
+                                'y' => 30
+                            ]
+                        ];
+                        $padding = 10;
+                        $totalWidth = 0;
+                        $totalHeight = 0;
+                        foreach ($labels as &$l) {
+                            $l['box'] = $Image->getTextSize($l['size'], 0, $l['font'], $l['text']);
+                            $totalWidth = max($totalWidth, $l['box']['width']);
+                        }
 
-        $Image->ImageMake($totalWidth + $padding, $totalHeight + $padding);
-        $pad_v = 0;
-        foreach ($labels as &$l) {
-            $pad_v += $l['pad_v'];
-            $Image->ImageDrawText(
-                $l['size'],
-                0,
-                $l['box']['left'],
-                $l['box']['top'] + $pad_v,
-                $l['box']['width'],
-                $l['box']['height'],
-                $l['color'],
-                $l['font'],
-                $l['text']
-            );
+                        $Image->ImageMake($totalWidth + $padding, $totalHeight + $padding);
+                        $pad_v = 0;
+                        foreach ($labels as &$l) {
+                            $pad_v += $l['pad_v'];
+                            $Image->ImageDrawText(
+                                $l['size'],
+                                0,
+                                $l['box']['left'],
+                                $l['box']['top'] + $pad_v,
+                                $l['box']['width'],
+                                $l['box']['height'],
+                                $l['color'],
+                                $l['font'],
+                                $l['text']
+                            );
+                        }
+                        $Image->ImageRender('png');
+                        die();
+
+                    case 'js':
+                        $data = User::getUserDataByCallsign($callsign);
+                        $contents = view('user.summary.js', [
+                            'qths' =>       $data['qths'],
+                            'user' =>       $data['user']
+                        ]);
+                        return  response($contents)->header('Content-Type', 'application/javascript');
+                }
+            break;
         }
-        $Image->ImageRender('png');
-        dd($size);
-        return view('user.summary', [
-            'callsign' =>  $callsign
-        ]);
     }
 
-    public function userJs(string $mode, string $callsign) {
-        $data = User::getUserDataByCallsign($callsign);
-
-        $contents = view('user/js/qths', [
-            'qths' =>       $data['qths'],
-            'user' =>       $data['user']
+    public function summary(string $callsign) {
+        if (!$u = User::getUserByCallsign($callsign)) {
+            return redirect(url('/'));
+        }
+        return view('user.summary.index', [
+            'callsign' => $callsign,
+            'user' => $u
         ]);
-        return  response($contents)->header('Content-Type', 'application/javascript');
     }
 
     public function update(UserUpdateRequest $request) {
