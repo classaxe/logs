@@ -4,6 +4,6 @@
 </head>
 <body>
 <div id="qthinfo"></div>
-<script src="{{ route('embed', ['method' => 'js', 'mode' => 'summary', 'callsign' =>Auth::user()->call]) }}"></script>
+<script src="{{ route('embed', ['method' => 'js', 'mode' => 'summary', 'callsign' => $callsign]) }}"></script>
 </body>
 </html>
