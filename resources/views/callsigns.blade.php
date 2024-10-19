@@ -12,8 +12,8 @@
     <div class="callsigns w-full max-w-fit mt-6 px-6 py-4 bg-white shadow-md overflow-hidden sm:rounded-lg" style="margin: 3em auto 0.5em auto">
         <h1>QRZ Log and Map Viewer</h1>
         <p>This site enables Radio Amateurs who are <a target="_blank" href="https://shop.qrz.com/collections/subscriptions">XML Subscribers</a>
-            at <a target="_blank" href="https://qrz.com">QRZ.com</a> to allow visitors to view their entire log with an
-            interactive Grid Square map without having to log in or create an account at either site.
+            at <a target="_blank" href="https://qrz.com">QRZ.com</a> to share their entire log with live stats and an
+            interactive Grid Square map without visitors having to log in or create an account at either site.
         </p>
         <p>To add your own logs to this system, click  <a href="{{ route('register') }}">Register</a> above to set up a profile.</p>
         <p>You will need to provide your QRZ.com API Key to use this facility, and a moderator will need to approve your

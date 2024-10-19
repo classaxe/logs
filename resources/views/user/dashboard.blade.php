@@ -23,7 +23,6 @@ style="width:680px; height: 360px; border:none"></iframe>
                         <li><b>Javascript Embedding</b>
                             <p>This second method <strong>does not work</strong> for QRZ profile pages, since script tags are not allowed.</p>
                             <textarea style="width: 1000px;height: 5.5em; overflow:hidden;background:#eee;font-family: 'Courier New', monospace;font-weight: bold">
-<h2>Location and Stats for {{ $user->name }} - {{ $user->call }}</h2>
 <div id="qthinfo"></div>
 <script src="{{ route('embed', ['method' => 'js', 'mode' => 'summary', 'callsign' =>Auth::user()->call]) }}"></script>
 </textarea>

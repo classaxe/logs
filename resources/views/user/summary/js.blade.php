@@ -40,6 +40,7 @@ function qthInfo() {
 }
 #qthinfo table th,
 #qthinfo table td {
+    color: #444;
     border: 1px solid #888;
     padding: 2px 5px;
     vertical-align: top;
@@ -55,6 +56,7 @@ function qthInfo() {
     text-decoration: underline;
 }
 </style>
+<h2>Location and Stats for {{ $user->name }} - {{ $user->call }}</h2>
 <p>Click the links below to view live logs and an interactive gridsquares map.</p>
 <table border="1" cellpadding="2" cellspacing="0">
     <thead>
@@ -88,7 +90,7 @@ function qthInfo() {
         </tr>`;
     }
     html += `</tbody></table>`;
-html += "<p><b>*Days</b> means days spent actively logging.</p>";
+html += "<p><b>*Days</b> means days with recorded logs.</p>";
     document.getElementById('qthinfo').innerHTML = html;
 }
 qthInfo();

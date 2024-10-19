@@ -31,7 +31,6 @@
         }
         #qthinfo table th,
         #qthinfo table td {
-            font-weight: 200;
             color: #444;
             border: 1px solid #444;
             padding: 4px 5px;
@@ -47,6 +46,14 @@
         #qthinfo table td a:hover {
             color: #f00;
             text-decoration: underline;
+        }
+        #qthinfo p.cta {
+            font-style: italic;
+            font-size: 70%;
+        }
+        #qthinfo p.cta a {
+            color: #00f;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -85,6 +92,7 @@
         </tbody>
     </table>
     <p><b>*Days</b> means days with recorded logs.</p>
+    <p class="cta">Share your <a href="https://qrz.com">QRZ.com</a> live logs, maps and stats at <a href="https://logs.classaxe.com" target="_blank">https://logs.classaxe.com</a></p>
 </div>
 </body>
 </html>
