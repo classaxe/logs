@@ -2,9 +2,14 @@
 <head>
     <title>Location and Stats for {{ $user->name }} - {{ $user->call }}</title>
     <style>
+        #qthinfo h2 {
+            font-size: 1em;
+        }
+        #qthinfo h2,
         #qthinfo p {
             text-align: center;
             margin: 0.5em auto;
+            font-family: Figtree,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji"
         }
         #qthinfo table {
             border-collapse: collapse;
@@ -13,6 +18,10 @@
         #qthinfo table thead th {
             background: #888;
             color: #fff;
+            font-family: Figtree,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji"
+        }
+        #qthinfo table tbody td {
+            font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace
         }
         #qthinfo table tbody tr.totals td {
             font-weight: bold;
@@ -22,14 +31,17 @@
         }
         #qthinfo table th,
         #qthinfo table td {
-            border: 1px solid #888;
-            padding: 2px 5px;
+            font-weight: 200;
+            color: #444;
+            border: 1px solid #444;
+            padding: 4px 5px;
             vertical-align: top;
         }
         #qthinfo table tbody td.r {
             text-align: right !important;
         }
         #qthinfo table td a {
+            text-decoration: none;
             color: #00f;
         }
         #qthinfo table td a:hover {
@@ -40,6 +52,7 @@
 </head>
 <body>
 <div id="qthinfo">
+    <h2>Location and Stats for {{ $user->name }} - {{ $user->call }}</h2>
     <p>Click the links below to view live logs and an interactive gridsquares map.</p>
     <table border="1" cellpadding="2" cellspacing="0">
         <thead>
@@ -71,7 +84,7 @@
         @endif
         </tbody>
     </table>
+    <p><b>*Days</b> means days with recorded logs.</p>
 </div>
-<xscript src="{{ route('embed', ['method' => 'js', 'mode' => 'summary', 'callsign' => $user->call]) }}"></xscript>
 </body>
 </html>

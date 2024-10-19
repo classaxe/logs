@@ -13,17 +13,19 @@
                     <p>Here's how you can embed your live information from this site in other websites</p>
                     <h2 style="margin-top: 1em">Summary information</h2>
                     <ol>
-                        <li><b>Javascript Embedding</b>
-                            <p>Note that this method <strong>does not work for QRZ profile pages</strong>, since script tags are not allowed.</p>
+                        <li><b>IFRAME Embedding</b>
+                            <p>This first method works for QRZ profile pages, since no Javascript is used in the iframe source.</p>
                             <textarea style="width: 1000px;height: 4em; overflow:hidden;background:#eee;font-family: 'Courier New', monospace;font-weight: bold">
+<iframe src="{{ route('embed', ['method' => 'iframe', 'mode' => 'summary', 'callsign' => $user->call]) }}" title="Live logs for {{ $user->call }}"
+style="width:680px; height: 360px; border:none"></iframe>
+</textarea>
+                        </li>
+                        <li><b>Javascript Embedding</b>
+                            <p>This second method <strong>does not work</strong> for QRZ profile pages, since script tags are not allowed.</p>
+                            <textarea style="width: 1000px;height: 5.5em; overflow:hidden;background:#eee;font-family: 'Courier New', monospace;font-weight: bold">
 <h2>Location and Stats for {{ $user->name }} - {{ $user->call }}</h2>
 <div id="qthinfo"></div>
 <script src="{{ route('embed', ['method' => 'js', 'mode' => 'summary', 'callsign' =>Auth::user()->call]) }}"></script>
-</textarea>
-                        </li>
-                        <li><b>IFRAME Embedding</b><br>
-                            <textarea style="width: 1000px;height: 2.5em; overflow:hidden;background:#eee;font-family: 'Courier New', monospace;font-weight: bold">
-<iframe src="{{ route('embed', ['method' => 'iframe', 'mode' => 'summary', 'callsign' => $user->call]) }}" title="Live logs for {{ $user->call }}">
 </textarea>
                         </li>
                     </ol>

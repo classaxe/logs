@@ -111,7 +111,10 @@ main ol {
     list-style: decimal;
 }
 main ol li {
-    margin: 0 0 1em 0;
+    margin: 0 0 2em 0;
+}
+main ol li p {
+    margin: 0.5em 0;
 }
 main:not(.compact)  {
     clear: both;
