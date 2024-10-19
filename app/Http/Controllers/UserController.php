@@ -32,12 +32,13 @@ class UserController extends Controller
             case 'summary':
                 switch ($method) {
                     case 'iframe':
-                        if (!$u = User::getUserByCallsign($callsign)) {
+                        if (!User::getUserByCallsign($callsign)) {
                             return redirect(url('/'));
                         }
+                        $data = User::getUserDataByCallsign($callsign);
                         return view('user.summary.iframe', [
-                            'callsign' => $callsign,
-                            'user' => $u
+                            'qths' =>       $data['qths'],
+                            'user' =>       $data['user']
                         ]);
                     case 'img':
                         $Image = new Image();
