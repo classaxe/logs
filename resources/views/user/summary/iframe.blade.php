@@ -8,8 +8,21 @@
         #qthinfo h2,
         #qthinfo p {
             text-align: center;
-            margin: 0.5em auto;
+            margin: 0.25em auto;
             font-family: Figtree,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji"
+        }
+        #qthinfo a.btn {
+            margin: 0 0 0.25em 1em;
+            font-size: 70%;
+            background: #44f;
+            color: white;
+            text-decoration: none;
+            padding: 0.25em;
+            border-radius: 0.5em;
+        }
+        #qthinfo a.btn:hover {
+            background: #88f;
+            color: yellow;
         }
         #qthinfo table {
             border-collapse: collapse;
@@ -59,7 +72,9 @@
 </head>
 <body>
 <div id="qthinfo">
-    <h2>Location and Stats for {{ $user->name }} - {{ $user->call }}</h2>
+    <h2>Location and Stats for {{ $user->name }} - {{ $user->call }}
+        <a class="btn" href="{{ route('embed', ['mode' => 'summary', 'method' => 'iframe', 'callsign' => $user->call]) }}">Reload</a>
+    </h2>
     <p>Click the links below to view live logs and an interactive gridsquares map.</p>
     <table border="1" cellpadding="2" cellspacing="0">
         <thead>
