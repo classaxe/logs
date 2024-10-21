@@ -60,6 +60,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'qrz_last_data_pull' => 'datetime',
     ];
 
+    public function delete() {
+        DB::statement("DELETE FROM `logs` WHERE `userId` = " . $this->id);
+        return parent::delete();
+    }
     /**
      * @return array
      */
