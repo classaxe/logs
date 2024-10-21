@@ -40,7 +40,7 @@ class ChangesController extends Controller
                 ) <= static::NEW_DAYS;
             $hash =     trim(array_shift($bits), ':');
             $version =  trim(array_shift($bits), ':');
-            $details =  implode(' ', $bits);
+            $details =  htmlentities(implode(' ', $bits));
             $commits[] =
                 '<li id="' . $version .'">'
                 . '<a href="' . static::REPO_BASE . '/commit/' . $hash .'" target="_blank"><strong>'.$version.'</strong></a> '
