@@ -52,7 +52,7 @@
 
         <div>
             <x-input-label for="qth" class="w-3/12 inline-block" :value="__('Address')" />
-            <x-text-input id="qth" name="qth" type="text" class="mt-1 w-8/12" :value="old('qth', $user->qth)" required autofocus autocomplete="qth" />
+            <x-text-input id="qth" name="qth" type="text" class="mt-1 w-8/12" :value="old('qth', $user->qth)" autofocus autocomplete="qth" />
             <x-input-error class="mt-2" :messages="$errors->get('qth')" />
         </div>
 
