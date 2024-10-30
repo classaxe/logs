@@ -30,6 +30,7 @@ class Log extends Model
         'gsq' =>        ['lbl' =>   'GSQ',          'class' => ''],
         'km' =>         ['lbl' =>   'Km',           'class' => 'r'],
         'deg' =>        ['lbl' =>   'Deg',          'class' => 'r not-compact'],
+        'comment' =>    ['lbl' =>   'Comment',      'class' => 'r not-compact'],
         'conf' =>       ['lbl' =>   'Conf',         'class' => 'r']
     ];
     const GSQ_SUBSTITUTES = [
@@ -188,6 +189,7 @@ class Log extends Model
             Log::Select(
                 'logs.band',
                 'logs.call',
+                'logs.comment',
                 'logs.conf',
                 'logs.continent',
                 'logs.county',
@@ -375,7 +377,7 @@ class Log extends Model
         } catch (\Exception $e) {
             $user->setAttribute('qrz_last_result', 'Server Error - ' . substr($e->getMessage(), 0, 240));
             $debug[] = "Error:" . substr($e->getMessage(), 0, 240);
-            $user->setAttribute('qrz_last_data_pull_debug', implode("\n", $debug));
+            $user->setAttribute('qrz_last_data_pull_debug', substr(implode("\n", $debug), 0, 65300));
             $user->save();
             return false;
         }
@@ -557,6 +559,7 @@ class Log extends Model
                     'gsq' =>        substr(strtoupper($log_gsq), 0, 4),
                     'km' =>         $i['DISTANCE'] ?? null,
                     'deg' =>        $deg,
+                    'comment' =>    ($i['COMMENT'] ?? ''),
                     'conf' =>       ($i['APP_QRZLOG_STATUS'] ?? '') === 'C' ? 'Y' : ''
                 ];
             } catch (\Exception $e) {

@@ -355,6 +355,7 @@ var frm = {
                 '<td data-link="gsq">' + log.gsq + '</td>' +
                 '<td class="r">' + (typeof log.km === 'number' ? log.km : '') + '</td>' +
                 '<td class="r not-compact">' + (typeof log.deg === 'number' ? log.deg : '') + '</td>' +
+                '<td class="r not-compact">' + log.comment + '</td>' +
                 '<td class="r">' + log.conf + '</td>'
             )
         });
