@@ -23,7 +23,7 @@ class UserController extends Controller
 
     }
 
-    public function embed(string $mode, string $method, string $callsign)
+    public function embed(Request $request, string $mode, string $method, string $callsign)
     {
         if (!$u = User::getUserByCallsign($callsign)) {
             return redirect(url('/'));
@@ -38,7 +38,8 @@ class UserController extends Controller
                         $data = User::getUserDataByCallsign($callsign);
                         return view('user.summary.iframe', [
                             'qths' =>       $data['qths'],
-                            'user' =>       $data['user']
+                            'user' =>       $data['user'],
+                            'hidestats' =>  $request->query('hidestats') ? '1' : '',
                         ]);
                     case 'img':
                         $Image = new Image();

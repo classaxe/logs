@@ -1,6 +1,20 @@
+@php
+/* @var $qths */
+/* @var $hidestats */
+/* @var $user */
+
+$title = sprintf(
+    "Location%s %s for %s - %s",
+    (count($qths) > 1 ? 's' : ''),
+    ($hidestats ? "" : " and Stats"),
+    $user->name,
+    $user->call
+);
+$url = route('embed', ['mode' => 'summary', 'method' => 'iframe', 'callsign' => $user->call])
+@endphp
 <html>
 <head>
-    <title>Location and Stats for {{ $user->name }} - {{ $user->call }}</title>
+    <title>{{ $title }}</title>
     <style>
         #qthinfo h2 {
             font-size: 1em;
@@ -12,17 +26,33 @@
             font-family: Figtree,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji"
         }
         #qthinfo a.btn {
-            margin: 0 0 0.25em 1em;
+            margin: 0 0 0.25em 0.25em;
             font-size: 70%;
-            background: #44f;
             color: white;
             text-decoration: none;
             padding: 0.25em;
             border-radius: 0.5em;
         }
+        #qthinfo a.btn.r {
+            background: #a44;
+        }
+        #qthinfo a.btn.g {
+            background: #484;
+        }
+        #qthinfo a.btn.b {
+            background: #44f;
+        }
         #qthinfo a.btn:hover {
-            background: #88f;
             color: yellow;
+        }
+        #qthinfo a.btn.r:hover {
+            background: #f44;
+        }
+        #qthinfo a.btn.g:hover {
+            background: #686;
+        }
+        #qthinfo a.btn.b:hover {
+            background: #88f;
         }
         #qthinfo table {
             border-collapse: collapse;
@@ -68,35 +98,56 @@
             color: #00f;
             font-weight: bold;
         }
+        @media print {
+            h2, p {
+                display: none;
+            }
+            td, a {
+                color: #000 !important;
+            }
+            td {
+                padding: 0.25em 0.5em 0.25em 0.5em !important;
+            }
+        }
     </style>
 </head>
 <body>
-<div id="qthinfo">
-    <h2>Location and Stats for {{ $user->name }} - {{ $user->call }}
-        <a class="btn" href="{{ route('embed', ['mode' => 'summary', 'method' => 'iframe', 'callsign' => $user->call]) }}">Reload</a>
+<div id="qthinfo">{{ $hidestats }}
+    <h2>{{ $title }}
+        <a class="btn r" style="margin-left: 2em" href="{{ $url }}{{ $hidestats ? '?hidestats=1' : '' }}">Reload</a>
+        @if($hidestats)
+            <a class="btn g" href="{{ $url }}">Show Stats</a>
+        @else
+            <a class="btn g" href="{{ $url }}?hidestats=1">Hide Stats</a>
+        @endif
+        <a class="btn b" target="_blank" href="{{ $url }}{{ $hidestats ? '?hidestats=1' : '' }}">Print</a>
     </h2>
     <p>Click the links below to view live logs and an interactive gridsquares map.</p>
     <table border="1" cellpadding="2" cellspacing="0">
         <thead>
         <tr>
-            <th>Location</th>
             <th>Grid</th>
-            <th>Dates</th>
-            <th title="Days actively logging">*Days</th>
-            <th>Logs</th>
+            <th>Location</th>
+            @if(!$hidestats)
+                <th>Dates</th>
+                <th title="Days actively logging">*Days</th>
+                <th>Logs</th>
+            @endif
         </tr>
         </thead>
         <tbody>
         @foreach ($qths as $label => $q)
             <tr>
-                <td><a href="{{ route('home') }}/logs/{{ $user->call }}/?presets[]=myQth|{{ $label }}" target="_blank">{{ $label }}</a></td>
                 <td> {{ $q['gsq'] }}</td>
-                <td>{{ $q['logFirst'] }}@if($q['logDays'] > 1) - {{ $q['logLast'] }}@endif</td>
-                <td class="r">{{ $q['logDays'] }}</td>
-                <td class="r">{{ $q['logs'] }}</td>
+                <td><a href="{{ route('home') }}/logs/{{ $user->call }}/?presets[]=myQth|{{ $label }}" target="_blank">{{ $label }}</a></td>
+                @if(!$hidestats)
+                    <td>{{ $q['logFirst'] }}@if($q['logDays'] > 1) - {{ $q['logLast'] }}@endif</td>
+                    <td class="r">{{ $q['logDays'] }}</td>
+                    <td class="r">{{ $q['logs'] }}</td>
+                @endif
             </tr>
         @endforeach
-        @if (count($qths) > 1)
+        @if (!$hidestats && count($qths) > 1)
             <tr class="totals">
                 <td colspan="2">Totals</td>
                 <td>{{ substr($user['first_log'], 0, 10) }}@if($user['log_days'] ?: 0 > 1) - {{ substr($user['last_log'], 0, 10) }}@endif</td>
