@@ -79,8 +79,8 @@
     <table border="1" cellpadding="2" cellspacing="0">
         <thead>
         <tr>
-            <th>Grid</th>
             <th>Location</th>
+            <th>Grid</th>
             <th>Dates</th>
             <th title="Days actively logging">*Days</th>
             <th>Logs</th>
@@ -89,8 +89,8 @@
         <tbody>
         @foreach ($qths as $label => $q)
             <tr>
-                <td> {{ $q['gsq'] }}</td>
                 <td><a href="{{ route('home') }}/logs/{{ $user->call }}/?presets[]=myQth|{{ $label }}" target="_blank">{{ $label }}</a></td>
+                <td> {{ $q['gsq'] }}</td>
                 <td>{{ $q['logFirst'] }}@if($q['logDays'] > 1) - {{ $q['logLast'] }}@endif</td>
                 <td class="r">{{ $q['logDays'] }}</td>
                 <td class="r">{{ $q['logs'] }}</td>

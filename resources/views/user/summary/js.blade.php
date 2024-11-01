@@ -61,8 +61,8 @@ function qthInfo() {
 <table border="1" cellpadding="2" cellspacing="0">
     <thead>
     <tr>
-        <th>Grid</th>
         <th>Location</th>
+        <th>Grid</th>
         <th>Dates</th>
         <th title="Days actively logging">*Days</th>
         <th>Logs</th>
@@ -73,8 +73,8 @@ function qthInfo() {
         let q = qths[i];
         html += `
         <tr>
-            <td>` + q['gsq'] + `</td>
             <td><a href="https://logs.classaxe.com/logs/` + callsign + `?presets[]=myQth|` + q['label'] + `" target="_blank">` + q['label'] + `</a></td>
+            <td>` + q['gsq'] + `</td>
             <td>` + q['logFirst'] + (q['logDays'] > 1 ? ` - ` + q['logLast']  : '') + `</td>
             <td class="r">` + q['logDays'] + `</td>
             <td class="r">` + q['logs'] + `</td>
