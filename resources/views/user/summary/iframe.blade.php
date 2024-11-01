@@ -112,7 +112,7 @@ $url = route('embed', ['mode' => 'summary', 'method' => 'iframe', 'callsign' => 
     </style>
 </head>
 <body>
-<div id="qthinfo">{{ $hidestats }}
+<div id="qthinfo">
     <h2>{{ $title }}
         <a class="btn r" style="margin-left: 2em" href="{{ $url }}{{ $hidestats ? '?hidestats=1' : '' }}">Reload</a>
         @if($hidestats)
