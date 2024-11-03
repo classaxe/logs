@@ -10,7 +10,7 @@ $title = sprintf(
     $user->name,
     $user->call
 );
-$url = route('embed', ['mode' => 'summary', 'method' => 'iframe', 'callsign' => $user->call])
+$url = route('embed', ['mode' => 'summary', 'method' => 'iframe', 'callsign' => str_replace('/', '-', $user->call)])
 @endphp
 <html>
 <head>
