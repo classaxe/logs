@@ -17,7 +17,7 @@
                             <p>This first method works for QRZ profile pages, since no Javascript is used in the iframe source.</p>
                             <textarea style="width: 1000px;height: 4em; overflow:hidden;background:#eee;font-family: 'Courier New', monospace;font-weight: bold">
 <iframe src="{{ route('embed', ['method' => 'iframe', 'mode' => 'summary', 'callsign' => str_replace('/', '-', Auth::user()->call)]) }}" title="Live logs for {{ $user->call }}"
-style="width:680px; height: 360px; border:none"></iframe>
+style="width:740px; height: 360px; border:none"></iframe>
 </textarea>
                         </li>
                         <li><b>Javascript Embedding</b>

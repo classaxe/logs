@@ -150,7 +150,7 @@ $url = route('embed', ['mode' => 'summary', 'method' => 'iframe', 'callsign' => 
         @if (!$hidestats && count($qths) > 1)
             <tr class="totals">
                 <td colspan="2">Totals</td>
-                <td>{{ substr($user['first_log'], 0, 10) }}@if($user['log_days'] ?: 0 > 1) - {{ substr($user['last_log'], 0, 10) }}@endif</td>
+                <td>{{ substr($user['first_log'], 0, 10) }}@if(substr($user['first_log'], 0, 10) !== substr($user['last_log'], 0, 10)) - {{ substr($user['last_log'], 0, 10) }}@endif</td>
                 <td class="r">{{ $user['log_days'] ?: 0 }}</td>
                 <td class="r">{{ $user['log_count'] }}</td>
             </tr>
