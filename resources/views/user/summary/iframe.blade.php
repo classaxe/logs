@@ -139,7 +139,7 @@ $url = route('embed', ['mode' => 'summary', 'method' => 'iframe', 'callsign' => 
         @foreach ($qths as $label => $q)
             <tr>
                 <td> {{ $q['gsq'] }}</td>
-                <td><a href="{{ route('home') }}/logs/{{ $user->call }}/?presets[]=myQth|{{ $label }}" target="_blank">{{ $label }}</a></td>
+                <td><a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}/?presets[]=myQth|{{ $label }}" target="_blank">{{ $label }}</a></td>
                 @if(!$hidestats)
                     <td>{{ $q['logFirst'] }}@if($q['logDays'] > 1) - {{ $q['logLast'] }}@endif</td>
                     <td class="r">{{ $q['logDays'] }}</td>
