@@ -12,6 +12,7 @@ class LogsController extends Controller
 {
     public static function logs(string $callsign)
     {
+        $callsign = str_replace('-','/', $callsign);
         $user = User::getUserByCallsign($callsign);
         $logs = Log::getLogsForUser($user);
         $user = User::getUserByCallsign($callsign);
@@ -38,6 +39,7 @@ class LogsController extends Controller
 
     public static function logsPage(string $callsign)
     {
+        $callsign = str_replace('-','/', $callsign);
         $data = User::getUserDataByCallsign($callsign);
         $presets = [];
         if ($_GET['presets'] ?? []) {

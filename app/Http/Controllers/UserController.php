@@ -25,20 +25,17 @@ class UserController extends Controller
 
     public function embed(Request $request, string $mode, string $method, string $callsign)
     {
-        if (!$u = User::getUserByCallsign($callsign)) {
+        $callsign = str_replace('-', '/', $callsign);
+        if (!$u = User::getUserDataByCallsign($callsign)) {
             return redirect(url('/'));
         }
         switch ($mode) {
             case 'summary':
                 switch ($method) {
                     case 'iframe':
-                        if (!User::getUserByCallsign($callsign)) {
-                            return redirect(url('/'));
-                        }
-                        $data = User::getUserDataByCallsign($callsign);
                         return view('user.summary.iframe', [
-                            'qths' =>       $data['qths'],
-                            'user' =>       $data['user'],
+                            'qths' =>       $u['qths'],
+                            'user' =>       $u['user'],
                             'hidestats' =>  $request->query('hidestats') ? '1' : '',
                         ]);
                     case 'img':
@@ -87,10 +84,9 @@ class UserController extends Controller
                         die();
 
                     case 'js':
-                        $data = User::getUserDataByCallsign($callsign);
                         $contents = view('user.summary.js', [
-                            'qths' =>       $data['qths'],
-                            'user' =>       $data['user']
+                            'qths' =>       $u['qths'],
+                            'user' =>       $u['user']
                         ]);
                         return  response($contents)->header('Content-Type', 'application/javascript');
                 }
@@ -99,6 +95,7 @@ class UserController extends Controller
     }
 
     public function summary(string $callsign) {
+        $callsign = str_replace('-', '/', $callsign);
         if (!$u = User::getUserByCallsign($callsign)) {
             return redirect(url('/'));
         }

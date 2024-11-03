@@ -274,7 +274,7 @@ var frm = {
         frm.start = Date.now();
         $.ajax({
             type: 'GET',
-            url: '/logs/' + callsign + '/logs',
+            url: '/logs/' + callsign.replace('/','-') + '/logs',
             dataType: 'json',
             success: function (data) {
                 logs = data.logs;

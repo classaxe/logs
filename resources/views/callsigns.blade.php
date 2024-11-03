@@ -69,7 +69,7 @@
                     title="This log is not actively maintained"
                 @endif
             >
-                <td>@if($u->log_count)<a href="{{ route('logs.page', ['callsign' => $u->call]) }}" title="View Logbook">{{ $u->call }}</a>@else<b>{{ $u->call }}</b>@endif</td>
+                <td>@if($u->log_count)<a href="{{ route('logs.page', ['callsign' => str_replace('/', '-', $u->call)]) }}" title="View Logbook">{{ $u->call }}</a>@else<b>{{ $u->call }}</b>@endif</td>
                 <td>
                     @if(Auth::user() && Auth::user()->admin)
                         <a href="{{ route('user.edit', ['id' => $u->id]) }}" title="Edit User Profile">{{ $u->name }}</a>
@@ -95,7 +95,7 @@
                 <td class="r" @if(Auth::user() && Auth::user()->admin && $u->qrz_last_data_pull_debug)
                     style="cursor:pointer;text-decoration: underline" title="{{ $u->qrz_last_data_pull_debug }}"
                 @endif>@if($u->qrz_last_result !== 'OK'){{ $u->qrz_last_result }} @else {{ $u->getLastQrzPull() }} @endif </td>
-                <td class="c">@if($u->log_count)<a href="/summary/{{ $u->call }}" title="View summary for {{ $u->call }}">VIEW</a>@endif</td>
+                <td class="c">@if($u->log_count)<a href="/summary/{{ str_replace('/', '-', $u->call) }}" title="View summary for {{ $u->call }}">VIEW</a>@endif</td>
                 <td class="c"><a target="_blank" href="https://www.qrz.com/db/{{ $u->call }}" title="View QRZ Page for {{ $u->call }}">LINK</a></td>
                 @if(Auth::user() && Auth::user()->admin)
                     <td class="c u_active"><a href="#">{{ $u->active ? 'Yes' : 'No' }}</a></td>

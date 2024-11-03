@@ -16,7 +16,7 @@
                         <li><b>IFRAME Embedding</b>
                             <p>This first method works for QRZ profile pages, since no Javascript is used in the iframe source.</p>
                             <textarea style="width: 1000px;height: 4em; overflow:hidden;background:#eee;font-family: 'Courier New', monospace;font-weight: bold">
-<iframe src="{{ route('embed', ['method' => 'iframe', 'mode' => 'summary', 'callsign' => $user->call]) }}" title="Live logs for {{ $user->call }}"
+<iframe src="{{ route('embed', ['method' => 'iframe', 'mode' => 'summary', 'callsign' => str_replace('/', '-', Auth::user()->call)]) }}" title="Live logs for {{ $user->call }}"
 style="width:680px; height: 360px; border:none"></iframe>
 </textarea>
                         </li>
@@ -24,7 +24,7 @@ style="width:680px; height: 360px; border:none"></iframe>
                             <p>This second method <strong>does not work</strong> for QRZ profile pages, since script tags are not allowed.</p>
                             <textarea style="width: 1000px;height: 5.5em; overflow:hidden;background:#eee;font-family: 'Courier New', monospace;font-weight: bold">
 <div id="qthinfo"></div>
-<script src="{{ route('embed', ['method' => 'js', 'mode' => 'summary', 'callsign' =>Auth::user()->call]) }}"></script>
+<script src="{{ route('embed', ['method' => 'js', 'mode' => 'summary', 'callsign' => str_replace('/', '-', Auth::user()->call)]) }}"></script>
 </textarea>
                         </li>
                     </ol>

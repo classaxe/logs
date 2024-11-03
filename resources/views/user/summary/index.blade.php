@@ -10,7 +10,7 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <div id="qthinfo"></div>
-                    <script src="{{ route('embed', ['method' => 'js', 'mode' => 'summary', 'callsign' => $callsign]) }}"></script>
+                    <script src="{{ route('embed', ['method' => 'js', 'mode' => 'summary', 'callsign' => str_replace('/', '-', $callsign)]) }}"></script>
                 </div>
             </div>
         </div>
