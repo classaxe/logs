@@ -4,17 +4,17 @@
         <a href="{{ route('profile.edit') }}"{{
             Route::currentRouteName() === 'profile.edit' ? " class=is-active" : ''
         }}>Profile</a>
-        <a href="{{ route('summary', ['callsign' => Auth::user()->call]) }}"{{
-            Route::currentRouteName() === 'summary' && request()->route('callsign') === Auth::user()->call ? " class=is-active" : ''
+        <a href="{{ route('summary', ['callsign' => str_replace('/', '-', Auth::user()->call)]) }}"{{
+            Route::currentRouteName() === 'summary' && request()->route('callsign') === str_replace('/', '-', Auth::user()->call) ? " class=is-active" : ''
         }}>Summary</a>
         <a href="{{ route('dashboard') }}"{{
             Route::currentRouteName() === 'dashboard' ? " class=is-active" : ''
         }}>Dashboard</a>
         @if (Auth::user()->is_visible)
-            <a href="{{ route('logs.page', ['callsign' => Auth::user()->call]) }}"{{
+            <a href="{{ route('logs.page', ['callsign' => str_replace('/', '-', Auth::user()->call)]) }}"{{
                 Route::currentRouteName() === 'logs.page'
                 && isset(Route::current()->parameters()['callsign'])
-                && Route::current()->parameters()['callsign'] === Auth::user()->call ? " class=is-active" : ''
+                && Route::current()->parameters()['callsign'] === str_replace('/', '-', Auth::user()->call) ? " class=is-active" : ''
             }}>Your Logs</a>
             <a href="{{ route('logs.fetch') }}" id="fetch" title="Reloads your own logs from QRZ.com"{{
                 Route::currentRouteName() === 'logs.fetch' ? " class=is-active" : ''
