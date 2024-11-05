@@ -33,10 +33,29 @@ class UserController extends Controller
             case 'summary':
                 switch ($method) {
                     case 'iframe':
+                        $hidestats = $request->query('hidestats') ? '1' : '';
+                        $title = sprintf("Location%s %s for %s - %s",
+                            (count($u['qths']) > 1 ? 's' : ''),
+                            ($hidestats ? "" : " and Stats"),
+                            $u['user']->name,
+                            $u['user']->call
+                        );
+                        $url = route(
+                            'embed', [
+                                'mode' => 'summary',
+                                'method' => 'iframe',
+                                'callsign' => str_replace('/', '-', $u['user']->call)
+                            ]
+                        );
+
                         return view('user.summary.iframe', [
+                            'cta' =>        true,
+                            'hidestats' =>  $hidestats,
                             'qths' =>       $u['qths'],
+                            'qth_bounds' => $u['qth_bounds'],
+                            'title' =>      $title,
+                            'url' =>        $url,
                             'user' =>       $u['user'],
-                            'hidestats' =>  $request->query('hidestats') ? '1' : '',
                         ]);
                     case 'img':
                         $Image = new Image();
@@ -94,14 +113,31 @@ class UserController extends Controller
         }
     }
 
-    public function summary(string $callsign) {
+    public function summary(Request $request, string $callsign) {
         $callsign = str_replace('-', '/', $callsign);
-        if (!$u = User::getUserByCallsign($callsign)) {
+        if (!$u = User::getUserDataByCallsign($callsign)) {
             return redirect(url('/'));
         }
+        $hidestats = $request->query('hidestats') ? '1' : '';
+        $title = sprintf("Location%s %s for %s - %s",
+            (count($u['qths']) > 1 ? 's' : ''),
+            ($hidestats ? "" : " and Stats"),
+            $u['user']->name,
+            $u['user']->call
+        );
+        $url = route(
+            'summary', [
+                'callsign' => str_replace('/', '-', $u['user']->call)
+            ]
+        );
         return view('user.summary.index', [
-            'callsign' => $callsign,
-            'user' => $u
+            'cta' =>        false,
+            'hidestats' =>  $hidestats,
+            'qths' =>       $u['qths'],
+            'qth_bounds' => $u['qth_bounds'],
+            'title' =>      $title,
+            'url' =>        $url,
+            'user' =>       $u['user'],
         ]);
     }
 

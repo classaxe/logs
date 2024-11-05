@@ -8,6 +8,7 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/css/logs.css',
+                'resources/css/summary.css',
                 'resources/js/app.js',
                 'resources/js/callsigns.js',
                 'resources/js/logs.js',

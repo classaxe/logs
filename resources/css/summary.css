@@ -1,0 +1,94 @@
+#qthinfo h2 {
+    font-size: 1em;
+}
+#qthinfo h2,
+#qthinfo p {
+    text-align: center;
+    margin: 0.25em auto;
+    font-family: Figtree,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji"
+}
+#qthinfo a.btn {
+    margin: 0 0 0.25em 0.25em;
+    font-size: 70%;
+    color: white;
+    text-decoration: none;
+    padding: 0.25em;
+    border-radius: 0.5em;
+}
+#qthinfo a.btn.r {
+    background: #a44;
+}
+#qthinfo a.btn.g {
+    background: #484;
+}
+#qthinfo a.btn.b {
+    background: #44f;
+}
+#qthinfo a.btn:hover {
+    color: yellow;
+}
+#qthinfo a.btn.r:hover {
+    background: #f44;
+}
+#qthinfo a.btn.g:hover {
+    background: #686;
+}
+#qthinfo a.btn.b:hover {
+    background: #88f;
+}
+#qthinfo table {
+    border-collapse: collapse;
+    margin: 0 auto;
+}
+#qthinfo table thead th {
+    background: #888;
+    color: #fff;
+    font-family: Figtree,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji"
+}
+#qthinfo table tbody td {
+    font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace
+}
+#qthinfo table tbody tr.totals td {
+    font-weight: bold;
+    text-align: left;
+    background: #eee;
+    color: #000;
+}
+#qthinfo table th,
+#qthinfo table td {
+    color: #444;
+    border: 1px solid #444;
+    padding: 4px 5px;
+    vertical-align: top;
+}
+#qthinfo table tbody td.r {
+    text-align: right !important;
+}
+#qthinfo table td a {
+    text-decoration: none;
+    color: #00f;
+}
+#qthinfo table td a:hover {
+    color: #f00;
+    text-decoration: underline;
+}
+#qthinfo p.cta {
+    margin-top: 0.5em;
+    font-style: italic;
+    font-size: 70%;
+}
+#qthinfo p.cta a {
+    color: #00f;
+    font-weight: bold;
+}
+@media print {
+    h2, p {
+        display: none;
+    }
+    td, a {
+        color: #000 !important;
+    }
+    td {
+        padding: 0.25em 0.5em 0.25em 0.5em !important;
+    }
+}

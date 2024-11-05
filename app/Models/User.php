@@ -60,6 +60,49 @@ class User extends Authenticatable implements MustVerifyEmail
         'qrz_last_data_pull' => 'datetime',
     ];
 
+    private static function calculateEnclosingCircle($points) {
+        if (count($points) === 0) {
+            return null;
+        }
+        $latSum = 0;
+        $lonSum = 0;
+        foreach ($points as $point) {
+            $latSum += $point['lat'];
+            $lonSum += $point['lon'];
+        }
+        $centerLat = $latSum / count($points);
+        $centerLon = $lonSum / count($points);
+        $maxDistance = 0;
+        foreach ($points as $point) {
+            $distance = self::calculateDX($centerLat, $centerLon, $point['lat'], $point['lon']);
+            if ($distance > $maxDistance) {
+                $maxDistance = $distance;
+            }
+        }
+        return [
+            'center' => [$centerLat, $centerLon],
+            'radius' => $maxDistance // in meters
+        ];
+    }
+
+    private static function calculateDX($latFrom, $lonFrom, $latTo, $lonTo, $earthRadius = 6371000) {
+// Convert from degrees to radians
+        $latFrom = deg2rad($latFrom);
+        $lonFrom = deg2rad($lonFrom);
+        $latTo = deg2rad($latTo);
+        $lonTo = deg2rad($lonTo);
+
+        $latDelta = $latTo - $latFrom;
+        $lonDelta = $lonTo - $lonFrom;
+
+        $a = sin($latDelta / 2) * sin($latDelta / 2) +
+            cos($latFrom) * cos($latTo) *
+            sin($lonDelta / 2) * sin($lonDelta / 2);
+        $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
+
+        return $earthRadius * $c; // Distance in meters
+    }
+
     public function delete() {
         DB::statement("DELETE FROM `logs` WHERE `userId` = " . $this->id);
         return parent::delete();
@@ -82,6 +125,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return User::orderBy('call', 'asc')->get();
     }
 
+    public static function array_column_pair(array $inputArray, string $column1, string $column2): array
+    {
+        $result = [];
+        foreach ($inputArray as $row) {
+            if (isset($row[$column1]) && isset($row[$column2])) {
+                $result[] = [$column1 => $row[$column1], $column2 => $row[$column2]];
+            }
+        }
+        return $result;
+    }
     /**
      * @param string $callsign
      * @return User|Exception
@@ -102,12 +155,18 @@ class User extends Authenticatable implements MustVerifyEmail
         $latlon = Log::convertGsqToDegrees($user['gsq']);
         $user['lat'] = $latlon['lat'];
         $user['lon'] = $latlon['lon'];
+        $qths = Log::getQthsForUser($user);
+
+        $coords = self::array_column_pair($qths,'lat', 'lon');
+        $bounds = self::calculateEnclosingCircle($coords);
+
         return [
             'bands' =>      Log::getBandsForUser($user),
             'modes' =>      Log::getModesForUser($user),
             'gsqs' =>       Log::getGsqsForUser($user),
-            'qths' =>       Log::getQthsForUser($user),
+            'qths' =>       $qths,
             'qth_names' =>  $user['qth_names'],
+            'qth_bounds' => $bounds,
             'user' =>       $user
         ];
     }
