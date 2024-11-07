@@ -114,8 +114,9 @@ class UserController extends Controller
     }
 
     public function summary(Request $request, string $callsign) {
+        $testGsq = $request->query('testgsq') ?: null;
         $callsign = str_replace('-', '/', $callsign);
-        if (!$u = User::getUserDataByCallsign($callsign)) {
+        if (!$u = User::getUserDataByCallsign($callsign, $testGsq)) {
             return redirect(url('/'));
         }
         $hidestats = $request->query('hidestats') ? '1' : '';

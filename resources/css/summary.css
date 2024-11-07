@@ -7,7 +7,7 @@
     margin: 0.25em auto;
     font-family: Figtree,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji"
 }
-#qthinfo a.btn {
+#qthinfo .btn {
     margin: 0 0 0.25em 0.25em;
     font-size: 70%;
     color: white;
@@ -15,25 +15,25 @@
     padding: 0.25em;
     border-radius: 0.5em;
 }
-#qthinfo a.btn.r {
+#qthinfo .btn.r {
     background: #a44;
 }
-#qthinfo a.btn.g {
+#qthinfo .btn.g {
     background: #484;
 }
-#qthinfo a.btn.b {
+#qthinfo .btn.b {
     background: #44f;
 }
-#qthinfo a.btn:hover {
+#qthinfo .btn:hover {
     color: yellow;
 }
-#qthinfo a.btn.r:hover {
+#qthinfo .btn.r:hover {
     background: #f44;
 }
-#qthinfo a.btn.g:hover {
+#qthinfo .btn.g:hover {
     background: #686;
 }
-#qthinfo a.btn.b:hover {
+#qthinfo .btn.b:hover {
     background: #88f;
 }
 #qthinfo table {
@@ -71,6 +71,23 @@
 #qthinfo table td a:hover {
     color: #f00;
     text-decoration: underline;
+}
+#qthinfo table td.gsq:hover {
+    cursor: help;
+    color: #f00;
+    background-color: #ff8;
+    text-decoration: underline;
+}
+#qthinfo table td.test {
+    background: #afa;
+}
+#qthinfo table td.test input,
+#qthinfo table td.test input:focus {
+    border: none !important;
+    padding: 0;
+    color: #040;
+    font-weight: bold;
+    background: transparent;
 }
 #qthinfo p.cta {
     margin-top: 0.5em;

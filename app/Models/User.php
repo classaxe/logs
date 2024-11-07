@@ -149,14 +149,16 @@ class User extends Authenticatable implements MustVerifyEmail
         return $result[$callsign];
     }
 
-    public static function getUserDataByCallsign(string $callsign): Array|Exception
+    public static function getUserDataByCallsign(string $callsign, $testGsq = null): Array|Exception
     {
         $user = static::getUserByCallsign($callsign);
         $latlon = Log::convertGsqToDegrees($user['gsq']);
         $user['lat'] = $latlon['lat'];
         $user['lon'] = $latlon['lon'];
         $qths = Log::getQthsForUser($user);
-
+        if ($testGsq !== null) {
+            $qths['testGsq'] = $coords = Log::convertGsqToDegrees($testGsq);
+        }
         $coords = self::array_column_pair($qths,'lat', 'lon');
         $bounds = self::calculateEnclosingCircle($coords);
 

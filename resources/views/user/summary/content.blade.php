@@ -26,8 +26,11 @@
         </thead>
         <tbody>
         @foreach ($qths as $label => $q)
+            @if(!isset($q['gsq']))
+                @continue
+            @endif
             <tr>
-                <td> {{ $q['gsq'] }}</td>
+                <td class="gsq" title="Lat: {{ $q['lat'] }}, Lon: {{ $q['lon'] }}"> {{ $q['gsq'] }}</td>
                 <td><a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}/?presets[]=myQth|{{ $label }}" target="_blank">{{ $label }}</a></td>
                 @if(!$hidestats)
                     <td>{{ $q['logFirst'] }}@if($q['logDays'] > 1) - {{ $q['logLast'] }}@endif</td>
@@ -36,6 +39,20 @@
                 @endif
             </tr>
         @endforeach
+        @if(Auth::user() && (Auth::user()->admin || $user->call === Auth::user()->call))
+            <tr>
+                <form method="get" action="{{ $url }}">
+                <td class="test">
+                        <input type="hidden" name="action" value="testgsq">
+                    @if($hidestats)
+                        <input type="hidden" name="hidestats" value="1">
+                    @endif
+                        <input type="text" name="testgsq" value="{{ request('testgsq') ?? '' }}">
+                </td>
+                <td @if(!$hidestats) colspan="4" @endif>&lt;-- Test a new gridsquare to find the resulting radius <input style="float:right" type="submit" class="btn b" value="Test"></td>
+                </form>
+            </tr>
+        @endif
         @if (!$hidestats && count($qths) > 1)
             <tr class="totals">
                 <td colspan="2">Totals</td>
