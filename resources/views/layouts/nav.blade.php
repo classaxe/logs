@@ -1,3 +1,7 @@
+@php
+use App\Http\Controllers\ChangesController;
+$changes = floor((time() - strtotime(exec('git log -1 --format="%ad"'))) / (60 * 60 * 24)) < ChangesController::NEW_DAYS;
+@endphp
 <nav>
     <a href="{{ route('home') }}"{{ Route::currentRouteName() === 'home' ? " class=is-active" : '' }}>Home</a>
     @auth
@@ -34,5 +38,7 @@
     @endauth
     <a href="{{ route('changes') }}"{{
         Route::currentRouteName() === 'changes' ? " class=is-active" : ''
-    }}>Changes</a>
+    }}>Changes
+        @if($changes)<span class="new">&#9673;</span>@endif
+    </a>
 </nav>
