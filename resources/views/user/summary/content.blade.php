@@ -17,6 +17,8 @@
         <tr>
             <th>Grid</th>
             <th>Location</th>
+            @if($user->pota)<th>POTA</th>@endif
+            <th>Map</th>
             @if(!$hidestats)
                 <th>Dates</th>
                 <th title="Days actively logging">*Days</th>
@@ -32,6 +34,8 @@
             <tr>
                 <td class="gsq" title="Lat: {{ $q['lat'] }}, Lon: {{ $q['lon'] }}"> {{ $q['gsq'] }}</td>
                 <td><a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}/?presets[]=myQth|{{ $label }}" target="_blank">{{ $label }}</a></td>
+                @if($user->pota)<td>@if(substr($label, 0, 4) === 'POTA')<a target="_blank" href="https://pota.app/#/park/{{ explode(' ', $label)[1] }}">View</a>@endif</td>@endif
+                <td><a target="_blank" href="https://maps.google.com/maps?q={{ $q['lat'] }},{{ $q['lon'] }}">Map</a></td>
                 @if(!$hidestats)
                     <td>{{ $q['logFirst'] }}@if($q['logDays'] > 1) - {{ $q['logLast'] }}@endif</td>
                     <td class="r">{{ $q['logDays'] }}</td>
@@ -49,13 +53,13 @@
                     @endif
                         <input type="text" name="testgsq" value="{{ request('testgsq') ?? '' }}">
                 </td>
-                <td @if(!$hidestats) colspan="4" @endif>&lt;-- Test a new gridsquare to find the resulting radius <input style="float:right" type="submit" class="btn b" value="Test"></td>
+                <td colspan="{{ ($user->pota ? 1 : 0) + ($hidestats ? 3 : 5) }}">&lt;-- Test a new gridsquare to find the resulting radius <input style="float:right" type="submit" class="btn b" value="Test"></td>
                 </form>
             </tr>
         @endif
         @if (!$hidestats && count($qths) > 1)
             <tr class="totals">
-                <td colspan="2">Totals</td>
+                <td colspan="{{ ($user->pota ? 4 : 3) }}">Totals</td>
                 <td>{{ substr($user['first_log'], 0, 10) }}@if(substr($user['first_log'], 0, 10) !== substr($user['last_log'], 0, 10)) - {{ substr($user['last_log'], 0, 10) }}@endif</td>
                 <td class="r">{{ $user['log_days'] ?: 0 }}</td>
                 <td class="r">{{ $user['log_count'] }}</td>

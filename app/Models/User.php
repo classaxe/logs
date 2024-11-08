@@ -159,6 +159,9 @@ class User extends Authenticatable implements MustVerifyEmail
         if ($testGsq !== null) {
             $qths['testGsq'] = $coords = Log::convertGsqToDegrees($testGsq);
         }
+        $user['pota'] = array_filter(array_keys($qths), function($lbl) {
+            return str_contains($lbl, 'POTA:');
+        }) ? true : false;
         $coords = self::array_column_pair($qths,'lat', 'lon');
         $bounds = self::calculateEnclosingCircle($coords);
 

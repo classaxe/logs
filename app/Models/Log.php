@@ -126,25 +126,31 @@ class Log extends Model
      */
     public static function convertGsqToDegrees($GSQ): bool|array
     {
-        $GSQ =      substr(strToUpper($GSQ), 0, 6);
-        $offset =   (strlen($GSQ)==6 ? 1/48 : 0);
-        if (strlen($GSQ) == 4) {
-            $GSQ = $GSQ."MM";
-        }
-        if (!preg_match('/^[a-rA-R]{2}[0-9]{2}([a-xA-X]{2})?$/i', $GSQ)) {
+        if (!preg_match('/^[a-rA-R]{2}[0-9]{2}([a-xA-X]{2})?([0-9]{2})?$/i', $GSQ)) {
             return false;
         }
-        $lon_d = ord(substr($GSQ, 0, 1))-65;
-        $lon_m = substr($GSQ, 2, 1);
-        $lon_s = ord(substr($GSQ, 4, 1))-65;
-
-        $lat_d = ord(substr($GSQ, 1, 1))-65;
-        $lat_m = substr($GSQ, 3, 1);
-        $lat_s = ord(substr($GSQ, 5, 1))-65;
+        $_GSQ =      strToUpper($GSQ);
+        if (strlen($_GSQ) === 4) {
+            $_GSQ = $_GSQ."LL";
+        }
+        if (strlen($_GSQ) === 6) {
+            $_GSQ = $_GSQ."55";
+        }
+        $lat=
+            (ord($_GSQ[1])-65) * 10 - 90 +
+            (ord($_GSQ[3])-48) +
+            (ord($_GSQ[5])-65) / 24 +
+            (ord($_GSQ[7])-48) / 240 + 1/480;
+        $lon=
+            (ord($_GSQ[0])-65) * 20 - 180 +
+            (ord($_GSQ[2])-48) * 2 +
+            (ord($_GSQ[4])-65) / 12 +
+            (ord($_GSQ[6])-48) / 120 + 1/240;
 
         return [
-            "lat" => round($lat_d*10 + $lat_m + $lat_s/24 + $offset - 90, 4),
-            "lon" => round(2 * ($lon_d*10 + $lon_m + $lon_s/24 + $offset) - 180, 4)
+            "gsq" => $GSQ,
+            "lat" => round($lat, 4),
+            "lon" => round($lon, 4)
         ];
     }
 
