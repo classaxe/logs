@@ -370,6 +370,14 @@ var frm = {
         if (typeof presets.myQth === 'string') {
             $('select[name=myQth]').val(presets.myQth);
         }
+        if (typeof presets.band === 'string') {
+            let bands = presets.band.split(',');
+            $('input[name=band]').prop('checked', false);
+            for (let i= 0; i < bands.length; i++) {
+                console.log(bands[i]);
+                $('input[data-band="' + bands[i]  + '"]').prop('checked', 'checked');
+            }
+        }
         $('input[name=band]').click(function(e) {
             if (e.shiftKey) {
                 $('input[name=band]').prop('checked', false);
