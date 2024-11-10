@@ -87,7 +87,7 @@
                 <td>{{ $u->gsq }}</td>
                 <td class="r">{{ $u->log_count }}</td>
                 @if(Auth::user() && Auth::user()->admin)
-                    <td class="c u_logs_purge">@if($u->log_count)<a href="#">Purge</a>@endif</td>
+                    <td class="c u_logs_purge"><a href="#">Purge</a></td>
                 @endif
                 <td class="r">{{ $u->qth_count }}</td>
                 <td class="r">{{ substr($u->first_log, 0, 10) }}</td>

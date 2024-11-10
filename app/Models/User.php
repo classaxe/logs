@@ -251,7 +251,6 @@ class User extends Authenticatable implements MustVerifyEmail
         $logCount = Log::where('userId', '=', $user->id)->count();
         $qthCount = Log::where('userId', '=', $user->id)->count(DB::raw('DISTINCT myQth'));
         $user->setAttribute('qrz_last_result', 'OK');
-        $user->setAttribute('qrz_last_data_pull', time());
         $user->setAttribute('first_log', $first->date . ' ' . $first->time);
         $user->setAttribute('last_log', $last->date . ' ' . $last->time);
         $user->setAttribute('log_days', $log_days);

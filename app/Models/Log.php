@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class Log extends Model
 {
+    const BATCHSIZE = 2000;
+
     const COLUMNS = [
         'logNum' =>     ['lbl' =>   'Log',          'class' => ''],
         'myGsq' =>      ['lbl' =>   'My GSQ',       'class' => 'not-compact multi-qth'],
@@ -344,11 +346,12 @@ class Log extends Model
     public static function getQRZDataForUser(User $user)
     {
         $debug = [];
+        $isIncremental = $user['qrz_last_data_pull'] !== null;
         ini_set('max_execution_time', 600);
         if (!self::getQRZStatusFromServer($user)) {
             return;
         }
-        if ($user['qrz_last_data_pull']) {
+        if ($isIncremental) {
             $dateNow = date('Y-m-d');
             $dateFrom = Carbon::parse($user['qrz_last_data_pull'])->subDay(1)->format('Y-m-d');
             $qrzItems1 = self::getQRZDataFromServer($user, 'BETWEEN:' . $dateFrom . '+' . $dateNow);
@@ -356,12 +359,13 @@ class Log extends Model
             $qrzItems = array_merge($qrzItems1, $qrzItems2);
             $debug[] = "QRZ changes $dateFrom to $dateNow";
         } else {
-            $qrzItems = self::getQRZDataFromServer($user, 'ALL');
+            $qrzItems = self::getQRZDataFromServer($user, 'MAX:' . self::BATCHSIZE . ',AFTERLOGID:' . $user->last_log_id ?? 0);
             $debug[] = "QRZ records for all time";
         }
         if (!$qrzItems) {
             $debug[] = "No records - exiting";
             $user->setAttribute('qrz_last_data_pull_debug', implode("\n", $debug));
+            $user->setAttribute('qrz_last_data_pull', time());
             $user->save();
             return true;
         }
@@ -373,10 +377,16 @@ class Log extends Model
             return false;
         }
         $debug[] = "Records parsed: " . count($qrzItems);
+        if (count($qrzItems) < self::BATCHSIZE) {
+            $isIncremental = true;
+        }
         try {
-            self::insertOrUpdateLogs($items);
+            $lastLogId = self::insertOrUpdateLogs($items);
+            $user->setAttribute('last_log_id', $lastLogId);
             self::renumberLogsForUser($user);
-            User::updateStats($user);
+            if ($isIncremental) {
+                $user->setAttribute('qrz_last_data_pull', time());
+            }
             $user->setAttribute('qrz_last_data_pull_debug', implode("\n", $debug));
             $user->save();
             return true;
@@ -488,6 +498,7 @@ class Log extends Model
                 Log::insert($item);
             }
         }
+        return $item['qrzId'];
     }
 
     /**
