@@ -24,8 +24,8 @@
             name: "{{ $user['name'] }}",
             loc: "{{ $user['qth'] }}, {{ $user['city'] }}, {{ $user['sp'] }}, {{ $user['itu'] }}"
         }
-        var presets = {
-            {!! implode(",\n    ", $presets) !!}
+        var q = {
+            {!! implode(",\n    ", $q) !!}
         };
         document.body.classList.add("loading");
 

@@ -74,7 +74,7 @@ function qthInfo() {
         html += `
         <tr>
             <td>` + q['gsq'] + `</td>
-            <td><a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}/?presets[]=myQth|{{ $label }}" target="_blank">` + q['label'] + `</a></td>
+            <td><a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}/?q[]=myQth|{{ $label }}" target="_blank">` + q['label'] + `</a></td>
             <td>` + q['logFirst'] + (q['logDays'] > 1 ? ` - ` + q['logLast']  : '') + `</td>
             <td class="r">` + q['logDays'] + `</td>
             <td class="r">` + q['logs'] + `</td>

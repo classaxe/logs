@@ -367,16 +367,22 @@ var frm = {
             $('input#compact_Y').prop('checked','checked') :
             $('input#compact_N').prop('checked','checked')
         );
-        if (typeof presets.myQth === 'string') {
-            $('select[name=myQth]').val(presets.myQth);
+        if (typeof q.myQth === 'string') {
+            $('select[name=myQth]').val(q.myQth);
         }
-        if (typeof presets.band === 'string') {
-            let bands = presets.band.split(',');
+        if (typeof q.dateFrom === 'string') {
+            $('input[name=dateFrom]').val(q.dateFrom);
+        }
+        if (typeof q.dateTo === 'string') {
+            $('input[name=dateTo]').val(q.dateTo);
+        }
+        if (typeof q.band === 'string') {
+            let bands = q.band.split(',');
             $('input[name=band]').prop('checked', false);
             for (let i= 0; i < bands.length; i++) {
-                console.log(bands[i]);
                 $('input[data-band="' + bands[i]  + '"]').prop('checked', 'checked');
             }
+            $('.bandsAll').prop('checked', $('input[name=band]:not(:checked)').length ? false : 'checked');
         }
         $('input[name=band]').click(function(e) {
             if (e.shiftKey) {
@@ -460,8 +466,11 @@ var frm = {
         });
         $('button#reset').click(function() {
             $('input[name=band]').prop('checked','checked');
+            $('input.bandsAll').prop('checked','checked');
             $('input[name=mode]').prop('checked','checked');
             $('input#conf_All').prop('checked','checked');
+            $('input[name=dateFrom]').val(logDates[0]);
+            $('input[name=dateTo]').val(logDates[1]);
             $('input[name=call]').val('');
             $('input[name=sp]').val('');
             $('input[name=itu]').val('');

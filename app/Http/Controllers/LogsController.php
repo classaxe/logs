@@ -41,15 +41,15 @@ class LogsController extends Controller
     {
         $callsign = str_replace('-','/', $callsign);
         $data = User::getUserDataByCallsign($callsign);
-        $presets = [];
-        if ($_GET['presets'] ?? []) {
-            foreach ($_GET['presets'] as $preset) {
-                if (!$preset) {
+        $q = [];
+        if ($_GET['q'] ?? []) {
+            foreach ($_GET['q'] as $qVal) {
+                if (!$qVal) {
                     continue;
                 }
-                $keyval = explode('|', $preset);
+                $keyval = explode('|', $qVal);
                 if (count($keyval) === 2) {
-                    $presets[] = $keyval[0] . ": '" . $keyval[1] . "'";
+                    $q[] = $keyval[0] . ": '" . $keyval[1] . "'";
                 }
             }
         }
@@ -59,7 +59,7 @@ class LogsController extends Controller
             'gsqs' =>       $data['gsqs'],
             'lastPulled' => Carbon::parse($data['user']['qrz_last_data_pull'])->diffForHumans(),
             'modes' =>      $data['modes'],
-            'presets' =>    $presets,
+            'q' =>          $q,
             'qths' =>       $data['qths'],
             'user' =>       $data['user']
         ]);
