@@ -387,6 +387,7 @@ class Log extends Model
             if ($isIncremental) {
                 $user->setAttribute('qrz_last_data_pull', time());
             }
+            User::updateStats($user);
             $user->setAttribute('qrz_last_data_pull_debug', implode("\n", $debug));
             $user->save();
             return true;
