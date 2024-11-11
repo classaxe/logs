@@ -13,14 +13,14 @@ class getQrzLogs extends Command
      *
      * @var string
      */
-    protected $signature = 'logs:fetch';
+    protected $signature = 'logs:fetch {call?} {--force}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Fetches latest logs from QRZ.com for all active users';
+    protected $description = 'Fetches latest logs from QRZ.com. Give a callsign to limit to one user. Specify --force to force refresh.';
 
     /**
      * Execute the console command.
@@ -29,8 +29,13 @@ class getQrzLogs extends Command
      */
     public function handle()
     {
-        $force = false;
-        $activeUsers = User::getVisibleUsers();
+        $force = $this->option('force');
+        $call = $this->argument('call');
+        if ($call) {
+            $activeUsers = User::where('call', $call)->get();
+        } else {
+            $activeUsers = User::getVisibleUsers();
+        }
         foreach ($activeUsers as $user) {
             if (!$force && !$user->active) {
                 print "- Skipping inactive user {$user->call}\n";
