@@ -13,6 +13,7 @@ class ChangesController extends Controller
                 'Maksym Shyskov',
                 '[[',
                 ']]',
+                '[]',
                 '[',
                 ']'
             ],
@@ -20,6 +21,7 @@ class ChangesController extends Controller
                 '[Maksym]',
                 '[',
                 ']',
+                '[]',
                 '<span>',
                 '</span>'
             ]
@@ -51,6 +53,8 @@ class ChangesController extends Controller
                 . '</li>';
         }
         $changes = str_replace($tweaks[0], $tweaks[1], implode("\n", $commits));
+        $changes = str_replace('<span></span>', '[]', $changes);
+
         return view('changes', [
             'changes' =>    $changes,
             'count' =>      count($commits),
