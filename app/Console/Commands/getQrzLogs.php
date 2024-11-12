@@ -33,6 +33,10 @@ class getQrzLogs extends Command
         $call = $this->argument('call');
         if ($call) {
             $activeUsers = User::where('call', $call)->get();
+            if ($activeUsers->isEmpty()) {
+                print "No such user as $call\n";
+                return Command::FAILURE;
+            }
         } else {
             $activeUsers = User::getVisibleUsers();
         }
