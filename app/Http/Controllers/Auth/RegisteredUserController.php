@@ -34,11 +34,11 @@ class RegisteredUserController extends Controller
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'call' => ['required', 'string', 'max:12'],
-            'gsq' => ['required', 'string', 'size:6'],
             'qth' => ['nullable', 'string', 'max:40'],
             'city' => ['required', 'string', 'max:40'],
             'sp' => ['nullable', 'string', 'size:2'],
             'itu' => ['required', 'string', 'size:3'],
+            'gsq' => ['required', 'string', 'regex:/^(?:[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}[0-9]{2})$/'],
             'qrz_api_key' => ['required', 'string', 'min:19, max:19'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);

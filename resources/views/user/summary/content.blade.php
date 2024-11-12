@@ -37,9 +37,15 @@
                 @if($user->pota)<td>@if(substr($label, 0, 4) === 'POTA')<a target="_blank" href="https://pota.app/#/park/{{ explode(' ', $label)[1] }}">View</a>@endif</td>@endif
                 <td><a target="_blank" href="https://k7fry.com/grid/?qth={{ $q['gsq'] }}">Map</a></td>
                 @if(!$hidestats)
-                    <td>{{ $q['logFirst'] }}@if($q['logDays'] > 1) - {{ $q['logLast'] }}@endif</td>
-                    <td class="r">{{ $q['logDays'] }}</td>
-                    <td class="r">{{ $q['logs'] }}</td>
+                    @if(isset($q['logFirst']))
+                        <td>{{ $q['logFirst'] }}@if($q['logDays'] > 1) - {{ $q['logLast'] }}@endif</td>
+                        <td class="r">{{ $q['logDays'] }}</td>
+                        <td class="r">{{ $q['logs'] }}</td>
+                    @else
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    @endif
                 @endif
             </tr>
         @endforeach
@@ -51,9 +57,14 @@
                     @if($hidestats)
                         <input type="hidden" name="hidestats" value="1">
                     @endif
-                        <input type="text" name="testgsq" value="{{ request('testgsq') ?? '' }}">
+                        <input type="text" name="testgsq" value="{{ request('testgsq') ?? '' }}"
+                           pattern="^(?:[a-rA-R]{2}[0-9]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}[0-9]{2})$"
+                           title="Valid 4, 6 or 8 character grid square">
                 </td>
-                <td colspan="{{ ($user->pota ? 1 : 0) + ($hidestats ? 3 : 5) }}">&lt;-- Test a new gridsquare to find the resulting radius <input style="float:right" type="submit" class="btn b" value="Test"></td>
+                <td colspan="{{ ($user->pota ? 1 : 0) + ($hidestats ? 3 : 5) }}">
+                    &lt;-- Test a gridsquare here
+                    <input style="float:right" type="submit" class="btn b" value="Test">
+                </td>
                 </form>
             </tr>
         @endif

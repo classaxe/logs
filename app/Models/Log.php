@@ -128,7 +128,7 @@ class Log extends Model
      */
     public static function convertGsqToDegrees($GSQ): bool|array
     {
-        if (!preg_match('/^[a-rA-R]{2}[0-9]{2}([a-xA-X]{2})?([0-9]{2})?$/i', $GSQ)) {
+        if (!preg_match('/^(?:[a-rA-R]{2}[0-9]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}[0-9]{2})$/i', $GSQ)) {
             return false;
         }
         $_GSQ =      strToUpper($GSQ);

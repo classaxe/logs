@@ -53,9 +53,10 @@
 
             <!-- Gridsquare -->
             <div class="mt-4">
-                <x-input-label for="gsq" :value="__('* Gridsquare  (Format AB12cd)')" />
-                <x-text-input id="gsq" class="block mt-1 w-full" type="text" name="gsq" size="6" maxlength="6" :value="old('gsq')"
-                  pattern="[A-R]{2}[0-9]{2}[a-x]{2}" required autocomplete="gsq" />
+                <x-input-label for="gsq" :value="__('* Maidenhead GSQ (6 or 8 chars)')" />
+                <x-text-input id="gsq" class="block mt-1 w-full" type="text" name="gsq" maxlength="8" :value="old('gsq')"
+                  pattern="^(?:[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}[0-9]{2})$"
+                  required autocomplete="gsq" />
                 <x-input-error :messages="$errors->get('gsq')" class="mt-2" />
             </div>
 

@@ -24,7 +24,7 @@ class UserUpdateRequest extends FormRequest
             'city' => ['required', 'string', 'max:40'],
             'sp' => ['nullable', 'string', 'size:2'],
             'itu' => ['required', 'string', 'size:3'],
-            'gsq' => ['required', 'string', 'size:6'],
+            'gsq' => ['required', 'string', 'regex:/^(?:[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}[0-9]{2})$/'],
             'qth_names' => ['nullable', 'string'],
             'qrz_api_key' => ['required', 'string', 'min:19, max:19'],
         ];
