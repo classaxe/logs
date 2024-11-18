@@ -294,23 +294,44 @@ var LMap = {
     },
 
     drawLocations: () => {
-        let i, icon, l;
+        let a, home, i, icon, l, n, p, title;
         for (i in locations) {
             l = locations[i];
-            icon = base_image + (l.pota !=='' ? '/green-pushpin.png' : (l.name.toLowerCase().includes('home') ? '/blue-pushpin.png' : '/yellow-pushpin.png'));
-            layers.locations.push(
-                new google.maps.Marker({
-                    position: { lat: l.lat, lng: l.lng },
-                    map: LMap.map,
-                    icon: {
-                        scaledSize: (l.name.toLowerCase().includes('home') ? new google.maps.Size(30,30) : new google.maps.Size(20,20)),
-                        url: icon
-                    },
-                    title: l.name,
-                    zIndex: 100
-                })
-            );
+            title = l.name;
+            home = (l.lat === qth.lat && l.lng === qth.lng);
+            icon = base_image + (l.pota !=='' ? '/green-pushpin.png' : (home ? '/blue-pushpin.png' : '/yellow-pushpin.png'));
+            a = new google.maps.Marker({
+                position: { lat: l.lat, lng: l.lng },
+                map: LMap.map,
+                icon: {
+                    scaledSize: (home ? new google.maps.Size(30,30) : new google.maps.Size(20,20)),
+                    url: icon
+                },
+                title: l.name,
+                zIndex: 100
+            });
+            if (l.pota) {
+                p = l.name.split(' ')[1];
+                n = l.name;
+                a.addListener('click', function () {
+                    let infoHtml =
+                        "<div class=\"map_info\">" + "" +
+                        "<h3>POTA: <strong><a style=\"color: #00f\" href=\"https://pota.app/#/park/" + p + "\" target='_blank'>" + p + "</a></strong>" +
+                        "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
+                        "</h3>" +
+                        "<p>" + n + "</p>";
+                    LMap.infoWindow.setContent(infoHtml);
+                    LMap.infoWindow.set('pixelOffset', new google.maps.Size(0, -20));
+                    LMap.infoWindow.setPosition(new google.maps.LatLng(l.lat, l.lng));
+                    LMap.infoWindow.open(LMap.map);
+                    setTimeout(() => {
+                        $('#close').focus();
+                    }, 10);
+                });
+            }
+            layers.pota.push(a);
 
+            layers.locations.push(a);
         }
     },
 
@@ -322,11 +343,13 @@ var LMap = {
             dataType: 'json',
             success: function (data) {
                 $(data.features).each(function (idx, feature) {
-                    let f, i, l, n, p, u;
+                    let a, f, i, l, n, p, u, lat, lng;
                     f = feature;
                     n = f.properties.name;
                     p = f.properties.reference;
                     u = true;
+                    lat = f.geometry.coordinates[1];
+                    lng = f.geometry.coordinates[0]
                     for (i in locations) {
                         l = locations[i];
                         if (p === l.pota) {
@@ -334,18 +357,33 @@ var LMap = {
                         }
                     }
                     if (u) {
-                        layers.pota.push(
-                            new google.maps.Marker({
-                                position: {lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0]},
-                                map: LMap.map,
-                                icon: {
-                                    scaledSize: new google.maps.Size(20, 20),
-                                    url: base_image + '/red-pushpin.png'
-                                },
-                                title: "POTA: " + p + " " + n + " [Unvisited]",
-                                zIndex: 100
-                            })
-                        );
+                        a = new google.maps.Marker({
+                            position: {lat: lat, lng: lng},
+                            map: LMap.map,
+                            icon: {
+                                scaledSize: new google.maps.Size(20, 20),
+                                url: base_image + '/red-pushpin.png'
+                            },
+                            title: "POTA: " + p + "\n" + n + "\n(Unvisited)",
+                            zIndex: 100
+                        });
+                        a.addListener('click', function() {
+                            let infoHtml =
+                                "<div class=\"map_info\">" +"" +
+                                "<h3>POTA: <strong><a style=\"color: #00f\" href=\"https://pota.app/#/park/" + p + "\" target='_blank'>" + p + "</a></strong>" +
+                                "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
+                                "</h3>" +
+                                "<p>" + n + "</p>" +
+                                "<p style='text-align: center'><i>(Unvisited)</i></p>";
+                            LMap.infoWindow.setContent(infoHtml);
+                            LMap.infoWindow.set('pixelOffset', new google.maps.Size(0, -20));
+                            LMap.infoWindow.setPosition(new google.maps.LatLng(lat, lng));
+                            LMap.infoWindow.open(LMap.map);
+                            setTimeout(() => {
+                                $('#close').focus();
+                            }, 10);
+                        });
+                        layers.locations.push(a);
                     }
                 });
             }
