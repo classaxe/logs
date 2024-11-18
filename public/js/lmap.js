@@ -44,6 +44,54 @@ var LMap = {
         setInterval(function() { nite.refresh() }, 10000); // every 10s
     },
 
+    initLocationsMap: () => {
+        let i, l;
+        let lat_min = 90;
+        let lat_max = -90;
+        let lng_min = 180;
+        let lng_max = -180
+
+        LMap.TxtOverlay =    LMap.initMapsTxtOverlay();
+        for (i in locations) {
+            l = locations[i];
+            if (l.lat > lat_max) {
+                lat_max = l.lat;
+            }
+            if (l.lat < lat_min) {
+                lat_min = l.lat;
+            }
+            if (l.lng > lng_max) {
+                lng_max = l.lng;
+            }
+            if (l.lng < lng_min) {
+                lng_min = l.lng;
+            }
+            box = [{
+                lat: lat_min,
+                lng: lng_min
+            }, {
+                lat: lat_max,
+                lng: lng_max
+            }];
+        }
+        LMap.options = {
+            'zoom': 1,
+            'center': new google.maps.LatLng(center.lat, center.lng),
+            'mapTypeId': google.maps.MapTypeId.ROADMAP
+        };
+        LMap.map = new google.maps.Map($('#map').get(0), LMap.options);
+        bounds = new google.maps.LatLngBounds(
+            new google.maps.LatLng(box[0].lat - 0.05, box[0].lng - 0.1), //sw
+            new google.maps.LatLng(box[1].lat + 0.05, box[1].lng + 0.1) //ne
+        )
+        LMap.map.fitBounds(bounds);
+        LMap.infoWindow = new google.maps.InfoWindow();
+        LMap.drawGrid();
+        LMap.drawLocations();
+        LMap.drawPotaUnvisited();
+
+    },
+
     initMapsTxtOverlay: () => {
         // Thanks to Michal, 'UX Lead at Alphero' for this custom text overlay code
         // Ref: https://stackoverflow.com/a/3955258/815790
@@ -245,7 +293,66 @@ var LMap = {
             "</tr>";
     },
 
-    drawQTH : () => {
+    drawLocations: () => {
+        let i, icon, l;
+        for (i in locations) {
+            l = locations[i];
+            icon = base_image + (l.pota !=='' ? '/green-pushpin.png' : (l.name.toLowerCase().includes('home') ? '/blue-pushpin.png' : '/yellow-pushpin.png'));
+            layers.locations.push(
+                new google.maps.Marker({
+                    position: { lat: l.lat, lng: l.lng },
+                    map: LMap.map,
+                    icon: {
+                        scaledSize: (l.name.toLowerCase().includes('home') ? new google.maps.Size(30,30) : new google.maps.Size(20,20)),
+                        url: icon
+                    },
+                    title: l.name,
+                    zIndex: 100
+                })
+            );
+
+        }
+    },
+
+    drawPotaUnvisited: () => {
+        let url = `https://api.pota.app/park/grids/${box[0].lat}/${box[0].lng}/${box[1].lat}/${box[1].lng}/0`;
+        $.ajax({
+            type: 'GET',
+            url: url,
+            dataType: 'json',
+            success: function (data) {
+                $(data.features).each(function (idx, feature) {
+                    let f, i, l, n, p, u;
+                    f = feature;
+                    n = f.properties.name;
+                    p = f.properties.reference;
+                    u = true;
+                    for (i in locations) {
+                        l = locations[i];
+                        if (p === l.pota) {
+                            u = false;
+                        }
+                    }
+                    if (u) {
+                        layers.pota.push(
+                            new google.maps.Marker({
+                                position: {lat: f.geometry.coordinates[1], lng: f.geometry.coordinates[0]},
+                                map: LMap.map,
+                                icon: {
+                                    scaledSize: new google.maps.Size(20, 20),
+                                    url: base_image + '/red-pushpin.png'
+                                },
+                                title: "POTA: " + p + " " + n + " [Unvisited]",
+                                zIndex: 100
+                            })
+                        );
+                    }
+                });
+            }
+        });
+    },
+
+    drawQTH: () => {
         if (typeof layers.qth !== 'undefined' ) {
             layers.qth.setMap(null);
         }
@@ -269,7 +376,7 @@ var LMap = {
             map: LMap.map,
             icon: {
                 scaledSize: new google.maps.Size(30,30),
-                url: base_image + '/purple-pushpin.png'
+                url: base_image + '/blue-pushpin.png'
             },
             title: qth.callsign,
             zIndex: 100

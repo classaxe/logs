@@ -23,6 +23,9 @@ $changes = floor((time() - strtotime(exec('git log -1 --format="%ad"'))) / (60 *
             <a href="{{ route('logs.fetch') }}" id="fetch" title="Reloads your own logs from QRZ.com"{{
                 Route::currentRouteName() === 'logs.fetch' ? " class=is-active" : ''
             }}>Fetch Logs</a>
+            <a href="{{ route('user.upload') }}" id="upload" title="Upload logs from an adi file"{{
+                Route::currentRouteName() === 'user.upload' ? " class=is-active" : ''
+            }}>Upload</a>
         @endif
         <form id="logout" method="POST" action="{{ route('logout') }}">@csrf</form>
         <a href="{{ route('logout') }}" onclick="event.preventDefault();document.getElementById('logout').submit();">{{ __('Sign Out') }}</a>

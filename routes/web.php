@@ -31,6 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile',      [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile',    [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile',   [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/upload',       [UserController::class, 'upload'])->name('user.upload');
 });
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -38,6 +39,7 @@ Route::get('/changes', [ChangesController::class, 'index'])->name('changes');
 Route::get('/logs/{callsign}', [LogsController::class, 'logsPage'])->name('logs.page');
 Route::get('/logs/{callsign}/logs', [LogsController::class, 'logs'])->name('logs');
 Route::get('/summary/{callsign}', [UserController::class, 'summary'])->name('summary');
+Route::get('/summary/{callsign}/map', [UserController::class, 'summaryMap'])->name('summaryMap');
 
 require __DIR__.'/auth.php';
 

@@ -20,7 +20,6 @@ class UserController extends Controller
     {
         $user = User::where('id', '=', $id)->firstOrFail();
         return view('user.edit', ['user' => $user]);
-
     }
 
     public function embed(Request $request, string $mode, string $method, string $callsign)
@@ -113,51 +112,6 @@ class UserController extends Controller
         }
     }
 
-    public function summary(Request $request, string $callsign) {
-        $testGsq = $request->query('testgsq') ?: null;
-        $callsign = str_replace('-', '/', $callsign);
-        if (!$u = User::getUserDataByCallsign($callsign, $testGsq)) {
-            return redirect(url('/'));
-        }
-        $hidestats = $request->query('hidestats') ? '1' : '';
-        $title = sprintf("Location%s %s for %s - %s",
-            (count($u['qths']) > 1 ? 's' : ''),
-            ($hidestats ? "" : " and Stats"),
-            $u['user']->name,
-            $u['user']->call
-        );
-        $url = route(
-            'summary', [
-                'callsign' => str_replace('/', '-', $u['user']->call)
-            ]
-        );
-        return view('user.summary.index', [
-            'cta' =>        false,
-            'hidestats' =>  $hidestats,
-            'qths' =>       $u['qths'],
-            'qth_bounds' => $u['qth_bounds'],
-            'title' =>      $title,
-            'url' =>        $url,
-            'user' =>       $u['user'],
-        ]);
-    }
-
-    public function update(UserUpdateRequest $request) {
-        $validated = $request->validated();
-        $user = User::find($validated['id']);
-        $user->fill($request->validated());
-
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
-        }
-        if ($user->qth_names === null) {
-            $user->qth_names = '';
-        }
-        $user->save();
-        return Redirect::route('home')
-            ->with('status', sprintf('<b>Success</b><br>Profile for <i>%s</i> has been updated.', $user->name));
-    }
-
     public function patch(UserPatchRequest $request)
     {
         if (!$user = User::find((int)$request->target)) {
@@ -203,4 +157,85 @@ class UserController extends Controller
         return Redirect::route('home')
             ->with('status', sprintf('<b>Success</b><br>Status for <i>%s</i> has been updated.', $user->name));
     }
+
+    public function summary(Request $request, string $callsign) {
+        $testGsq = $request->query('testgsq') ?: null;
+        $callsign = str_replace('-', '/', $callsign);
+        if (!$u = User::getUserDataByCallsign($callsign, $testGsq)) {
+            return redirect(url('/'));
+        }
+        $hidestats = $request->query('hidestats') ? '1' : '';
+        $title = sprintf("Location%s %s for %s - %s",
+            (count($u['qths']) > 1 ? 's' : ''),
+            ($hidestats ? "" : " and Stats"),
+            $u['user']->name,
+            $u['user']->call
+        );
+        $url = route(
+            'summary', [
+                'callsign' => str_replace('/', '-', $u['user']->call)
+            ]
+        );
+        return view('user.summary.index', [
+            'cta' =>        false,
+            'hidestats' =>  $hidestats,
+            'qths' =>       $u['qths'],
+            'qth_bounds' => $u['qth_bounds'],
+            'title' =>      $title,
+            'url' =>        $url,
+            'user' =>       $u['user'],
+        ]);
+    }
+
+    public function summaryMap(string $callsign) {
+        $callsign = str_replace('-', '/', $callsign);
+        if (!$u = User::getUserDataByCallsign($callsign)) {
+            return redirect(url('/'));
+        }
+        $title = sprintf("Location%s Map for %s - %s",
+            (count($u['qths']) > 1 ? 's' : ''),
+            $u['user']->name,
+            $u['user']->call
+        );
+        $url = route(
+            'summaryMap', [
+                'callsign' => str_replace('/', '-', $u['user']->call)
+            ]
+        );
+        return view('user.summary.map', [
+            'cta' =>        false,
+            'qths' =>       $u['qths'],
+            'qth_bounds' => $u['qth_bounds'],
+            'title' =>      $title,
+            'url' =>        $url,
+            'user' =>       $u['user'],
+        ]);
+    }
+
+    public function update(UserUpdateRequest $request) {
+        $validated = $request->validated();
+        $user = User::find($validated['id']);
+        $user->fill($request->validated());
+
+        if ($user->isDirty('email')) {
+            $user->email_verified_at = null;
+        }
+        if ($user->qth_names === null) {
+            $user->qth_names = '';
+        }
+        $user->save();
+        return Redirect::route('home')
+            ->with('status', sprintf('<b>Success</b><br>Profile for <i>%s</i> has been updated.', $user->name));
+    }
+
+    public function upload()
+    {
+        $user = Auth::user();
+        return view('user.upload.form', [
+            'title' => "Upload ADI File",
+            'user' => $user
+        ]);
+    }
+
+
 }

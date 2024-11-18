@@ -5,6 +5,7 @@
     <script>
         var callsign = "{{ $user['call'] }}";
         var base_image = '/images';
+        var bounds = [];
         var box = [{}, {}];
         var center = {}
         var gridColor = '#800000';
@@ -12,6 +13,8 @@
         var gsqs = [];
         var layers = {
             grid: [],
+            locations: [],
+            pota: [],
             squares: [],
             squareLabels: []
         };
