@@ -169,7 +169,10 @@ class UserController extends Controller
             (count($u['qths']) > 1 ? 's' : ''),
             ($hidestats ? "" : " and Stats"),
             $u['user']->name,
-            $u['user']->call
+            '<a style="color:#00f;" href="'
+            . route('logs.page', ['callsign' => str_replace('/', '-', $u['user']->call)]) . '">'
+            . $u['user']->call
+            . "</a>"
         );
         $url = route(
             'summary', [
@@ -192,10 +195,20 @@ class UserController extends Controller
         if (!$u = User::getUserDataByCallsign($callsign)) {
             return redirect(url('/'));
         }
-        $title = sprintf("Location%s Map for %s - %s",
+        $urlSummary = '<a class="btn b" target="_blank" href="'
+            . route('summary', ['callsign' => str_replace('/', '-', $u['user']->call)]) . '">'
+            . "Summary"
+            . "</a>";
+        $urlLogs = '<a class="btn g" target="_blank" href="'
+            . route('logs.page', ['callsign' => str_replace('/', '-', $u['user']->call)]) . '">'
+            . "Logs"
+            . "</a>";
+        $title = sprintf("Location%s Map for %s - %s <div style='float:right;font-style: italic'>%s %s</div>",
             (count($u['qths']) > 1 ? 's' : ''),
             $u['user']->name,
-            $u['user']->call
+            $u['user']->call,
+            $urlSummary,
+            $urlLogs
         );
         $url = route(
             'summaryMap', [

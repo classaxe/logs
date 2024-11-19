@@ -150,7 +150,7 @@ var LMap = {
                     geodesic: false,
                     strokeColor: gridColor,
                     strokeOpacity: gridOpacity,
-                    strokeWeight: 0.5
+                    strokeWeight: 1
                 })
             );
             if (typeof squares !== 'undefined' && squares) {
@@ -294,18 +294,21 @@ var LMap = {
     },
 
     drawLocations: () => {
-        let a, home, i, icon, l, n, p, title;
-        for (i in locations) {
-            l = locations[i];
-            title = l.name;
-            home = (l.lat === qth.lat && l.lng === qth.lng);
-            icon = base_image + (l.pota !=='' ? '/green-pushpin.png' : (home ? '/blue-pushpin.png' : '/yellow-pushpin.png'));
+        $(locations).each(function(idx, l) {
+            let a, d, home, i, icon, lat, lng, logs, n, p;
+            d = l.days;
+            logs = l.logs;
+            lat = l.lat;
+            lng = l.lng;
+            home = l.home;
+
+            icon = l.pota !=='' ? '/green-pushpin.png' : (home ? '/blue-pushpin.png' : '/yellow-pushpin.png');
             a = new google.maps.Marker({
-                position: { lat: l.lat, lng: l.lng },
+                position: { lat: lat, lng: lng },
                 map: LMap.map,
                 icon: {
                     scaledSize: (home ? new google.maps.Size(30,30) : new google.maps.Size(20,20)),
-                    url: icon
+                    url: base_image + icon
                 },
                 title: l.name,
                 zIndex: 100
@@ -313,16 +316,18 @@ var LMap = {
             if (l.pota) {
                 p = l.name.split(' ')[1];
                 n = l.name;
-                a.addListener('click', function () {
-                    let infoHtml =
+                a.addListener('click', function() {
+                    let infoHtml;
+                    infoHtml =
                         "<div class=\"map_info\">" + "" +
                         "<h3>POTA: <strong><a style=\"color: #00f\" href=\"https://pota.app/#/park/" + p + "\" target='_blank'>" + p + "</a></strong>" +
                         "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
                         "</h3>" +
-                        "<p>" + n + "</p>";
+                        "<p>" + n + "</p>" +
+                        "<p>Days: " + d + ", Logs: " + logs + "</p>";
                     LMap.infoWindow.setContent(infoHtml);
                     LMap.infoWindow.set('pixelOffset', new google.maps.Size(0, -20));
-                    LMap.infoWindow.setPosition(new google.maps.LatLng(l.lat, l.lng));
+                    LMap.infoWindow.setPosition(new google.maps.LatLng(lat, lng));
                     LMap.infoWindow.open(LMap.map);
                     setTimeout(() => {
                         $('#close').focus();
@@ -332,11 +337,12 @@ var LMap = {
             layers.pota.push(a);
 
             layers.locations.push(a);
-        }
+        });
     },
 
     drawPotaUnvisited: () => {
         let url = `https://api.pota.app/park/grids/${box[0].lat}/${box[0].lng}/${box[1].lat}/${box[1].lng}/0`;
+        console.log(url);
         $.ajax({
             type: 'GET',
             url: url,

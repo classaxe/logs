@@ -7,7 +7,7 @@
     margin: 0.25em auto;
     font-family: Figtree,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji"
 }
-#qthinfo .btn {
+.btn {
     margin: 0 0 0.25em 0.25em;
     font-size: 70%;
     color: white;
@@ -15,25 +15,25 @@
     padding: 0.25em;
     border-radius: 0.5em;
 }
-#qthinfo .btn.r {
+.btn.r {
     background: #a44;
 }
-#qthinfo .btn.g {
+.btn.g {
     background: #484;
 }
-#qthinfo .btn.b {
+.btn.b {
     background: #44f;
 }
-#qthinfo .btn:hover {
+.btn:hover {
     color: yellow;
 }
-#qthinfo .btn.r:hover {
+.btn.r:hover {
     background: #f44;
 }
-#qthinfo .btn.g:hover {
+.btn.g:hover {
     background: #686;
 }
-#qthinfo .btn.b:hover {
+.btn.b:hover {
     background: #88f;
 }
 #qthinfo table {

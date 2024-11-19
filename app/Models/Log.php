@@ -472,8 +472,11 @@ class Log extends Model
         $out = [];
         foreach($items as $item) {
             $latlon = self::convertGsqToDegrees($item['myGsq']);
+            $lat = $latlon['lat'];
+            $lon = $latlon['lon'];
             $out[$item['myQth']] = [
                 'gsq' =>        $item['myGsq'],
+                'home' =>       $lat === $user['lat'] && $lon === $user['lon'],
                 'lat' =>        $latlon['lat'],
                 'lon' =>        $latlon['lon'],
                 'logs' =>       $item['logCount'],

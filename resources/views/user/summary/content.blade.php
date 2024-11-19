@@ -1,5 +1,5 @@
 <div id="qthinfo">
-    <h2>{{ $title }}
+    <h2>{!! $title !!}
         <a class="btn r" style="margin-left: 2em" href="{{ $url }}{{ $hidestats ? '?hidestats=1' : '' }}">Reload</a>
         @if($hidestats)
             <a class="btn g" href="{{ $url }}">Show Stats</a>
