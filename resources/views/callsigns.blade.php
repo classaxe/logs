@@ -29,20 +29,23 @@
             <thead>
                 <tr>
                     <th>Callsign</th>
-                    <th>Name</th>
+                    <th class="pc">Name</th>
+                    <th class="mobile">Name / Home QTH</th>
                     @if(Auth::user() && Auth::user()->admin)
-                        <th>Email</th>
-                        <th>Email Verified</th>
+                        <th class="pc">Email</th>
+                        <th class="pc">Email Verified</th>
                     @endif
-                    <th>Main QTH</th>
-                    <th>S/P</th>
-                    <th>ITU</th>
-                    <th>GSQ</th>
-                    <th @if(Auth::user() && Auth::user()->admin) colspan="2" style="text-align: center"@endif>Logs</th>
+                    <th class="pc">Main QTH</th>
+                    <th class="pc">S/P</th>
+                    <th class="pc">ITU</th>
+                    <th class="pc">GSQ</th>
+                    <th class="pc"@if(Auth::user() && Auth::user()->admin) colspan="2" style="text-align: center"@endif>Logs</th>
+                    <th class="mobile">Logs</th>
                     <th>QTHs</th>
-                    <th>First Log</th>
-                    <th>Last Log</th>
-                    <th>Last Fetch</th>
+                    <th class="mobile">Log Stats</th>
+                    <th class="pc">First Log</th>
+                    <th class="pc">Last Log</th>
+                    <th class="pc">Last Fetch</th>
                     <th>Summary</th>
                     <th>QRZ</th>
                     @if(Auth::user() && Auth::user()->admin)
@@ -70,29 +73,52 @@
                 @endif
             >
                 <td>@if($u->log_count)<a href="{{ route('logs.page', ['callsign' => str_replace('/', '-', $u->call)]) }}" title="View Logbook">{{ $u->call }}</a>@else<b>{{ $u->call }}</b>@endif</td>
-                <td>
+                <td class="pc">
                     @if(Auth::user() && Auth::user()->admin)
                         <a href="{{ route('user.edit', ['id' => $u->id]) }}" title="Edit User Profile">{{ $u->name }}</a>
                     @else
                         {{ $u->name }}
                     @endif
                 </td>
+                <td class="mobile">
+                    @if(Auth::user() && Auth::user()->admin)
+                        <a href="{{ route('user.edit', ['id' => $u->id]) }}" title="Edit User Profile">{{ $u->name }}</a>
+                    @else
+                        {{ $u->name }}
+                    @endif
+                    <br>
+                    {{ $u->city }} {{ $u->sp }} {{ $u->itu }}
+                </td>
                 @if(Auth::user() && Auth::user()->admin)
-                    <td>{{ $u->email }}</td>
-                    <td>{{ $u->email_verified_at }}</td>
+                    <td class="pc">{{ $u->email }}</td>
+                    <td class="pc">{{ $u->email_verified_at }}</td>
                 @endif
-                <td>{{ $u->city }}</td>
-                <td>{{ $u->sp }}</td>
-                <td>{{ $u->itu }} <span class="fi fi-{{ $u->itu }}"></span></td>
-                <td>{{ $u->gsq }}</td>
-                <td class="r">{{ $u->log_count }}</td>
+                <td class="pc">{{ $u->city }}</td>
+                <td class="pc">{{ $u->sp }}</td>
+                <td class="pc">{{ $u->itu }}</td>
+                <td class="pc">{{ $u->gsq }}</td>
+                <td class="pc r">{{ $u->log_count }}</td>
                 @if(Auth::user() && Auth::user()->admin)
-                    <td class="c u_logs_purge"><a href="#">Purge</a></td>
+                    <td class="pc c u_logs_purge"><a href="#">Purge</a></td>
                 @endif
-                <td class="r">{{ $u->qth_count }}</td>
-                <td class="r">{{ substr($u->first_log, 0, 10) }}</td>
-                <td class="r">{{ substr($u->last_log, 0, 10) }}</td>
-                <td class="r" @if(Auth::user() && Auth::user()->admin && $u->qrz_last_data_pull_debug)
+                <td class="mobile r">
+                    {{ $u->log_count }}
+                    @if(Auth::user() && Auth::user()->admin)<a class="u_logs_purge" href="#">Purge</a>@endif
+                </td>
+                <td class="r">
+                    @if($u->qth_count>0)<a href="{{ route('summaryMap', ['callsign' => str_replace('/', '-', $u->call)]) }}" title="View Locations Map" target="_blank">{{ $u->qth_count }}</a>
+                    @else{{ $u->qth_count }}
+                    @endif
+                </td>
+                <td class="mobile">
+                    <span style="white-space: nowrap">From: {{ substr($u->first_log, 0, 10) }}<br>
+                    To: {{ substr($u->last_log, 0, 10) }}<br>
+                    Fetch: @if($u->qrz_last_result !== 'OK'){{ $u->qrz_last_result }} @else {{ $u->getLastQrzPull() }} @endif
+                    </span>
+                </td>
+                <td class="pc r">{{ substr($u->first_log, 0, 10) }}</td>
+                <td class="pc r">{{ substr($u->last_log, 0, 10) }}</td>
+                <td class="pc r" @if(Auth::user() && Auth::user()->admin && $u->qrz_last_data_pull_debug)
                     style="cursor:pointer;text-decoration: underline" title="{{ $u->qrz_last_data_pull_debug }}"
                 @endif>@if($u->qrz_last_result !== 'OK'){{ $u->qrz_last_result }} @else {{ $u->getLastQrzPull() }} @endif </td>
                 <td class="c">@if($u->log_count)<a href="/summary/{{ str_replace('/', '-', $u->call) }}" title="View summary for {{ $u->call }}">VIEW</a>@endif</td>
@@ -107,4 +133,24 @@
             </tbody>
         </table>
     </div>
+ <style>
+ @media screen and (max-width: 800px) {
+     tbody td {
+         vertical-align: top;
+     }
+     .mobile {
+         display: table-cell;
+     }
+     .pc {
+         display: none;
+     }
+ }
+ @media screen and (min-width: 801px) {
+     .mobile {
+         display: none;
+     }
+     .pc {
+         display: table-cell;
+     }
+ }</style>
 </x-app-layout>

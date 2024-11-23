@@ -7,6 +7,7 @@
             <a class="btn g" href="{{ $url }}?hidestats=1">Hide Stats</a>
         @endif
         <a class="btn b" target="_blank" href="{{ $url }}{{ $hidestats ? '?hidestats=1' : '' }}">Print</a>
+        <a class="btn o" target="_blank" href="{{ route('summaryMap', ['callsign' => str_replace('/', '-', $user->call)]) }}" title="View Locations Map">Map</a>
     </h2>
     @if (!$hidestats && count($qths) > 1)
         <p>@if(count($qths) === 2)Both @else All <b>{{count($qths)}}</b>@endif locations are situated within a radius of <b>{{ ceil($qth_bounds['radius'] / 1000) }} Km</b> ({{ ceil(0.6213712 * ($qth_bounds['radius'] / 1000)) }} Miles)</p>
@@ -16,9 +17,8 @@
         <thead>
         <tr>
             <th>Grid</th>
-            <th>Location</th>
+            <th>Location (Click for logs)</th>
             @if($user->pota)<th>POTA</th>@endif
-            <th>Map</th>
             @if(!$hidestats)
                 <th>Dates</th>
                 <th title="Days actively logging">*Days</th>
@@ -32,10 +32,11 @@
                 @continue
             @endif
             <tr>
-                <td class="gsq" title="Lat: {{ $q['lat'] }}, Lon: {{ $q['lon'] }}"> {{ $q['gsq'] }}</td>
+                <td class="gsq" title="Lat: {{ $q['lat'] }}, Lon: {{ $q['lon'] }}">
+                    <a target="_blank" href="https://k7fry.com/grid/?qth={{ $q['gsq'] }}">{{ $q['gsq'] }}</a>
+                </td>
                 <td><a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}/?q[]=myQth|{{ $label }}" target="_blank">{{ $label }}</a></td>
                 @if($user->pota)<td>@if(substr($label, 0, 4) === 'POTA')<a target="_blank" href="https://pota.app/#/park/{{ explode(' ', $label)[1] }}">View</a>@endif</td>@endif
-                <td><a target="_blank" href="https://k7fry.com/grid/?qth={{ $q['gsq'] }}">Map</a></td>
                 @if(!$hidestats)
                     @if(isset($q['logFirst']))
                         <td>{{ $q['logFirst'] }}@if($q['logDays'] > 1) - {{ $q['logLast'] }}@endif</td>
@@ -61,7 +62,7 @@
                            pattern="^(?:[a-rA-R]{2}[0-9]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}[0-9]{2})$"
                            title="Valid 4, 6 or 8 character grid square">
                 </td>
-                <td colspan="{{ ($user->pota ? 1 : 0) + ($hidestats ? 3 : 5) }}">
+                <td colspan="{{ ($user->pota ? 1 : 0) + ($hidestats ? 2 : 4) }}">
                     &lt;-- Test a gridsquare here
                     <input style="float:right" type="submit" class="btn b" value="Test">
                 </td>
@@ -70,9 +71,8 @@
         @endif
         @if (!$hidestats && count($qths) > 1)
             <tr class="totals">
-                <td>Totals</td>
+                <td><a href="{{ route('summaryMap', ['callsign' => str_replace('/', '-', $user->call)]) }}" title="Show map" target="_blank">Totals</a></td>
                 <td{{ ($user->pota ? ' colspan=2' : '') }}><a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}" style="font-weight: normal" target="_blank">({{ count($qths) ===2 ? 'Both' : 'All ' . count($qths) }} locations)</a></td>
-                <td><a href="{{ route('summaryMap', ['callsign' => str_replace('/', '-', $user->call)]) }}" target="_blank">Map</a></td>
                 <td>{{ substr($user['first_log'], 0, 10) }}@if(substr($user['first_log'], 0, 10) !== substr($user['last_log'], 0, 10)) - {{ substr($user['last_log'], 0, 10) }}@endif</td>
                 <td class="r">{{ $user['log_days'] ?: 0 }}</td>
                 <td class="r">{{ $user['log_count'] }}</td>

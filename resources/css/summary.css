@@ -24,6 +24,9 @@
 .btn.b {
     background: #44f;
 }
+.btn.o {
+    background: #f60;
+}
 .btn:hover {
     color: yellow;
 }
@@ -35,6 +38,9 @@
 }
 .btn.b:hover {
     background: #88f;
+}
+.btn.o:hover {
+    background: #fc0;
 }
 #qthinfo table {
     border-collapse: collapse;

@@ -198,7 +198,7 @@ class User extends Authenticatable implements MustVerifyEmail
             return 'Never' . ($this['qrz_last_result'] ? ' - ' . $this['qrz_last_result'] : '');
         }
         if (Carbon::parse($this['qrz_last_data_pull'])->diffInDays() >= self::RECENTDAYS) {
-            return substr($this['qrz_last_data_pull'], 0, 16);
+            return substr($this['qrz_last_data_pull'], 0, 10);
         }
         $result = Carbon::parse($this['qrz_last_data_pull'])->diffForHumans();
         return str_replace(
