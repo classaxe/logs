@@ -89,6 +89,7 @@ var LMap = {
         LMap.drawGrid();
         LMap.drawLocations();
         LMap.drawPotaUnvisited();
+        LMap.drawBoundsRing();
 
     },
 
@@ -134,6 +135,34 @@ var LMap = {
         };
 
         return TxtOverlay;
+    },
+
+    drawBoundsRing: () => {
+        layers.locations.push(
+            new google.maps.Circle({
+                strokeColor: '#800000',
+                strokeOpacity: 0.5,
+                strokeWeight: 1,
+                fillColor: '#FF0000',
+                fillOpacity: 0.20,
+                map: LMap.map,
+                center: new google.maps.LatLng(qthBounds.lat, qthBounds.lng),
+                radius: 1000 * (50 / 0.6213712),
+                title: "50 mile ring"
+            })
+        );
+        layers.locations.push(
+            new google.maps.Circle({
+                strokeColor: '#008000',
+                strokeOpacity: 0.5,
+                strokeWeight: 1,
+                fillColor: '#00FF00',
+                fillOpacity: 0.20,
+                map: LMap.map,
+                center: new google.maps.LatLng(qthBounds.lat, qthBounds.lng),
+                radius: qthBounds.radius
+            })
+        );
     },
 
     drawGrid : () => {

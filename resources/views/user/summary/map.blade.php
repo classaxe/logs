@@ -7,6 +7,15 @@
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">{!! $title !!}</h2>
+                    @if (count($qths) > 1)
+                        <p>@if(count($qths) === 2)Both @else All <b>{{count($qths)}}</b>@endif locations are situated within a radius of
+                            <b>{{ ceil($qth_bounds['radius'] / 1000) }} Km</b> ({{ ceil(0.6213712 * ($qth_bounds['radius'] / 1000)) }} Miles)
+                            - indicated by the <span style="color:green">green</span> circle.
+                        </p>
+                        <p>Most QRZ awards require locations used to qualify be within 50 miles radius of a given point
+                            - indicated by the <span style="color:red">red</span> circle.</p>
+                    @endif
+
                     <fieldset>
                         <img src="{{ asset('images/blue-pushpin.png') }}" alt="Blue Pushpin" style="display: inline; height: 30px">Home QTH &nbsp;
                         <img src="{{ asset('images/green-pushpin.png') }}" alt="Green Pushpin" style="display: inline; height: 20px">POTA (visited) &nbsp;
@@ -42,6 +51,11 @@
             lat: {{ $user['lat'] }},
             lng: {{ $user['lon'] }},
             name: "{{ $user['name'] }}",
+        }
+        var qthBounds = {
+            lat: {{ $qth_bounds['center'][0] }},
+            lng: {{ $qth_bounds['center'][1] }},
+            radius: {{ $qth_bounds['radius'] }}
         }
         var locations = [
 @foreach($qths as $name => $qth)
