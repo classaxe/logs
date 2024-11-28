@@ -67,6 +67,9 @@
     padding: 4px 5px;
     vertical-align: top;
 }
+#qthinfo table tbody tr.testGsq td {
+    background: #e0ffe0;
+}
 #qthinfo table tbody td.r {
     text-align: right !important;
 }

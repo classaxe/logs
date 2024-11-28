@@ -50,11 +50,11 @@
             @if(!isset($q['gsq']))
                 @continue
             @endif
-            <tr>
-                <td class="gsq" title="Lat: {{ $q['lat'] }}, Lon: {{ $q['lon'] }}">
+            <tr @if($label === 'Test Location') class="testGsq" @endif>
+                <td class="gsq" title="Lat: {{ $q['lat'] }}, Lon: {{ $q['lon'] }} - click for Map">
                     <a target="_blank" href="https://k7fry.com/grid/?qth={{ $q['gsq'] }}">{{ $q['gsq'] }}</a>
                 </td>
-                <td><a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}/?q[]=myQth|{{ $label }}" target="_blank">{{ $label }}</a></td>
+                <td>@if($label === 'Test Location'){{ $label }}@else<a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}/?q[]=myQth|{{ $label }}" target="_blank">{{ $label }}</a>@endif</td>
                 @if($user->pota)<td>@if(substr($label, 0, 4) === 'POTA')<a target="_blank" href="https://pota.app/#/park/{{ explode(' ', $label)[1] }}">View</a>@endif</td>@endif
                 @if(!$hidestats)
                     @if(isset($q['logFirst']))

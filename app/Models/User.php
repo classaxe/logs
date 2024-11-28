@@ -155,10 +155,11 @@ class User extends Authenticatable implements MustVerifyEmail
         $latlon = Log::convertGsqToDegrees($user['gsq']);
         $user['lat'] = $latlon['lat'];
         $user['lon'] = $latlon['lon'];
-        $qths = Log::getQthsForUser($user);
+        $qths = [];
         if ($testGsq !== null) {
-            $qths['testGsq'] = $coords = Log::convertGsqToDegrees($testGsq);
+            $qths['Test Location'] = $coords = Log::convertGsqToDegrees($testGsq);
         }
+        $qths += Log::getQthsForUser($user);
         $user['pota'] = array_filter(array_keys($qths), function($lbl) {
             return str_contains($lbl, 'POTA:');
         }) ? true : false;
