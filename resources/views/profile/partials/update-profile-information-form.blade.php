@@ -88,7 +88,7 @@
         <div class="mt-4">
             <x-input-label for="qth_names" :value="__('Home QTH Names - Format GSQ = Name')" />
             <x-input-label for="qth_names" :value="__('To HIDE all logs for any location, set the name  to HIDE')" />
-            <x-textarea id="qth_names" rows="8" class="font-mono block mt-1 w-full" name="qth_names" :value="old('qth_names', $user->qth_names)" autocomplete="qth_names" />
+            <x-textarea id="qth_names" rows="8" class="block mt-1 w-full" name="qth_names" :value="old('qth_names', $user->qth_names)" autocomplete="qth_names" />
             <x-input-error :messages="$errors->get('qth_names')" class="mt-2" />
         </div>
 

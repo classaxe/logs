@@ -27,6 +27,25 @@
         </tr>
         </thead>
         <tbody>
+        @if(Auth::user() && (Auth::user()->admin || $user->call === Auth::user()->call))
+            <tr>
+                <form method="get" action="{{ $url }}">
+                    <td class="test">
+                        <input type="hidden" name="action" value="testgsq">
+                        @if($hidestats)
+                            <input type="hidden" name="hidestats" value="1">
+                        @endif
+                        <input type="text" name="testgsq" value="{{ request('testgsq') ?? '' }}"
+                               pattern="^(?:[a-rA-R]{2}[0-9]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}[0-9]{2})$"
+                               title="Valid 4, 6 or 8 character grid square">
+                    </td>
+                    <td colspan="{{ ($user->pota ? 1 : 0) + ($hidestats ? 2 : 4) }}">
+                        &lt;-- Test a gridsquare here
+                        <input style="float:right" type="submit" class="btn b" value="Test">
+                    </td>
+                </form>
+            </tr>
+        @endif
         @foreach ($qths as $label => $q)
             @if(!isset($q['gsq']))
                 @continue
@@ -50,25 +69,6 @@
                 @endif
             </tr>
         @endforeach
-        @if(Auth::user() && (Auth::user()->admin || $user->call === Auth::user()->call))
-            <tr>
-                <form method="get" action="{{ $url }}">
-                <td class="test">
-                        <input type="hidden" name="action" value="testgsq">
-                    @if($hidestats)
-                        <input type="hidden" name="hidestats" value="1">
-                    @endif
-                        <input type="text" name="testgsq" value="{{ request('testgsq') ?? '' }}"
-                           pattern="^(?:[a-rA-R]{2}[0-9]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}[0-9]{2})$"
-                           title="Valid 4, 6 or 8 character grid square">
-                </td>
-                <td colspan="{{ ($user->pota ? 1 : 0) + ($hidestats ? 2 : 4) }}">
-                    &lt;-- Test a gridsquare here
-                    <input style="float:right" type="submit" class="btn b" value="Test">
-                </td>
-                </form>
-            </tr>
-        @endif
         @if (!$hidestats && count($qths) > 1)
             <tr class="totals">
                 <td><a href="{{ route('summaryMap', ['callsign' => str_replace('/', '-', $user->call)]) }}" title="Show map" target="_blank">Totals</a></td>

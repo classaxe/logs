@@ -697,3 +697,9 @@ div.scroll div table.results img {
 #trigger_show_map_calls:hover {
     color: #ffff00;
 }
+/* Edit Profile */
+#qth_names {
+    font-family: "Courier New", monospace;
+    color: #000;
+    font-size: 90%;
+}
