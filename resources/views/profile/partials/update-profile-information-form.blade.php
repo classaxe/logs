@@ -72,8 +72,9 @@
         </div>
 
         <div>
-            <x-input-label for="itu" class="w-3/12 inline-block" :value="__('* Country')" />
-            <x-text-input id="itu" name="itu" type="text" class="mt-1 w-8/12" :value="old('sp', $user->itu)" required autofocus autocomplete="itu" />
+            <x-input-label for="itu" class="w-3/12 inline-block" :value="__('* Country (2 chars)')" />
+            <x-text-input id="itu" name="itu" type="text" class="mt-1 w-8/12" :value="old('itu', $user->itu)" required maxlength="2"
+              pattern="^[A-Z]{2}$" required autocomplete="itu" />
             <x-input-error class="mt-2" :messages="$errors->get('itu')" />
         </div>
 

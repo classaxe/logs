@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\UserPatchRequest;
 use App\Http\Requests\UserUpdateRequest;
 use App\Models\Image;
+use App\Models\Iso3166;
 use App\Models\Log;
 use App\Models\User;
 use Carbon\Carbon;
@@ -19,7 +20,10 @@ class UserController extends Controller
     public function edit($id)
     {
         $user = User::where('id', '=', $id)->firstOrFail();
-        return view('user.edit', ['user' => $user]);
+        return view('user.edit', [
+            'iso3166' => Iso3166::getOptions(),
+            'user' => $user
+        ]);
     }
 
     public function embed(Request $request, string $mode, string $method, string $callsign)
