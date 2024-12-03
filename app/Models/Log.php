@@ -128,7 +128,13 @@ class Log extends Model
      */
     public static function convertGsqToDegrees($GSQ): bool|array
     {
-        if (!preg_match('/^(?:[a-rA-R]{2}[0-9]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}[0-9]{2})$/i', $GSQ)) {
+        $regExp =
+            '/^(?:[a-rA-R]{2}[0-9]{2}|'                                 // FN03
+            .'[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}|'                          // FN03HR
+            .'[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}[0-9]{2}|'                  // FN03HR72
+            .'[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}[0-9]{2}[a-xA-X]{2})$/i';   // FN03HR72VO
+
+        if (!preg_match($regExp, $GSQ)) {
             return false;
         }
         $_GSQ =      strToUpper($GSQ);
@@ -138,16 +144,21 @@ class Log extends Model
         if (strlen($_GSQ) === 6) {
             $_GSQ = $_GSQ."55";
         }
+        if (strlen($_GSQ) === 8) {
+            $_GSQ = $_GSQ."XX";
+        }
         $lat=
             (ord($_GSQ[1])-65) * 10 - 90 +
             (ord($_GSQ[3])-48) +
             (ord($_GSQ[5])-65) / 24 +
-            (ord($_GSQ[7])-48) / 240 + 1/480;
+            (ord($_GSQ[7])-48) / 240 +
+            (ord($_GSQ[9])-65) / 5760;
         $lon=
             (ord($_GSQ[0])-65) * 20 - 180 +
             (ord($_GSQ[2])-48) * 2 +
             (ord($_GSQ[4])-65) / 12 +
-            (ord($_GSQ[6])-48) / 120 + 1/240;
+            (ord($_GSQ[6])-48) / 120 +
+            (ord($_GSQ[8])-65) / 2880;
 
         return [
             "gsq" => $GSQ,
