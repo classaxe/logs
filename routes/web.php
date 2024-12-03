@@ -39,7 +39,7 @@ Route::get('/changes', [ChangesController::class, 'index'])->name('changes');
 Route::get('/logs/{callsign}', [LogsController::class, 'logsPage'])->name('logs.page');
 Route::get('/logs/{callsign}/logs', [LogsController::class, 'logs'])->name('logs');
 Route::get('/summary/{callsign}', [UserController::class, 'summary'])->name('summary');
-Route::get('/summary/{callsign}/map', [UserController::class, 'summaryMap'])->name('summaryMap');
+Route::get('/map/{callsign}', [UserController::class, 'summaryMap'])->name('summaryMap');
 
 require __DIR__.'/auth.php';
 

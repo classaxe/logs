@@ -103,7 +103,7 @@
                 @endif
                 <td class="mobile r">
                     {{ $u->log_count }}
-                    @if(Auth::user() && Auth::user()->admin)<a class="u_logs_purge" href="#">Purge</a>@endif
+                    @if(Auth::user() && Auth::user()->admin)<a class="u_logs_purge" href="#" title="Removes all logs for {{ $u->call }}">Purge</a>@endif
                 </td>
                 <td class="r">
                     @if($u->qth_count>0)<a href="{{ route('summaryMap', ['callsign' => str_replace('/', '-', $u->call)]) }}" title="View Locations Map" target="_blank">{{ $u->qth_count }}</a>
@@ -124,9 +124,9 @@
                 <td class="c">@if($u->log_count)<a href="/summary/{{ str_replace('/', '-', $u->call) }}" title="View summary for {{ $u->call }}">VIEW</a>@endif</td>
                 <td class="c"><a target="_blank" href="https://www.qrz.com/db/{{ $u->call }}" title="View QRZ Page for {{ $u->call }}">LINK</a></td>
                 @if(Auth::user() && Auth::user()->admin)
-                    <td class="c u_active"><a href="#">{{ $u->active ? 'Yes' : 'No' }}</a></td>
-                    <td class="c u_admin"><a href="#">{{ $u->admin ? 'Yes' : 'No' }}</a></td>
-                    <td class="c u_is_visible"><a href="#">{{ $u->is_visible ? 'Yes' : 'No' }}</a></td>
+                    <td class="c u_active"><a href="#" title="Toggle Active status for {{ $u->call }}">{{ $u->active ? 'Yes' : 'No' }}</a></td>
+                    <td class="c u_admin"><a href="#" title="Toggle Admin status for {{ $u->call }}">{{ $u->admin ? 'Yes' : 'No' }}</a></td>
+                    <td class="c u_is_visible"><a href="#" title="Toggle Visibility for {{ $u->call }}">{{ $u->is_visible ? 'Yes' : 'No' }}</a></td>
                 @endif
             </tr>
         @endforeach
