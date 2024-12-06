@@ -7,6 +7,38 @@ var LMap = {
     options : {},
     TxtOverlay: null,
 
+    nameSubs : {
+        'Conservation Area' :          'CA',
+        'Conservation Park' :          'CP',
+        'Conservation Reserve' :       'CR',
+        'District Park' :              'DP',
+        'for Conservation' :           'for Cons',
+        'National Historic Site' :     'NHS',
+        'National Park' :              'NP',
+        'National Recreation Trail' :  'NRT',
+        'Point' :                      'Pt',
+        'Provincial Nature Reserve' :  'PNR',
+        'Provincial Park' :            'PP',
+        'Recreation Park' :            'Rec P',
+        'Regional Park' :              'Reg P',
+        'Wilderness Park' :            'WP',
+    },
+
+    strTr(str, replacements) {
+        const regex = new RegExp(Object.keys(replacements).join('|'), 'g');
+        return str.replace(regex, (matched) => replacements[matched]);
+    },
+
+    arrayFlip( trans ) {
+        var key, tmp_ar = {};
+        for (key in trans) {
+            if (trans.hasOwnProperty(key)) {
+                tmp_ar[trans[key]] = key;
+            }
+        }
+        return tmp_ar;
+    },
+
     init: () => {
         LMap.TxtOverlay =    LMap.initMapsTxtOverlay();
         LMap.options = {
@@ -135,6 +167,38 @@ var LMap = {
         };
 
         return TxtOverlay;
+    },
+
+    convertDegGsq(lat, lng, chars = 10) {
+        function getLtr(v) {
+            return String.fromCharCode(65 + v)
+        }
+
+        function getNum(v) {
+            return String.fromCharCode(48 + v)
+        }
+
+        lat = (lat += 90) / 10 + 1e-7;      // Middle of smallest square
+        lng = (lng += 180) / 20 + 1e-7;     // Middle of smallest square
+        var out = getLtr(lng) + getLtr(lat);
+
+        lat = 10 * (lat - Math.floor(lat));
+        lng = 10 * (lng - Math.floor(lng))
+        out += getNum(lng) + getNum(lat);
+
+        lat = 24 * (lat - Math.floor(lat));
+        lng = 24 * (lng - Math.floor(lng));
+        out += getLtr(lng) + getLtr(lat);
+
+        lat = 10 * (lat - Math.floor(lat));
+        lng = 10 * (lng - Math.floor(lng));
+        out += getNum(lng) + getNum(lat);
+
+        lat = 24 * (lat - Math.floor(lat));
+        lng = 24 * (lng - Math.floor(lng));
+        out += getLtr(lng) + getLtr(lat);
+
+        return out.substring(0, chars);
     },
 
     drawBoundsRing: () => {
@@ -324,7 +388,7 @@ var LMap = {
 
     drawLocations: () => {
         $(locations).each(function(idx, l) {
-            let a, d, home, i, icon, lat, lng, logs, n, p;
+            let a, d, home, i, icon, lat, lng, logs, n, nFull, p;
             d = l.days;
             logs = l.logs;
             lat = l.lat;
@@ -344,15 +408,19 @@ var LMap = {
             });
             if (l.pota) {
                 p = l.name.split(' ')[1];
-                n = l.name;
+                n = l.name . substring(14);
+                nFull = LMap.strTr(n, LMap.arrayFlip(LMap.nameSubs));
                 a.addListener('click', function() {
                     let infoHtml;
+                    let g = LMap.convertDegGsq(lat, lng);
                     infoHtml =
                         "<div class=\"map_info\">" + "" +
                         "<h3>POTA: <strong><a style=\"color: #00f\" href=\"https://pota.app/#/park/" + p + "\" target='_blank'>" + p + "</a></strong>" +
                         "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
                         "</h3>" +
-                        "<p>" + n + "</p>" +
+                        "<p><b><a href='https://k7fry.com/grid/?qth=" + g + "' style='color: #00f' target='_blank'>" + g + "</a> &nbsp " +
+                        "<span title='" + nFull + "'>" + n + "</span>" +
+                        " &nbsp; <a href='https://google.com/maps/place/" + lat + "," + lng + "' class='btn o' target='_blank'>Goto</a></b></p>" +
                         "<p>Days: " + d + ", Logs: " + logs + "</p>";
                     LMap.infoWindow.setContent(infoHtml);
                     LMap.infoWindow.set('pixelOffset', new google.maps.Size(0, -20));
@@ -378,48 +446,51 @@ var LMap = {
             dataType: 'json',
             success: function (data) {
                 $(data.features).each(function (idx, feature) {
-                    let a, f, i, l, n, p, u, lat, lng;
+                    let a, f, g, i, l, n, nFull, p, u, lat, lng;
                     f = feature;
-                    n = f.properties.name;
                     p = f.properties.reference;
-                    u = true;
-                    lat = f.geometry.coordinates[1];
-                    lng = f.geometry.coordinates[0]
                     for (i in locations) {
                         l = locations[i];
                         if (p === l.pota) {
-                            u = false;
+                            // Not unvisited
+                            return;
                         }
                     }
-                    if (u) {
-                        a = new google.maps.Marker({
-                            position: {lat: lat, lng: lng},
-                            map: LMap.map,
-                            icon: {
-                                scaledSize: new google.maps.Size(20, 20),
-                                url: base_image + '/red-pushpin.png'
-                            },
-                            title: "POTA: " + p + "\n" + n + "\n(Unvisited)",
-                            zIndex: 100
-                        });
-                        a.addListener('click', function() {
-                            let infoHtml =
-                                "<div class=\"map_info\">" +"" +
-                                "<h3>POTA: <strong><a style=\"color: #00f\" href=\"https://pota.app/#/park/" + p + "\" target='_blank'>" + p + "</a></strong>" +
-                                "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
-                                "</h3>" +
-                                "<p>" + n + "</p>" +
-                                "<p style='text-align: center'><i>(Unvisited)</i></p>";
-                            LMap.infoWindow.setContent(infoHtml);
-                            LMap.infoWindow.set('pixelOffset', new google.maps.Size(0, -20));
-                            LMap.infoWindow.setPosition(new google.maps.LatLng(lat, lng));
-                            LMap.infoWindow.open(LMap.map);
-                            setTimeout(() => {
-                                $('#close').focus();
-                            }, 10);
-                        });
-                        layers.locations.push(a);
-                    }
+                    n = LMap.strTr(f.properties.name, LMap.nameSubs);
+                    nFull = f.properties.name;
+                    LMap.nameSubs
+                    lat = f.geometry.coordinates[1];
+                    lng = f.geometry.coordinates[0];
+                    g = LMap.convertDegGsq(lat, lng);
+                    a = new google.maps.Marker({
+                        position: {lat: lat, lng: lng},
+                        map: LMap.map,
+                        icon: {
+                            scaledSize: new google.maps.Size(20, 20),
+                            url: base_image + '/red-pushpin.png'
+                        },
+                        title: "POTA: " + p + "\n" + n + "\n(Unvisited)",
+                        zIndex: 100
+                    });
+                    a.addListener('click', function() {
+                        let infoHtml =
+                            "<div class=\"map_info\">" +"" +
+                            "<h3>POTA: <strong><a style='color: #00f' href='https://pota.app/#/park/" + p + "' target='_blank'>" + p + "</a></strong>" +
+                            "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
+                            "</h3>" +
+                            "<p><b><a href='https://k7fry.com/grid/?qth=" + g + "' style='color: #00f' target='_blank'>" + g + "</a> &nbsp " +
+                            "<span title='" + nFull + "'>" + n + "</span>" +
+                            " &nbsp; <a href='https://google.com/maps/place/" + lat + "," + lng + "' class='btn o' target='_blank'>Goto</a></b></p>" +
+                            "<p style='text-align: center'><i>(Unvisited)</i></p>";
+                        LMap.infoWindow.setContent(infoHtml);
+                        LMap.infoWindow.set('pixelOffset', new google.maps.Size(0, -20));
+                        LMap.infoWindow.setPosition(new google.maps.LatLng(lat, lng));
+                        LMap.infoWindow.open(LMap.map);
+                        setTimeout(() => {
+                            $('#close').focus();
+                        }, 10);
+                    });
+                    layers.locations.push(a);
                 });
             }
         });
