@@ -1,3 +1,11 @@
+<?php
+$pota_v = 0;
+$other = 0;
+foreach($qths as $name => $qth) {
+    $pota_v += $qth['pota'] ? 1 : 0;
+    $other +=  $qth['pota'] ? 0 : ($qth['home'] ? 0 : 1);
+}
+?>
 <x-app-layout>
     @vite([
         'resources/css/summary.css'
@@ -18,9 +26,13 @@
 
                     <fieldset>
                         <img src="{{ asset('images/blue-pushpin.png') }}" alt="Blue Pushpin" style="display: inline; height: 30px">Home QTH &nbsp;
-                        <img src="{{ asset('images/green-pushpin.png') }}" alt="Green Pushpin" style="display: inline; height: 20px">POTA (visited) &nbsp;
-                        <img src="{{ asset('images/red-pushpin.png') }}" alt="Red Pushpin" style="display: inline; height: 20px">POTA (unvisited) &nbsp;
-                        <img src="{{ asset('images/yellow-pushpin.png') }}" alt="Yellow Pushpin" style="display: inline; height: 20px">Other location
+                        @if ($pota_v)
+                            <img src="{{ asset('images/green-pushpin.png') }}" alt="Green Pushpin" style="display: inline; height: 20px">POTA (visited): {{ $pota_v }}&nbsp;
+                            <img src="{{ asset('images/red-pushpin.png') }}" alt="Red Pushpin" style="display: inline; height: 20px">POTA (unvisited) &nbsp;
+                        @endif
+                        @if ($other)
+                            <img src="{{ asset('images/yellow-pushpin.png') }}" alt="Yellow Pushpin" style="display: inline; height: 20px">Other location: {{ $other }}
+                        @endif
                     </fieldset>
                     <div id="map" style="height: 600px;">Loading...</div>
                 </div>

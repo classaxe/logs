@@ -24,6 +24,9 @@
 .btn.b {
     background: #44f;
 }
+.btn.blk {
+    background: #000;
+}
 .btn.o {
     background: #f60;
 }

@@ -201,6 +201,15 @@ var LMap = {
         return out.substring(0, chars);
     },
 
+    copyToClipboard: (text)=>  {
+        console.log(text);
+        var temp = $("<textarea>");
+        $("body").append(temp);
+        temp.val(text).select();
+        document.execCommand("copy");
+        temp.remove();
+    },
+
     drawBoundsRing: () => {
         layers.locations.push(
             new google.maps.Circle({
@@ -420,8 +429,10 @@ var LMap = {
                         "</h3>" +
                         "<p><b><a href='https://k7fry.com/grid/?qth=" + g + "' style='color: #00f' target='_blank'>" + g + "</a> &nbsp " +
                         "<span title='" + nFull + "'>" + n + "</span>" +
-                        " &nbsp; <a href='https://google.com/maps/place/" + lat + "," + lng + "' class='btn o' target='_blank'>Goto</a></b></p>" +
-                        "<p>Days: " + d + ", Logs: " + logs + "</p>";
+                        " &nbsp; <a href='https://google.com/maps/place/" + lat + "," + lng + "' class='btn o' target='_blank'>Goto</a>" +
+                        " <a href='#' title=\"Get Potashell command for this location\" class='btn blk' target='_blank' onclick=\"LMap.copyToClipboard('potashell " + p + " " + g + "');return false\">POTA Shell</a>" +
+                        "</b></p>" +
+                        "<p>Sessions: <b>" + d + "</b>, <a href='/logs/" + qth.call.replace('/', '-') + "/?q[]=myQth|" + l.name + "' style='color: #00f' target='_blank'>Logs: <b>" + logs + "</b></a></p>";
                     LMap.infoWindow.setContent(infoHtml);
                     LMap.infoWindow.set('pixelOffset', new google.maps.Size(0, -20));
                     LMap.infoWindow.setPosition(new google.maps.LatLng(lat, lng));
