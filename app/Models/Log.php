@@ -481,13 +481,17 @@ class Log extends Model
             ->get()
             ->toArray();
         $out = [];
+        $myQthNames = [];
+        foreach($items as $item) {
+            $myQthNames[$item['myQth']] = true;
+        }
         foreach($items as $item) {
             $latlon = self::convertGsqToDegrees($item['myGsq']);
             $lat = $latlon['lat'];
             $lon = $latlon['lon'];
             $out[$item['myQth']] = [
                 'gsq' =>        $item['myGsq'],
-                'home' =>       $lat === $user['lat'] && $lon === $user['lon'],
+                'home' =>       $lat === $user['lat'] && $lon === $user['lon'] || count(array_keys($myQthNames)) === 1,
                 'lat' =>        $latlon['lat'],
                 'lon' =>        $latlon['lon'],
                 'logs' =>       $item['logCount'],
