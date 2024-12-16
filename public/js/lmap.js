@@ -457,6 +457,7 @@ var LMap = {
             url: url,
             dataType: 'json',
             success: function (data) {
+                let c = data.features.length;
                 $(data.features).each(function (idx, feature) {
                     let a, f, g, i, l, n, nFull, p, u, lat, lng;
                     f = feature;
@@ -504,6 +505,7 @@ var LMap = {
                             $('#close').focus();
                         }, 10);
                     });
+                    $('#count_pota_u').text(c - parseInt($('#count_pota_v').text()));
                     layers.locations.push(a);
                 });
             }
