@@ -170,7 +170,7 @@ var frm = {
             }
         })
         let html = '';
-        let column = 0, row = 0;
+        let column = 0, row = 0, logged = 0;
         for (row = 0; row + column < stats.usCounties.length + 10; row += 10) {
             html += "<table><tr><th>State</th>";
             for (column = 0; column < 10; column++) {
@@ -189,6 +189,7 @@ var frm = {
                     (stats.usCounties[row+column]['percent'] >= 50 && stats.usCounties[row+column]['percent'] < 100 ? ' class="pc50"' : '') +
                     (stats.usCounties[row+column]['percent'] === 100 ? ' class="pc100"' : '') +
                     ">" + stats.usCounties[row+column]['logged'] + "</td>";
+                logged += stats.usCounties[row+column]['logged'];
             }
             html += "</tr>";
             html += "<tr><th>Total</th>";
@@ -217,7 +218,7 @@ var frm = {
             html += "</tr></table>";
         }
         $('#usCountiesState').html(html);
-        //console.log(logs.length);
+        $('#usCountiesTotal').html('There are ' + logged + ' confirmed ' + (logged === 1 ? 'county' : 'counties') + ' - assuming no problems with qualifying logs at QRZ.com.');
     },
 
     getUniqueValues: (field) => {
