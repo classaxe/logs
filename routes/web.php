@@ -38,6 +38,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/changes', [ChangesController::class, 'index'])->name('changes');
 Route::get('/logs/{callsign}', [LogsController::class, 'logsPage'])->name('logs.page');
 Route::get('/logs/{callsign}/logs', [LogsController::class, 'logs'])->name('logs');
+Route::get('/stats/{callsign}/{mode}', [LogsController::class, 'logsStats'])->name('logsStats');
+
 Route::get('/summary/{callsign}', [UserController::class, 'summary'])->name('summary');
 Route::get('/map/{callsign}', [UserController::class, 'summaryMap'])->name('summaryMap');
 

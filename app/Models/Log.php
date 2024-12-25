@@ -35,6 +35,62 @@ class Log extends Model
         'comment' =>    ['lbl' =>   'Comment',      'class' => 'r not-compact'],
         'conf' =>       ['lbl' =>   'Conf',         'class' => 'r']
     ];
+    const US_COUNTIES = [
+        'AK' => 27,
+        'AL' => 67,
+        'AR' => 75,
+        'AZ' => 15,
+        'CA' => 58,
+        'CO' => 64,
+        'CT' => 8,
+        'DC' => 1,
+        'DE' => 3,
+        'FL' => 67,
+        'GA' => 159,
+        'HI' => 4,
+        'IA' => 99,
+        'ID' => 44,
+        'IL' => 102,
+        'IN' => 92,
+        'KS' => 105,
+        'KY' => 120,
+        'LA' => 64,
+        'MA' => 14,
+        'MD' => 24,
+        'ME' => 16,
+        'MI' => 83,
+        'MN' => 87,
+        'MO' => 115,
+        'MS' => 82,
+        'MT' => 56,
+        'NC' => 100,
+        'ND' => 53,
+        'NE' => 93,
+        'NH' => 10,
+        'NJ' => 21,
+        'NM' => 33,
+        'NV' => 17,
+        'NY' => 62,
+        'OH' => 88,
+        'OK' => 77,
+        'OR' => 36,
+        'PA' => 67,
+        'PR' => 78,
+        'RI' => 5,
+        'SC' => 46,
+        'SD' => 66,
+        'TN' => 95,
+        'TX' => 254,
+        'UT' => 29,
+        'VA' => 132,
+        'VI' => 3,
+        'VT' => 16,
+        'WA' => 39,
+        'WI' => 72,
+        'WV' => 55,
+        'WY' => 23
+    ];
+
     const GSQ_SUBSTITUTES = [
         3 => [
             'VK0IR' => 'MD66' // Heard Island operator who placed wrong GSQ in Antarctica mainland
@@ -301,6 +357,52 @@ class Log extends Model
             static::getQRZDataForUser($user);
         }
         return Log::getDBLogsForUser($user);
+    }
+
+    public static function getLogUsStateCountiesForUser(User $user): array
+    {
+        $states =
+            Log::Select(
+                'logs.itu',
+                'logs.sp',
+                DB::raw('COUNT(DISTINCT(logs.county)) AS count')
+            )
+            ->where('userId', $user->id)
+            ->where('conf', 'Y')
+            ->whereNot('county', '')
+            ->whereIn('itu', ['USA', 'Alaska', 'Hawaii', 'Puerto Rico', 'US Virgin Islands'])
+            ->groupBy('itu', 'sp')
+            ->orderBy('sp')
+            ->get()
+            ->toArray();
+        $results = [];
+        foreach ($states as $state) {
+            $sp = $state['sp'];
+            switch ($state['itu']) {
+                case 'Alaska':
+                    $sp = 'AK';
+                    break;
+                case 'Hawaii':
+                    $sp = 'HI';
+                    break;
+                case 'Puerto Rico':
+                    $sp = 'PR';
+                    break;
+                case 'US Virgin Islands':
+                    $sp = 'VI';
+                    break;
+            }
+            $results[] = [
+                'sp' =>  $sp,
+                'logged' => $state['count'],
+                'total' => Log::US_COUNTIES[$sp],
+                'percent' => (int)round(100 * ($state['count'] / Log::US_COUNTIES[$sp]))
+            ];
+        }
+        usort($results, function ($a, $b) {
+            return $a['sp'] <=> $b['sp'];
+        });
+        return $results;
     }
 
     /**

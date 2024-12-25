@@ -703,3 +703,52 @@ div.scroll div table.results img {
     color: #000;
     font-size: 90%;
 }
+
+/* Stats */
+.stats h1 {
+    font-size: 120%;
+}
+.stats h2 {
+    text-align: left;
+    font-size: 100%;
+}
+#usCountiesState table {
+    border-collapse: collapse;
+    margin: 0 0 1em 0;
+}
+#usCountiesState table th,
+#usCountiesState table td {
+    border: 1px solid #444;
+}
+#usCountiesState table th {
+    background: #888;
+    color: #fff;
+    width: 5em;
+}
+#usCountiesState table th:first-child {
+    text-align: right;
+    padding-right: 0.5em;
+}
+
+#usCountiesState table td {
+    background: #fffafa;
+    text-align: right;
+    padding-right: 0.5em;
+    width: 2em;
+}
+#usCountiesState table td.pc50 {
+    background: #feb;
+}
+#usCountiesState table td.pc100 {
+    background: #cfc;
+}
+#usCountiesState table td.b {
+    border-top: 2px solid #000;
+    background: #fee;
+}
+#usCountiesState table td.b.pc50 {
+    background: #fda;
+}
+#usCountiesState table td.b.pc100 {
+    background: #afa;
+}

@@ -20,7 +20,7 @@ class LogsController extends Controller
             'status' => 200,
             'lastPulled' => $user->getLastQrzPull(),
             'logs' => $logs
-        ]);
+        ], 200);
     }
 
     public static function logsFetch()
@@ -63,5 +63,23 @@ class LogsController extends Controller
             'qths' =>       $data['qths'],
             'user' =>       $data['user']
         ]);
+    }
+
+    public static function logsStats(string $callsign, $mode) {
+        $callsign = str_replace('-','/', $callsign);
+
+        if (!$user = User::getUserByCallsign($callsign)) {
+            return response()->json(['error' => true, 'data' => []], 404);
+        }
+
+        switch ($mode) {
+            case 'usCounties':
+                return response()->json([
+                    'status' => 200,
+                    'data' => Log::getLogUsStateCountiesForUser($user)
+                ], 200);
+            default:
+                return response()->json(['error' => true, 'data' => []], 500);
+        }
     }
 }

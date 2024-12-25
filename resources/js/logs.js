@@ -158,11 +158,66 @@ var frm = {
         LMap.fitToBox();
     },
 
-    getStats: () => {
-        $.each(logs, function(idx, log) {
-
-        });
-        console.log(logs.length);
+    getStats: async () => {
+        var stats = {};
+        await $.ajax({
+            type: 'GET',
+            url: '/stats/' + callsign.replace('/', '-') + '/usCounties',
+            dataType: 'json',
+            data: stats,
+            success: function (result) {
+                stats.usCounties = result.data;
+            }
+        })
+        let html = '';
+        let column = 0, row = 0;
+        for (row = 0; row + column < stats.usCounties.length + 10; row += 10) {
+            html += "<table><tr><th>State</th>";
+            for (column = 0; column < 10; column++) {
+                if (typeof stats.usCounties[row+column] === 'undefined') {
+                    break;
+                }
+                html += "<th>" + stats.usCounties[row+column]['sp'] + "</th>";
+            }
+            html += "</tr>";
+            html += "<tr><th>Logged</th>";
+            for (column = 0; column < 10; column++) {
+                if (typeof stats.usCounties[row+column] === 'undefined') {
+                    break;
+                }
+                html += "<td" +
+                    (stats.usCounties[row+column]['percent'] >= 50 && stats.usCounties[row+column]['percent'] < 100 ? ' class="pc50"' : '') +
+                    (stats.usCounties[row+column]['percent'] === 100 ? ' class="pc100"' : '') +
+                    ">" + stats.usCounties[row+column]['logged'] + "</td>";
+            }
+            html += "</tr>";
+            html += "<tr><th>Total</th>";
+            for (column = 0; column < 10; column++) {
+                if (typeof stats.usCounties[row+column] === 'undefined') {
+                    break;
+                }
+                html += "<td" +
+                    (stats.usCounties[row+column]['percent'] >= 50 && stats.usCounties[row+column]['percent'] < 100 ? ' class="pc50"' : '') +
+                    (stats.usCounties[row+column]['percent'] === 100 ? ' class="pc100"' : '') +
+                    ">" +
+                    stats.usCounties[row+column]['total'] + "</td>";
+            }
+            html += "</tr>";
+            html += "<tr><th>Percent</th>";
+            for (column = 0; column < 10; column++) {
+                if (typeof stats.usCounties[row+column] === 'undefined') {
+                    break;
+                }
+                html += "<td class='b" +
+                    (stats.usCounties[row+column]['percent'] >= 50 && stats.usCounties[row+column]['percent'] < 100 ? ' pc50' : '') +
+                    (stats.usCounties[row+column]['percent'] === 100 ? ' pc100' : '') +
+                    "'>" +
+                    stats.usCounties[row+column]['percent'] + "%</td>";
+            }
+            html += "</tr></table>";
+        }
+        $('#usCountiesState').html(html);
+        //console.log(logs.length);
     },
 
     getUniqueValues: (field) => {
