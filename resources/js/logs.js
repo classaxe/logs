@@ -170,14 +170,16 @@ var frm = {
             }
         })
         let html = '';
-        let column = 0, row = 0, logged = 0;
+        let column = 0, row = 0, counties = 0, states = 0, usState = false;
         for (row = 0; row + column < stats.usCounties.length + 10; row += 10) {
             html += "<table><tr><th>State</th>";
             for (column = 0; column < 10; column++) {
                 if (typeof stats.usCounties[row+column] === 'undefined') {
                     break;
                 }
-                html += "<th>" + stats.usCounties[row+column]['sp'] + "</th>";
+                usState = stats.usCounties[row+column]['itu'] === 'USA' || stats.usCounties[row+column]['sp'] === 'AK' || stats.usCounties[row+column]['sp'] === 'HI';
+                states += (usState? 1 : 0);
+                html += "<th>" + stats.usCounties[row+column]['sp'] + (usState ? '' : ' *') + "</th>";
             }
             html += "</tr>";
             html += "<tr><th>Logged</th>";
@@ -189,7 +191,7 @@ var frm = {
                     (stats.usCounties[row+column]['percent'] >= 50 && stats.usCounties[row+column]['percent'] < 100 ? ' class="pc50"' : '') +
                     (stats.usCounties[row+column]['percent'] === 100 ? ' class="pc100"' : '') +
                     ">" + stats.usCounties[row+column]['logged'] + "</td>";
-                logged += stats.usCounties[row+column]['logged'];
+                counties += stats.usCounties[row+column]['logged'];
             }
             html += "</tr>";
             html += "<tr><th>Total</th>";
@@ -218,7 +220,11 @@ var frm = {
             html += "</tr></table>";
         }
         $('#usCountiesState').html(html);
-        $('#usCountiesTotal').html('There are ' + logged + ' confirmed ' + (logged === 1 ? 'county' : 'counties') + ' - assuming no problems with qualifying logs at QRZ.com.');
+        $('#usCountiesTotal').html(
+            'There are <b>' + counties + '</b> confirmed ' + (counties === 1 ? 'county' : 'counties') +
+            ' in <b>' + states + '</b> ' + (states === 1 ? 'state' : 'states') +
+            ' US States - assuming no problems with qualifying logs at QRZ.com.'
+        );
     },
 
     getUniqueValues: (field) => {

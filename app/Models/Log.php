@@ -393,10 +393,11 @@ class Log extends Model
                     break;
             }
             $results[] = [
-                'sp' =>  $sp,
-                'logged' => $state['count'],
-                'total' => Log::US_COUNTIES[$sp],
-                'percent' => (int)round(100 * ($state['count'] / Log::US_COUNTIES[$sp]))
+                'sp' =>         $sp,
+                'itu' =>        $state['itu'],
+                'logged' =>     $state['count'],
+                'total' =>      Log::US_COUNTIES[$sp],
+                'percent' =>    (int)round(100 * ($state['count'] / Log::US_COUNTIES[$sp]))
             ];
         }
         usort($results, function ($a, $b) {
