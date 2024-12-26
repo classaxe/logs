@@ -170,16 +170,26 @@ var frm = {
             }
         })
         let html = '';
-        let column = 0, row = 0, counties = 0, states = 0, usState = false;
+        let column = 0, row = 0, counties = 0, states = 0;
+        let dc = false, usState = false;
         for (row = 0; row + column < stats.usCounties.length + 10; row += 10) {
             html += "<table><tr><th>State</th>";
             for (column = 0; column < 10; column++) {
                 if (typeof stats.usCounties[row+column] === 'undefined') {
                     break;
                 }
-                usState = stats.usCounties[row+column]['itu'] === 'USA' || stats.usCounties[row+column]['sp'] === 'AK' || stats.usCounties[row+column]['sp'] === 'HI';
-                states += (usState? 1 : 0);
-                html += "<th>" + stats.usCounties[row+column]['sp'] + (usState ? '' : ' *') + "</th>";
+                dc = stats.usCounties[row+column]['sp'] === 'DC';
+                usState = stats.usCounties[row+column]['itu'] === 'USA' ||
+                    stats.usCounties[row+column]['sp'] === 'AK' ||
+                    stats.usCounties[row+column]['sp'] === 'HI';
+                states += (usState && !dc ? 1 : 0);
+                html += "<th" +
+                    (dc ?
+                        ' style="cursor:help; font-style:italic" title="According to QRZ\'s rules, a log in DC counts towards MD for the \'USA 50\' United States Award"'
+                        : (!usState ? ' style="cursor:help; font-style:italic" title="This state does not count towards the QRZ \'USA 50\' United States Award"' : '')
+                    ) +
+                    ">" +
+                    stats.usCounties[row+column]['sp'] + (usState && !dc ? '' : ' *') + "</th>";
             }
             html += "</tr>";
             html += "<tr><th>Logged</th>";
@@ -222,8 +232,8 @@ var frm = {
         $('#usCountiesState').html(html);
         $('#usCountiesTotal').html(
             'There are <b>' + counties + '</b> confirmed ' + (counties === 1 ? 'county' : 'counties') +
-            ' in <b>' + states + '</b> ' + (states === 1 ? 'state' : 'states') +
-            ' US States - assuming no problems with qualifying logs at QRZ.com.'
+            ' in <b>' + states + '</b> US ' + (states === 1 ? 'state' : 'states') +
+            ' - assuming no problems with qualifying logs at QRZ.com.'
         );
     },
 
