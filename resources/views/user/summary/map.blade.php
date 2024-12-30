@@ -20,9 +20,9 @@ foreach($qths as $name => $qth) {
                             <b>{{ ceil($qth_bounds['radius'] / 1000) }} Km</b> ({{ ceil(0.6213712 * ($qth_bounds['radius'] / 1000)) }} Miles)
                             - indicated by the <span style="color:green">green</span> circle.
                         </p>
-                        <p>Most QRZ awards require locations used to qualify be within 50 miles radius of a given point
-                            - indicated by the <span style="color:red">red</span> circle.</p>
                     @endif
+                    <p>Most QRZ awards require locations used to qualify be within 50 miles radius of a given point
+                        - indicated by the <span style="color:red">red</span> circle.</p>
 
                     <fieldset>
                         <img src="{{ asset('images/blue-pushpin.png') }}" alt="Blue Pushpin" style="display: inline; height: 30px">Home QTH &nbsp;
@@ -50,8 +50,9 @@ foreach($qths as $name => $qth) {
         var gsqs = [];
         var layers = {
             grid: [],
-            locations: [],
-            pota: [],
+            locs: [],
+            potaU: [],
+            potaV: [],
             squares: [],
             squareLabels: []
         };
@@ -71,7 +72,7 @@ foreach($qths as $name => $qth) {
         }
         var locations = [
 @foreach($qths as $name => $qth)
-            { days: {{ $qth['logDays'] }}, home: {{ $qth['home'] ? 1 : 0 }}, lat: {{ $qth['lat'] }}, lng: {{ $qth['lon'] }}, logs: {{ $qth['logs'] }}, name: "{{ $name }}", pota: "{{ $qth['pota'] }}" },
+            { days: {{ $qth['logDays'] }}, home: {{ $qth['home'] ? 1 : 0 }}, lat: {{ $qth['lat'] }}, lng: {{ $qth['lon'] }}, gsq: '{{ $qth['gsq'] }}', logs: {{ $qth['logs'] }}, name: "{{ $name }}", pota: "{{ $qth['pota'] }}" },
 @endforeach
         ];
         var center = { lat: {{ $qth_bounds['center'][0] }}, lng: {{ $qth_bounds['center'][1] }} }

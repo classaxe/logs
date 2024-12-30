@@ -244,8 +244,8 @@ var LMap = {
             radius: qthBounds.radius
         })
 
-        layers.locations.push(ring50);
-        layers.locations.push(ringLocs);
+        layers.locs.push(ring50);
+        layers.locs.push(ringLocs);
         return ring50.getBounds();
     },
 
@@ -408,12 +408,14 @@ var LMap = {
 
     drawLocations: () => {
         $(locations).each(function(idx, l) {
-            let a, d, home, i, icon, lat, lng, logs, n, nFull, p;
+            let a, d, gsq, home, i, icon, lat, lng, logs, n, name, nFull, p;
             d = l.days;
             logs = l.logs;
             lat = l.lat;
             lng = l.lng;
             home = l.home;
+            name = l.name;
+            gsq = l.gsq;
 
             icon = l.pota !=='' ? '/green-pushpin.png' : (home ? '/blue-pushpin.png' : '/yellow-pushpin.png');
             a = new google.maps.Marker({
@@ -426,14 +428,32 @@ var LMap = {
                 title: l.name,
                 zIndex: 100
             });
-            if (l.pota) {
+            if (!l.pota) {
+                a.addListener('click', function() {
+                    let g = LMap.convertDegGsq(lat, lng);
+                    let html =
+                        "<div class=\"map_info\">" +
+                        "<h3><b>" + qth.call + "</b> - " + qth.name + " @ <b>" + gsq + "</b>" +
+                        "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
+                        "</h3>" +
+                        "<p>" + name + "</p>" +
+                        "</div>";
+                    LMap.infoWindow.setContent(html);
+                    LMap.infoWindow.set('pixelOffset', new google.maps.Size(0, -20));
+                    LMap.infoWindow.setPosition(new google.maps.LatLng(lat, lng));
+                    LMap.infoWindow.open(LMap.map);
+                    setTimeout(() => {
+                        $('#close').focus();
+                    }, 10);
+                });
+                layers.locs.push(a);
+            } else {
                 p = l.name.split(' ')[1];
                 n = l.name . substring(14);
                 nFull = LMap.strTr(n, LMap.arrayFlip(LMap.nameSubs));
                 a.addListener('click', function() {
-                    let infoHtml;
                     let g = LMap.convertDegGsq(lat, lng);
-                    infoHtml =
+                    let html =
                         "<div class=\"map_info\">" + "" +
                         "<h3>POTA: <strong><a style=\"color: #00f\" href=\"https://pota.app/#/park/" + p + "\" target='_blank'>" + p + "</a></strong>" +
                         "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
@@ -444,7 +464,7 @@ var LMap = {
                         " <a href='#' title=\"Get Potashell command for this location\" class='btn blk' target='_blank' onclick=\"return LMap.copyToClipboard('potashell " + p + " " + g + "')\">POTA Shell</a>" +
                         "</b></p>" +
                         "<p>Sessions: <b>" + d + "</b>, <a href='/logs/" + qth.call.replace('/', '-') + "/?q[]=myQth|" + l.name + "' style='color: #00f' target='_blank'>Logs: <b>" + logs + "</b></a></p>";
-                    LMap.infoWindow.setContent(infoHtml);
+                    LMap.infoWindow.setContent(html);
                     LMap.infoWindow.set('pixelOffset', new google.maps.Size(0, -20));
                     LMap.infoWindow.setPosition(new google.maps.LatLng(lat, lng));
                     LMap.infoWindow.open(LMap.map);
@@ -452,19 +472,25 @@ var LMap = {
                         $('#close').focus();
                     }, 10);
                 });
+                layers.potaV.push(a);
             }
-            layers.pota.push(a);
-
-            layers.locations.push(a);
         });
     },
 
     drawPotaUnvisited: () => {
+        if (LMap.map.getZoom() < 7) {
+            return;
+        }
+        for (i in layers.potaU) {
+            layers.potaU[i].setMap(null);
+        }
+        layers.potaU = [];
         let lat0 = LMap.map.getBounds().getNorthEast().lat().toFixed(3);
         let lng0 = LMap.map.getBounds().getNorthEast().lng().toFixed(3);
         let lat1 = LMap.map.getBounds().getSouthWest().lat().toFixed(3);
         let lng1 = LMap.map.getBounds().getSouthWest().lng().toFixed(3);
         let url = `/park/grids/${lat0}/${lng0}/${lat1}/${lng1}/0`;
+        console.log(LMap.map.getZoom());
         console.log(url);
         $.ajax({
             type: 'GET',
@@ -519,7 +545,7 @@ var LMap = {
                             $('#close').focus();
                         }, 10);
                     });
-                    layers.locations.push(a);
+                    layers.potaU.push(a);
                 });
             }
         });
