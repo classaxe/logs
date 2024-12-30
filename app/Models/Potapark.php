@@ -20,6 +20,17 @@ class Potapark extends Model
         return $json;
     }
 
+    public static function getParks($lat0, $lng0, $lat1, $lng1) {
+        return Potapark::where([
+            [ 'lat', '<=', $lat0 ],
+            [ 'lng', '>=', $lng0 ],
+            [ 'lat', '>=', $lat1 ],
+            [ 'lng', '<=', $lng1 ]
+        ])
+        ->get()
+        ->toArray();
+    }
+
     public static function updateParks($prefix) {
         $parks = Potapark::fetchParks($prefix);
         DB::beginTransaction();

@@ -28,8 +28,8 @@ foreach($qths as $name => $qth) {
                         <img src="{{ asset('images/blue-pushpin.png') }}" alt="Blue Pushpin" style="display: inline; height: 30px">Home QTH &nbsp;
                         @if ($pota_v)
                             <img src="{{ asset('images/green-pushpin.png') }}" alt="Green Pushpin" style="display: inline; height: 20px">POTA (visited): <span id="count_pota_v">{{ $pota_v }}</span>&nbsp;
-                            <img src="{{ asset('images/red-pushpin.png') }}" alt="Red Pushpin" style="display: inline; height: 20px">POTA (unvisited): <span id="count_pota_u"></span> &nbsp;
                         @endif
+                        <img src="{{ asset('images/red-pushpin.png') }}" alt="Red Pushpin" style="display: inline; height: 20px">POTA (unvisited)
                         @if ($other)
                             <img src="{{ asset('images/yellow-pushpin.png') }}" alt="Yellow Pushpin" style="display: inline; height: 20px">Other location: {{ $other }}
                         @endif

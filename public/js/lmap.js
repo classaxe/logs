@@ -116,13 +116,23 @@ var LMap = {
             new google.maps.LatLng(box[0].lat - 0.05, box[0].lng - 0.1), //sw
             new google.maps.LatLng(box[1].lat + 0.05, box[1].lng + 0.1) //ne
         )
+        console.log([box[0].lat, box[1].lat, box[0].lng, box[1].lng]);
+        bounds = LMap.drawBoundsRing();
         LMap.map.fitBounds(bounds);
+
         LMap.infoWindow = new google.maps.InfoWindow();
         LMap.drawGrid();
         LMap.drawLocations();
-        LMap.drawPotaUnvisited();
-        LMap.drawBoundsRing();
-
+        google.maps.event.addListener(
+            LMap.map,
+            'bounds_changed',
+            ()=> {
+                if (window.scheduledUpdate) {
+                    clearTimeout(window.scheduledUpdate);
+                }
+                window.scheduledUpdate = setTimeout(LMap.drawPotaUnvisited, 500);
+            }
+        );
     },
 
     initMapsTxtOverlay: () => {
@@ -212,31 +222,31 @@ var LMap = {
     },
 
     drawBoundsRing: () => {
-        layers.locations.push(
-            new google.maps.Circle({
-                strokeColor: '#800000',
-                strokeOpacity: 0.5,
-                strokeWeight: 1,
-                fillColor: '#FF0000',
-                fillOpacity: 0.20,
-                map: LMap.map,
-                center: new google.maps.LatLng(qthBounds.lat, qthBounds.lng),
-                radius: 1000 * (50 / 0.6213712),
-                title: "50 mile ring"
-            })
-        );
-        layers.locations.push(
-            new google.maps.Circle({
-                strokeColor: '#008000',
-                strokeOpacity: 0.5,
-                strokeWeight: 1,
-                fillColor: '#00FF00',
-                fillOpacity: 0.20,
-                map: LMap.map,
-                center: new google.maps.LatLng(qthBounds.lat, qthBounds.lng),
-                radius: qthBounds.radius
-            })
-        );
+        let ring50 = new google.maps.Circle({
+            strokeColor: '#800000',
+            strokeOpacity: 0.5,
+            strokeWeight: 1,
+            fillColor: '#FF0000',
+            fillOpacity: 0.20,
+            map: LMap.map,
+            center: new google.maps.LatLng(qthBounds.lat, qthBounds.lng),
+            radius: 1000 * (50 / 0.6213712),
+            title: "50 mile ring"
+        })
+        let ringLocs = new google.maps.Circle({
+            strokeColor: '#008000',
+            strokeOpacity: 0.5,
+            strokeWeight: 1,
+            fillColor: '#00FF00',
+            fillOpacity: 0.20,
+            map: LMap.map,
+            center: new google.maps.LatLng(qthBounds.lat, qthBounds.lng),
+            radius: qthBounds.radius
+        })
+
+        layers.locations.push(ring50);
+        layers.locations.push(ringLocs);
+        return ring50.getBounds();
     },
 
     drawGrid : () => {
@@ -450,7 +460,11 @@ var LMap = {
     },
 
     drawPotaUnvisited: () => {
-        let url = `https://api.pota.app/park/grids/${box[0].lat}/${box[0].lng}/${box[1].lat}/${box[1].lng}/0`;
+        let lat0 = LMap.map.getBounds().getNorthEast().lat().toFixed(3);
+        let lng0 = LMap.map.getBounds().getNorthEast().lng().toFixed(3);
+        let lat1 = LMap.map.getBounds().getSouthWest().lat().toFixed(3);
+        let lng1 = LMap.map.getBounds().getSouthWest().lng().toFixed(3);
+        let url = `/park/grids/${lat0}/${lng0}/${lat1}/${lng1}/0`;
         console.log(url);
         $.ajax({
             type: 'GET',
@@ -505,7 +519,6 @@ var LMap = {
                             $('#close').focus();
                         }, 10);
                     });
-                    $('#count_pota_u').text(c - parseInt($('#count_pota_v').text()));
                     layers.locations.push(a);
                 });
             }
