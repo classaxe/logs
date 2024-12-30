@@ -125,6 +125,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return User::orderBy('call', 'asc')->get();
     }
 
+    public static function getAllUserItus(): array
+    {
+        return User::select('itu')->groupBy('itu')->orderBy('itu', 'asc')->pluck('itu')->toArray();
+    }
+
     public static function array_column_pair(array $inputArray, string $column1, string $column2): array
     {
         $result = [];
