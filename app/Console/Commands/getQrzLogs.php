@@ -20,7 +20,7 @@ class getQrzLogs extends Command
      *
      * @var string
      */
-    protected $description = 'Fetches latest logs from QRZ.com. Give a callsign to limit to one user. Specify --force to force refresh.';
+    protected $description = 'Fetches latest logs from QRZ.com. Give a callsign to limit to one user, --force will force refresh.';
 
     /**
      * Execute the console command.

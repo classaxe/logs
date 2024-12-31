@@ -20,7 +20,7 @@ class getPotaParks extends Command
      *
      * @var string
      */
-    protected $description = 'Refreshes Pota Parks database with latest data from POTA. Specify prefix e.g. CA or US, otherwise all user prefixes are fetched';
+    protected $description = 'Downloads Parks from POTA for user countries, or provide csv list of 2-char country codes.';
 
     /**
      * Execute the console command.
@@ -30,7 +30,7 @@ class getPotaParks extends Command
     public function handle() {
         $prefixes = [];
         if ($this->argument('prefix')) {
-            $prefixes[] = $this->argument('prefix');
+            $prefixes = explode(',', $this->argument('prefix'));
         } else {
             $prefixes = User::getAllUserItus();
         }
