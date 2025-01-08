@@ -55,10 +55,17 @@
                     <a target="_blank" href="https://k7fry.com/grid/?qth={{ $q['gsq'] }}">{{ $q['gsq'] }}</a>
                 </td>
                 <td>@if($label === 'Test Location'){{ $label }}@else<a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}/?q[]=myQth|{{ $label }}" target="_blank">{{ $label }}</a>@endif</td>
-                @if($user->pota)<td>@if(substr($label, 0, 4) === 'POTA')<a target="_blank" href="https://pota.app/#/park/{{ explode(' ', $label)[1] }}">View</a>@endif</td>@endif
+                @if($user->pota)
+                    <td>
+                        @if(substr($label, 0, 4) === 'POTA')
+                            <a href='https://google.com/maps/place/{{ $q['lat'] }},{{ $q['lon'] }}' class='btn o' target='_blank'>Goto</a><a class='btn g' target="_blank" href="https://pota.app/#/park/{{ explode(' ', $label)[1] }}">View</a><a href='#' title="Get Potashell command for this location" class='btn blk' target='_blank' onclick="return copyToClipboard('potashell {{ explode(' ', $label)[1] }} {{ $q['gsq'] }}')">PS</a>
+                        @endif
+                    </td>
+                @endif
                 @if(!$hidestats)
                     @if(isset($q['logFirst']))
-                        <td>{{ $q['logFirst'] }}@if($q['logDays'] > 1) - {{ $q['logLast'] }}@endif</td>
+                        <td>{{ $q['logFirst'] }}@if($q['logDays'] === 2), {{ $q['logLast'] }}@endif
+                            @if($q['logDays'] > 2) - {{ $q['logLast'] }}@endif</td>
                         <td class="r">{{ $q['logDays'] }}</td>
                         <td class="r">{{ $q['logs'] }}</td>
                     @else

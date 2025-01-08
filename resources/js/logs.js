@@ -170,8 +170,13 @@ var frm = {
             }
         })
         let html = '';
-        let column = 0, row = 0, counties = 0, states = 0;
+        let column = 0, row = 0, i, counties = 0, countiesTotal = 0, states = 0;
         let dc = false, usState = false;
+        for (i = 0; i < stats.usCounties.length; i++) {
+            countiesTotal += stats.usCounties[i].total;
+        }
+
+
         for (row = 0; row + column < stats.usCounties.length + 10; row += 10) {
             html += "<table><tr><th>State</th>";
             for (column = 0; column < 10; column++) {
@@ -232,8 +237,10 @@ var frm = {
         $('#usCountiesState').html(html);
         $('#usCountiesTotal').html(
             'There are <b>' + counties + '</b> confirmed ' + (counties === 1 ? 'county' : 'counties') +
-            ' in <b>' + states + '</b> US ' + (states === 1 ? 'state' : 'states') +
-            ' - assuming no problems with qualifying logs at QRZ.com.'
+            ' from a total of <b>' + countiesTotal + '</b> available in <b>' + states + '</b> US ' + (states === 1 ? 'state' : 'states') +
+            ' - assuming that there are no problems with qualifying logs at QRZ.com.<br>' +
+            'Note that for the QRZ "US-50" states award, neither PR nor VI logs count towards the 50, and ' +
+            'any log seen for DC counts as a log in MD.'
         );
     },
 

@@ -452,7 +452,7 @@ var LMap = {
                 n = l.name . substring(14);
                 nFull = LMap.strTr(n, LMap.arrayFlip(LMap.nameSubs));
                 a.addListener('click', function() {
-                    let g = LMap.convertDegGsq(lat, lng);
+                    let g = l.gsq;
                     let html =
                         "<div class=\"map_info\">" + "" +
                         "<h3>POTA: <strong><a style=\"color: #00f\" href=\"https://pota.app/#/park/" + p + "\" target='_blank'>" + p + "</a></strong>" +
@@ -461,7 +461,7 @@ var LMap = {
                         "<p><b><a href='https://k7fry.com/grid/?qth=" + g + "' style='color: #00f' target='_blank'>" + g + "</a> &nbsp " +
                         "<span title='" + nFull + "'>" + n + "</span>" +
                         " &nbsp; <a href='https://google.com/maps/place/" + lat + "," + lng + "' class='btn o' target='_blank'>Goto</a>" +
-                        " <a href='#' title=\"Get Potashell command for this location\" class='btn blk' target='_blank' onclick=\"return LMap.copyToClipboard('potashell " + p + " " + g + "')\">POTA Shell</a>" +
+                        " <a href='#' title=\"Get Potashell command for this location\" class='btn blk' target='_blank' onclick=\"return LMap.copyToClipboard('potashell " + p + " " + g + "')\">PS</a>" +
                         "</b></p>" +
                         "<p>Sessions: <b>" + d + "</b>, <a href='/logs/" + qth.call.replace('/', '-') + "/?q[]=myQth|" + l.name + "' style='color: #00f' target='_blank'>Logs: <b>" + logs + "</b></a></p>";
                     LMap.infoWindow.setContent(html);
