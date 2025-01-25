@@ -168,6 +168,15 @@ class UserController extends Controller
         if (!$u = User::getUserDataByCallsign($callsign, $testGsq)) {
             return redirect(url('/'));
         }
+        $fetchLogs = $request->query('action') ?: null === 'fetch';
+        if (Auth::user() && $fetchLogs) {
+            if (!Log::getQRZDataForUser(Auth::user())) {
+                return redirect()
+                    ->route('home')
+                    ->with('status', '<b>Error:</b><br>' . Auth::user()->qrz_last_result);
+            }
+            return redirect()->route('summary', ['callsign' => $callsign]);
+        }
         $hidestats = $request->query('hidestats') ? '1' : '';
         $title = sprintf("Location%s %s for %s - %s",
             (count($u['qths']) > 1 ? 's' : ''),
@@ -194,11 +203,21 @@ class UserController extends Controller
         ]);
     }
 
-    public function summaryMap(string $callsign) {
+    public function summaryMap(Request $request, string $callsign) {
         $callsign = str_replace('-', '/', $callsign);
         if (!$u = User::getUserDataByCallsign($callsign)) {
             return redirect(url('/'));
         }
+        $fetchLogs = $request->query('action') ?: null === 'fetch';
+        if (Auth::user() && $fetchLogs) {
+            if (!Log::getQRZDataForUser(Auth::user())) {
+                return redirect()
+                    ->route('home')
+                    ->with('status', '<b>Error:</b><br>' . Auth::user()->qrz_last_result);
+            }
+            return redirect()->route('summaryMap', ['callsign' => $callsign]);
+        }
+
         $urlSummary = '<a class="btn b" target="_blank" href="'
             . route('summary', ['callsign' => str_replace('/', '-', $u['user']->call)]) . '">'
             . "Summary"
@@ -245,14 +264,11 @@ class UserController extends Controller
             ->with('status', sprintf('<b>Success</b><br>Profile for <i>%s</i> has been updated.', $user->name));
     }
 
-    public function upload()
-    {
+    public function upload() {
         $user = Auth::user();
         return view('user.upload.form', [
             'title' => "Upload ADI File",
             'user' => $user
         ]);
     }
-
-
 }

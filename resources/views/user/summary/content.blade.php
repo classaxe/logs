@@ -80,7 +80,7 @@
             <tr class="totals">
                 <td><a href="{{ route('summaryMap', ['callsign' => str_replace('/', '-', $user->call)]) }}" title="Show map" target="_blank">Totals</a></td>
                 <td{{ ($user->pota ? ' colspan=2' : '') }}><a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}" style="font-weight: normal" target="_blank">({{ count($qths) ===2 ? 'Both' : 'All ' . count($qths) }} locations)</a></td>
-                <td>{{ substr($user['first_log'], 0, 10) }}@if(substr($user['first_log'], 0, 10) !== substr($user['last_log'], 0, 10)) - {{ substr($user['last_log'], 0, 10) }}@endif</td>
+                <td style="white-space: nowrap">{{ substr($user['first_log'], 0, 10) }}@if(substr($user['first_log'], 0, 10) !== substr($user['last_log'], 0, 10)) - {{ substr($user['last_log'], 0, 10) }}@endif</td>
                 <td class="r">{{ $user['log_days'] ?: 0 }}</td>
                 <td class="r">{{ $user['log_count'] }}</td>
             </tr>

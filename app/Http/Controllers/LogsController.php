@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Log;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 
@@ -37,9 +38,19 @@ class LogsController extends Controller
         return redirect()->route('home')->with('status', '<b>Error:</b><br>' . Auth::user()->qrz_last_result);
     }
 
-    public static function logsPage(string $callsign)
+    public static function logsPage(Request $request, string $callsign)
     {
         $callsign = str_replace('-','/', $callsign);
+        $fetchLogs = $request->query('action') ?: null === 'fetch';
+        if (Auth::user() && $fetchLogs) {
+            if (!Log::getQRZDataForUser(Auth::user())) {
+                return redirect()
+                    ->route('home')
+                    ->with('status', '<b>Error:</b><br>' . Auth::user()->qrz_last_result);
+            }
+            return redirect()->route('logs.page', ['callsign' => $callsign]);
+        }
+
         $data = User::getUserDataByCallsign($callsign);
         $q = [];
         if ($_GET['q'] ?? []) {

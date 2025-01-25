@@ -8,20 +8,22 @@ var LMap = {
     TxtOverlay: null,
 
     nameSubs : {
-        'Conservation Area' :          'CA',
-        'Conservation Park' :          'CP',
-        'Conservation Reserve' :       'CR',
-        'District Park' :              'DP',
-        'for Conservation' :           'for Cons',
-        'National Historic Site' :     'NHS',
-        'National Park' :              'NP',
-        'National Recreation Trail' :  'NRT',
-        'Point' :                      'Pt',
-        'Provincial Nature Reserve' :  'PNR',
-        'Provincial Park' :            'PP',
-        'Recreation Park' :            'Rec P',
-        'Regional Park' :              'Reg P',
-        'Wilderness Park' :            'WP',
+        'Conservation Area' :           'CA',
+        'Conservation Park' :           'CP',
+        'Conservation Reserve' :        'CR',
+        'District Park' :               'DP',
+        'for Conservation' :            'for Cons',
+        'Heritage Trail' :              'HT',
+        'National Historic Site' :      'NHS',
+        'National Park' :               'NP',
+        'National Recreation Trail' :   'NRT',
+        'Point' :                       'Pt',
+        'Provincial Nature Reserve' :   'PNR',
+        'Provincial Park' :             'PP',
+        'Recreation Park' :             'Rec P',
+        'Recreation Site' :             'Rec S',
+        'Regional Park' :               'Reg P',
+        'Wilderness Park' :             'WP',
     },
 
     strTr(str, replacements) {
@@ -534,7 +536,7 @@ var LMap = {
                             "<p><b><a href='https://k7fry.com/grid/?qth=" + g + "' style='color: #00f' target='_blank'>" + g + "</a> &nbsp " +
                             "<span title='" + nFull + "'>" + n + "</span>" +
                             " &nbsp; <a href='https://google.com/maps/place/" + lat + "," + lng + "' class='btn o' target='_blank'>Goto</a>" +
-                            " <a href='#' title=\"Get Potashell command for this location\" class='btn blk' target='_blank' onclick=\"return LMap.copyToClipboard('potashell " + p + " " + g + "')\">POTA Shell</a>" +
+                            " <a href='#' title=\"Get Potashell command for this location\" class='btn blk' target='_blank' onclick=\"return LMap.copyToClipboard('potashell " + p + " " + g + "')\">PS</a>" +
                             "</b></p>" +
                             "<p style='text-align: center'><i>(Unvisited)</i></p>";
                         LMap.infoWindow.setContent(infoHtml);
