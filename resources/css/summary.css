@@ -45,6 +45,14 @@
 .btn.o:hover {
     background: #fc0;
 }
+#btnCurrent {
+    font-weight: bold;
+    text-decoration: underline;
+    color:#00f;
+}
+#btnCurrent:hover {
+    color:#f00;
+}
 #qthinfo table {
     border-collapse: collapse;
     margin: 0 auto;

@@ -85,6 +85,12 @@ var LMap = {
         let lng_min = 180;
         let lng_max = -180
 
+        $('#btnCurrent').click(() => {
+            const coords = LMap.getCurrentLocation();
+            console.log(coords);
+            return false;
+        });
+
         LMap.TxtOverlay =    LMap.initMapsTxtOverlay();
         for (i in locations) {
             l = locations[i];
@@ -615,6 +621,24 @@ var LMap = {
             )
         }
         LMap.map.fitBounds(bounds);
+    },
+
+    getCurrentLocation: () => {
+        let coords = {lat: false, lng: false};
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                function (position) {
+                    coords = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    }
+                },
+                function (error) {
+                    console.log(error);
+                }
+            );
+        }
+        return coords;
     },
 
     getUniqueArrayValues: (arr) => {
