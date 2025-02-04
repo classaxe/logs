@@ -85,11 +85,6 @@ var LMap = {
         let lng_min = 180;
         let lng_max = -180
 
-        $('#btnCurrent').click(() => {
-            LMap.drawCurrentLocation();
-            return false;
-        });
-
         LMap.TxtOverlay =    LMap.initMapsTxtOverlay();
         for (i in locations) {
             l = locations[i];
@@ -140,6 +135,12 @@ var LMap = {
                 window.scheduledUpdate = setTimeout(LMap.drawPotaUnvisited, 500);
             }
         );
+
+        $('#btnCurrent').click(() => {
+            LMap.zoomCurrentLocation();
+            return false;
+        });
+
         setInterval(function() { LMap.drawCurrentLocation() }, 10000); // every 10s
     },
 
@@ -850,6 +851,17 @@ var LMap = {
                 let aVal = (typeof a[sortField] === 'string' ? a[sortField].toLowerCase() || '|||' : a[sortField]);
                 let bVal = (typeof b[sortField] === 'string' ? b[sortField].toLowerCase() || '|||' : b[sortField]);
                 return ((aVal < bVal) ? -1 : ((aVal > bVal) ? 1 : 0));
+            });
+        }
+    },
+
+    zoomCurrentLocation: () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                LMap.map.setCenter(new google.maps.LatLng(lat, lng));
+                LMap.map.setZoom(12);
             });
         }
     },
