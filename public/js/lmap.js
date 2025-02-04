@@ -86,8 +86,7 @@ var LMap = {
         let lng_max = -180
 
         $('#btnCurrent').click(() => {
-            const coords = LMap.getCurrentLocation();
-            console.log(coords);
+            LMap.drawCurrentLocation();
             return false;
         });
 
@@ -124,13 +123,13 @@ var LMap = {
             new google.maps.LatLng(box[0].lat - 0.05, box[0].lng - 0.1), //sw
             new google.maps.LatLng(box[1].lat + 0.05, box[1].lng + 0.1) //ne
         )
-        console.log([box[0].lat, box[1].lat, box[0].lng, box[1].lng]);
         bounds = LMap.drawBoundsRing();
         LMap.map.fitBounds(bounds);
 
         LMap.infoWindow = new google.maps.InfoWindow();
         LMap.drawGrid();
         LMap.drawLocations();
+        LMap.drawCurrentLocation();
         google.maps.event.addListener(
             LMap.map,
             'bounds_changed',
@@ -498,8 +497,6 @@ var LMap = {
         let lat1 = LMap.map.getBounds().getSouthWest().lat().toFixed(3);
         let lng1 = LMap.map.getBounds().getSouthWest().lng().toFixed(3);
         let url = `/park/grids/${lat0}/${lng0}/${lat1}/${lng1}/0`;
-        console.log(LMap.map.getZoom());
-        console.log(url);
         $.ajax({
             type: 'GET',
             url: url,
@@ -623,22 +620,24 @@ var LMap = {
         LMap.map.fitBounds(bounds);
     },
 
-    getCurrentLocation: () => {
-        let coords = {lat: false, lng: false};
+    drawCurrentLocation: () => {
         if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                function (position) {
-                    coords = {
-                        lat: position.coords.latitude,
-                        lng: position.coords.longitude
-                    }
-                },
-                function (error) {
-                    console.log(error);
+            navigator.geolocation.getCurrentPosition((pos) => {
+                if (typeof layers.current !== 'undefined' ) {
+                    layers.current.setMap(null);
                 }
-            );
+                layers.current = new google.maps.Marker({
+                    position: { lat: pos.coords.latitude, lng: pos.coords.longitude },
+                    map: LMap.map,
+                    icon: {
+                        scaledSize: new google.maps.Size(30,30),
+                        url: base_image + '/purple-pushpin.png'
+                    },
+                    title: 'Your location',
+                    zIndex: 100
+                });
+            });
         }
-        return coords;
     },
 
     getUniqueArrayValues: (arr) => {
