@@ -45,13 +45,14 @@
 .btn.o:hover {
     background: #fc0;
 }
-#btnCurrent {
-    font-weight: bold;
-    text-decoration: underline;
-    color:#00f;
-}
 #btnCurrent:hover {
+    text-decoration: underline;
     color:#f00;
+}
+#currentGsq {
+    width: 6em;
+    background: transparent;
+    border: none;
 }
 #qthinfo table {
     border-collapse: collapse;

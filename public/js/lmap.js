@@ -140,6 +140,7 @@ var LMap = {
                 window.scheduledUpdate = setTimeout(LMap.drawPotaUnvisited, 500);
             }
         );
+        setInterval(function() { LMap.drawCurrentLocation() }, 10000); // every 10s
     },
 
     initMapsTxtOverlay: () => {
@@ -254,6 +255,30 @@ var LMap = {
         layers.locs.push(ring50);
         layers.locs.push(ringLocs);
         return ring50.getBounds();
+    },
+
+    drawCurrentLocation: () => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition((pos) => {
+                const lat = pos.coords.latitude;
+                const lng = pos.coords.longitude;
+                if (typeof layers.current !== 'undefined' ) {
+                    layers.current.setMap(null);
+                }
+                layers.current = new google.maps.Marker({
+                    position: { lat: lat, lng: lng },
+                    map: LMap.map,
+                    icon: {
+                        scaledSize: new google.maps.Size(30,30),
+                        url: base_image + '/purple-pushpin.png'
+                    },
+                    title: 'Your location',
+                    zIndex: 100
+                });
+                $('#currentGsq').val(LMap.convertDegGsq(lat, lng, 10));
+                $('#currentLocation').show();
+            });
+        }
     },
 
     drawGrid : () => {
@@ -618,26 +643,6 @@ var LMap = {
             )
         }
         LMap.map.fitBounds(bounds);
-    },
-
-    drawCurrentLocation: () => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition((pos) => {
-                if (typeof layers.current !== 'undefined' ) {
-                    layers.current.setMap(null);
-                }
-                layers.current = new google.maps.Marker({
-                    position: { lat: pos.coords.latitude, lng: pos.coords.longitude },
-                    map: LMap.map,
-                    icon: {
-                        scaledSize: new google.maps.Size(30,30),
-                        url: base_image + '/purple-pushpin.png'
-                    },
-                    title: 'Your location',
-                    zIndex: 100
-                });
-            });
-        }
     },
 
     getUniqueArrayValues: (arr) => {
