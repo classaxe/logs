@@ -33,8 +33,9 @@ foreach($qths as $name => $qth) {
                         @if ($other)
                             <img src="{{ asset('images/yellow-pushpin.png') }}" alt="Yellow Pushpin" style="display: inline; height: 20px">Other location: {{ $other }}
                         @endif
-                        <span id="currentLocation" style="display: none"><a href="#" id="btnCurrent" title="Click to show your current location"><img src="{{ asset('images/purple-pushpin.png') }}" style="display: inline; height: 20px">Your Location</a>:
-                        <input type="text" id="currentGsq"></span>
+                        <span id="currentLocation" style="display: none">
+                            <a href="#" id="btnCurrent" title="Click to show your current location"><img src="{{ asset('images/purple-pushpin.png') }}" style="display: inline; height: 20px">Your Location</a>:<input type="text" id="currentGsq">
+                        </span>
                     </fieldset>
                     <div id="map" style="height: 600px;">Loading...</div>
                 </div>
