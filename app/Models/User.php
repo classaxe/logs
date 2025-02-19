@@ -64,6 +64,20 @@ class User extends Authenticatable implements MustVerifyEmail
         if (count($points) === 0) {
             return null;
         }
+        // Horrible kludgey hack because the welzl routine doesn't seem to work well beyond 3 points.
+        if (count($points) <= 3) {
+            $pointArr = [];
+            foreach ($points as $point) {
+                $pointArr[] = new Point($point['lon'], $point['lat']);
+            }
+
+            $circle = SmallestEnclosingCircle::makeCircle($pointArr);
+            $center = $circle->getCenter();
+            return [
+                'center' => [$center->getY(), $center->getX()],
+                'radius' => $circle->getRadius() * 99500
+            ];
+        }
         $latSum = 0;
         $lonSum = 0;
         foreach ($points as $point) {
@@ -170,7 +184,10 @@ class User extends Authenticatable implements MustVerifyEmail
         }) ? true : false;
         $coords = self::array_column_pair($qths,'lat', 'lon');
         $bounds = self::calculateEnclosingCircle($coords);
-
+        //dump($bounds);
+        // 44.16351145111103 -79.67774031160585 0.7622065421564141
+        // $bounds = ['center' => [44.16351145111103, -79.67774031160585], 'radius' =>0.7622065421564141 ];
+        //dd($bounds);
         return [
             'bands' =>      Log::getBandsForUser($user),
             'modes' =>      Log::getModesForUser($user),
