@@ -442,7 +442,16 @@ th.sortable:hover::after {
     font-size: 10pt;
     width: 16em;
 }
-
+.conf_q {
+    width: 15px; height: 15px;
+    margin: 0 auto;
+    background-image: url("/images/star_q.svg");
+}
+.conf_m {
+    width: 15px; height: 15px;
+    margin: 0 auto;
+    background-image: url("/images/star_m.svg");
+}
 
 .map {
     margin: 0;

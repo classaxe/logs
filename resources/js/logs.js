@@ -415,6 +415,10 @@ var frm = {
             html.push(
                 '<tr' + (bonus ? " class='bonus' title='Bonus Entity for some QRZ Awards'" : "") + ">" +
                 '<td class="r">' + (log.logNum)+ '</td>' +
+                '<td class="r">' +
+                    (log.conf === 'Y' ? "<div class='conf_q' title='Confirmed in QRZ'></div>" : '') +
+                    (log.conf === 'M' ? "<div class='conf_m' title='Manually marked as confirmed'></div>" : '') +
+                '</td>' +
                 '<td class="not-compact multi-qth">' + log.myGsq + '</td>' +
                 '<td class="not-compact multi-qth nowrap">' + log.myQth + '</td>' +
                 '<td class="nowrap">' + log.date + '</td>' +
@@ -434,8 +438,7 @@ var frm = {
                 '<td data-link="gsq">' + log.gsq + '</td>' +
                 '<td class="r">' + (typeof log.km === 'number' ? log.km : '') + '</td>' +
                 '<td class="r not-compact">' + (typeof log.deg === 'number' ? log.deg : '') + '</td>' +
-                '<td class="r not-compact">' + log.comment + '</td>' +
-                '<td class="r">' + log.conf + '</td>'
+                '<td class="r not-compact">' + log.comment + '</td>'
             )
         });
         return html.join('\n');

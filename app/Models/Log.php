@@ -13,6 +13,7 @@ class Log extends Model
 
     const COLUMNS = [
         'logNum' =>     ['lbl' =>   'Log',          'class' => ''],
+        'conf' =>       ['lbl' =>   'C',            'class' => 'r'],
         'myGsq' =>      ['lbl' =>   'My GSQ',       'class' => 'not-compact multi-qth'],
         'myQth' =>      ['lbl' =>   'My QTH',       'class' => 'not-compact multi-qth'],
         'date' =>       ['lbl' =>   'Date',         'class' => ''],
@@ -33,7 +34,6 @@ class Log extends Model
         'km' =>         ['lbl' =>   'Km',           'class' => 'r'],
         'deg' =>        ['lbl' =>   'Deg',          'class' => 'r not-compact'],
         'comment' =>    ['lbl' =>   'Comment',      'class' => 'r not-compact'],
-        'conf' =>       ['lbl' =>   'Conf',         'class' => 'r']
     ];
     const US_COUNTIES = [
         'AK' => 27,
