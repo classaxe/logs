@@ -93,12 +93,31 @@
             <x-input-error :messages="$errors->get('qth_names')" class="mt-2" />
         </div>
 
+        <div class="mt-4"><hr></div>
+
         <!-- QRZ API Key -->
         <div class="mt-4">
             <x-input-label for="qrz_api_key" :value="__('* QRZ API Key (Format: XXXX-XXXX-XXXX-XXXX)')" />
             <x-text-input id="qrz_api_key" class="block mt-1 w-full" type="text" name="qrz_api_key" :value="old('qrz_api_key', $user->qrz_api_key)"
                           pattern="[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}" length="19" maxlen="19" required />
             <x-input-error :messages="$errors->get('qrz_api_key')" class="mt-2" />
+        </div>
+
+        <!-- Clublog -->
+        <div class="mt-4">
+            <x-input-label for="clublog_email" :value="__('Clublog Email Address')" />
+            <x-text-input id="clublog_email" class="block mt-1 w-full" type="text" name="clublog_email" :value="old('clublog_email', $user->clublog_email)" />
+            <x-input-error :messages="$errors->get('clublog_email')" class="mt-2" />
+        </div>
+        <div class="mt-4">
+            <x-input-label for="clublog_password" :value="__('Clublog Password')" />
+            <x-text-input id="clublog_password" class="block mt-1 w-full" type="password" name="clublog_password" :value="old('clublog_password', $user->clublog_password)" />
+            <x-input-error :messages="$errors->get('clublog_password')" class="mt-2" />
+        </div>
+        <div class="mt-4">
+            <x-input-label for="clublog_call" :value="__('Clublog Callsign')" />
+            <x-text-input id="clublog_call" class="block mt-1 w-full" type="text" name="clublog_call" :value="old('clublog_call', $user->clublog_call)" />
+            <x-input-error :messages="$errors->get('clublog_call')" class="mt-2" />
         </div>
 
         <div class="flex items-center gap-4">

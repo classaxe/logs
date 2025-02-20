@@ -38,7 +38,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'qrz_last_data_pull',
         'qth_names',
         'is_visible',
-        'log_count'
+        'log_count',
+        'clublog_email',
+        'clublog_password',
+        'clublog_call',
     ];
 
     /**

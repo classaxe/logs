@@ -40,6 +40,9 @@ class RegisteredUserController extends Controller
             'itu' => ['required', 'string', 'size:3'],
             'gsq' => ['required', 'string', 'regex:/^(?:[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}[0-9]{2})$/'],
             'qrz_api_key' => ['required', 'string', 'min:19, max:19'],
+            'clublog_email' => ['nullable', 'string'],
+            'clublog_password' => ['nullable', 'string'],
+            'clublog_call' => ['nullable', 'string'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
@@ -55,6 +58,9 @@ class RegisteredUserController extends Controller
             'qth_names' => '',
             'qrz_api_key' => $request->qrz_api_key,
             'password' => Hash::make($request->password),
+            'clublog_email' => $request->clublog_email,
+            'clublog_password' => $request->clublog_password,
+            'clublog_call' => $request->clublog_call,
 
             // For now make all users visible
             'is_visible' => 1

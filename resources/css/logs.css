@@ -445,12 +445,12 @@ th.sortable:hover::after {
 .conf_q {
     width: 15px; height: 15px;
     margin: 0 auto;
-    background-image: url("/images/star_q.svg");
+    background-image: url("$images/star_q.svg");
 }
 .conf_m {
     width: 15px; height: 15px;
     margin: 0 auto;
-    background-image: url("/images/star_m.svg");
+    background-image: url("$images/star_m.svg");
 }
 
 .map {
