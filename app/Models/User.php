@@ -150,8 +150,15 @@ class User extends Authenticatable implements MustVerifyEmail
         return User::select('itu')->groupBy('itu')->orderBy('itu', 'asc')->pluck('itu')->toArray();
     }
 
-    public static function getClublogUsers(): Collection
+    public static function getClublogUsers($call = null): Collection
     {
+        if ($call) {
+            return User::where('clublog_email', '<>', '')
+                ->where('clublog_password', '<>', '')
+                ->whereColumn('clublog_call', 'call')
+                ->where('call', $call)
+                ->get();
+        }
         return User::where('clublog_email', '<>', '')
             ->where('clublog_password', '<>', '')
             ->whereColumn('clublog_call', 'call')

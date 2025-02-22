@@ -31,14 +31,11 @@ class getClubLogs extends Command
     {
         $force = $this->option('force');
         $call = $this->argument('call');
-        if ($call) {
-            $clublogUsers = User::getClublogUsers()->where('call', $call)->get();
-            if ($clublogUsers->isEmpty()) {
-                print "No such user as $call\n";
-                return Command::FAILURE;
-            }
-        } else {
-            $clublogUsers = User::getClublogUsers();
+
+        $clublogUsers = User::getClublogUsers($call);
+        if ($clublogUsers->isEmpty() && $call) {
+            print "No such user as $call\n";
+            return Command::FAILURE;
         }
         foreach ($clublogUsers as $user) {
             if (!$force && !$user->active) {
@@ -55,6 +52,7 @@ class getClubLogs extends Command
                 print "- ERROR for user {$user->call} - {$user->clublog_last_result}\n";
             }
         }
+        Clublog::updateLogs();
         return Command::SUCCESS;
     }
 }

@@ -266,6 +266,8 @@ class Log extends Model
                 'logs.call',
                 'logs.comment',
                 'logs.conf',
+                'logs.conf',
+                'logs.clublog_conf',
                 'logs.continent',
                 'logs.county',
                 'logs.date',

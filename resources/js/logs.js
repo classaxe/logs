@@ -102,6 +102,7 @@ var frm = {
                         calls_count: 0,
                         calls_html: '',
                         conf: '',
+                        clublog_conf: '',
                         deg: 0,
                         gsq: gsq,
                         km: 0,
@@ -132,6 +133,9 @@ var frm = {
                     }];
                 }
                 if (log.conf === 'Y') {
+                    gsqs_tmp[gsq].conf = 'Y'
+                }
+                if (log.clublog_conf === 'Y') {
                     gsqs_tmp[gsq].conf = 'Y'
                 }
                 gsqs_tmp[gsq].logs.push(log);
@@ -304,10 +308,10 @@ var frm = {
         if (!log.mode.length || $.inArray(log.mode, filters.modes) < 0) {
             return false;
         }
-        if (filters.conf === 'N' && log.conf !== '') {
+        if (filters.conf === 'N' && (log.conf !== '' || log.clublog_conf !== '')) {
             return false;
         }
-        if (filters.conf === 'Y' && log.conf !== 'Y') {
+        if (filters.conf === 'Y' && !(log.conf === 'Y' || log.clublog_conf === 'Y')) {
             return false;
         }
         if (filters.call.length && filters.call.toLowerCase() !== log.call.toLowerCase().substring(0, filters.call.length)) {
@@ -416,8 +420,10 @@ var frm = {
                 '<tr' + (bonus ? " class='bonus' title='Bonus Entity for some QRZ Awards'" : "") + ">" +
                 '<td class="r">' + (log.logNum)+ '</td>' +
                 '<td class="r">' +
-                    (log.conf === 'Y' ? "<div class='conf_q' title='Confirmed in QRZ'></div>" : '') +
-                    (log.conf === 'M' ? "<div class='conf_m' title='Manually marked as confirmed'></div>" : '') +
+                    (log.conf === 'Y' ?
+                        "<div class='conf_q' title='Confirmed in QRZ'></div>"
+                        : (log.clublog_conf === 'Y' ? "<div class='conf_c' title='Confirmed in Clublog'></div>" : '')
+                    ) +
                 '</td>' +
                 '<td class="not-compact multi-qth">' + log.myGsq + '</td>' +
                 '<td class="not-compact multi-qth nowrap">' + log.myQth + '</td>' +
