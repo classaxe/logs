@@ -13,7 +13,7 @@ class getPotaParks extends Command
      *
      * @var string
      */
-    protected $signature = 'pota:parks {prefix?}';
+    protected $signature = 'logs:fetchPota {prefix?}';
 
     /**
      * The console command description.

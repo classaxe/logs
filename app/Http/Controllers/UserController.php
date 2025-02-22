@@ -131,6 +131,8 @@ class UserController extends Controller
                 $user->qrz_last_data_pull = null;
                 $user->qrz_last_data_pull_debug = '';
                 $user->qrz_last_result = null;
+                $user->clublog_last_data_pull = null;
+                $user->clublog_last_result = '';
                 $user->last_log_id = 0;
                 $user->log_days = 0;
                 $user->qth_count = 0;

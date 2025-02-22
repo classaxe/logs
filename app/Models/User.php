@@ -42,6 +42,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'clublog_email',
         'clublog_password',
         'clublog_call',
+        'clublog_last_data_pull',
     ];
 
     /**
@@ -62,6 +63,7 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
         'qrz_last_data_pull' => 'datetime',
+        'clublog_last_data_pull' => 'datetime',
     ];
 
     private static function calculateEnclosingCircle($points) {
@@ -148,6 +150,15 @@ class User extends Authenticatable implements MustVerifyEmail
         return User::select('itu')->groupBy('itu')->orderBy('itu', 'asc')->pluck('itu')->toArray();
     }
 
+    public static function getClublogUsers(): Collection
+    {
+        return User::where('clublog_email', '<>', '')
+            ->where('clublog_password', '<>', '')
+            ->whereColumn('clublog_call', 'call')
+            ->orderBy('call', 'asc')
+            ->get();
+    }
+
     public static function array_column_pair(array $inputArray, string $column1, string $column2): array
     {
         $result = [];
@@ -212,6 +223,22 @@ class User extends Authenticatable implements MustVerifyEmail
             return substr($this['last_log'], 0, 16);
         }
         $result = Carbon::parse($this['last_log'])->diffForHumans();
+        return str_replace(
+            ['second', 'minute'],
+            ['sec', 'min'],
+            $result
+        );
+    }
+
+    public function getLastClublogPull(): string
+    {
+        if ($this['clublog_last_data_pull'] === null) {
+            return 'Never' . ($this['clublog_last_result'] ? ' - ' . $this['clublog_last_result'] : '');
+        }
+        if (Carbon::parse($this['clublog_last_data_pull'])->diffInDays() >= self::RECENTDAYS) {
+            return substr($this['clublog_last_data_pull'], 0, 10);
+        }
+        $result = Carbon::parse($this['clublog_last_data_pull'])->diffForHumans();
         return str_replace(
             ['second', 'minute'],
             ['sec', 'min'],
