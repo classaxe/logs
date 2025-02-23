@@ -13,7 +13,7 @@ class Log extends Model
 
     const COLUMNS = [
         'logNum' =>     ['lbl' =>   'Log',          'class' => ''],
-        'conf' =>       ['lbl' =>   'C',            'class' => 'r'],
+        'conf_qc' =>    ['lbl' =>   'C',            'class' => 'r'],
         'myGsq' =>      ['lbl' =>   'My GSQ',       'class' => 'not-compact multi-qth'],
         'myQth' =>      ['lbl' =>   'My QTH',       'class' => 'not-compact multi-qth'],
         'date' =>       ['lbl' =>   'Date',         'class' => ''],
@@ -260,45 +260,48 @@ class Log extends Model
                 $hide[] = $gsq;
             }
         }
-        return
-            Log::Select(
-                'logs.band',
-                'logs.call',
-                'logs.comment',
-                'logs.conf',
-                'logs.conf',
-                'logs.clublog_conf',
-                'logs.continent',
-                'logs.county',
-                'logs.date',
-                'logs.deg',
-                'logs.gsq',
-                'logs.itu',
-                'logs.km',
-                'logs.logNum',
-                'logs.mode',
-                'logs.myGsq',
-                'logs.myQth',
-                'logs.name',
-                'logs.pwr',
-                'logs.qth',
-                'logs.rx',
-                'logs.sp',
-                'logs.time',
-                'logs.tx',
-                'iso3166.flag'
-            )->leftJoin(
-                'iso3166',
-                'logs.itu',
-                '=',
-                'iso3166.country'
-            )
-            ->where('userId', $user->id)
-            ->whereNotIn('myGsq', $hide)
-            ->orderBy('time', 'asc')
-            ->orderBy('date', 'desc')
-            ->get()
-            ->toArray();
+        $logs = Log::Select(
+            'logs.band',
+            'logs.call',
+            'logs.comment',
+            'logs.conf',
+            'logs.clublog_conf',
+            'logs.continent',
+            'logs.county',
+            'logs.date',
+            'logs.deg',
+            'logs.gsq',
+            'logs.itu',
+            'logs.km',
+            'logs.logNum',
+            'logs.mode',
+            'logs.myGsq',
+            'logs.myQth',
+            'logs.name',
+            'logs.pwr',
+            'logs.qth',
+            'logs.rx',
+            'logs.sp',
+            'logs.time',
+            'logs.tx',
+            'iso3166.flag'
+        )->leftJoin(
+            'iso3166',
+            'logs.itu',
+            '=',
+            'iso3166.country'
+        )
+        ->where('userId', $user->id)
+        ->whereNotIn('myGsq', $hide)
+        ->orderBy('time', 'asc')
+        ->orderBy('date', 'desc')
+        ->get()
+        ->toArray();
+
+        foreach ($logs as &$log) {
+            $log['conf_qc'] = ($log['conf'] === 'Y' ? '1' : ($log['clublog_conf'] === 'Y' ? '2' : ''));
+        }
+        return $logs;
     }
 
     /**

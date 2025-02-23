@@ -308,10 +308,10 @@ var frm = {
         if (!log.mode.length || $.inArray(log.mode, filters.modes) < 0) {
             return false;
         }
-        if (filters.conf === 'N' && (log.conf !== '' || log.clublog_conf !== '')) {
+        if (filters.conf === 'N' && log.conf_qc !== '') {
             return false;
         }
-        if (filters.conf === 'Y' && !(log.conf === 'Y' || log.clublog_conf === 'Y')) {
+        if (filters.conf === 'Y' && log.conf_qc === '') {
             return false;
         }
         if (filters.call.length && filters.call.toLowerCase() !== log.call.toLowerCase().substring(0, filters.call.length)) {
@@ -420,9 +420,9 @@ var frm = {
                 '<tr' + (bonus ? " class='bonus' title='Bonus Entity for some QRZ Awards'" : "") + ">" +
                 '<td class="r">' + (log.logNum)+ '</td>' +
                 '<td class="r">' +
-                    (log.conf === 'Y' ?
+                    (log.conf_qc === '1' ?
                         "<div class='conf_q' title='Confirmed in QRZ'></div>"
-                        : (log.clublog_conf === 'Y' ? "<div class='conf_c' title='Confirmed in Clublog'></div>" : '')
+                        : (log.conf_qc === '2' ? "<div class='conf_c' title='Confirmed in Clublog'></div>" : '')
                     ) +
                 '</td>' +
                 '<td class="not-compact multi-qth">' + log.myGsq + '</td>' +
