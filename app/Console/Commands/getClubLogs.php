@@ -52,6 +52,7 @@ class getClubLogs extends Command
                 print "- ERROR for user {$user->call} - {$user->clublog_last_result}\n";
             }
         }
+        Clublog::purgeDupes();
         Clublog::updateLogs();
         return Command::SUCCESS;
     }

@@ -78,11 +78,53 @@ class Clublog extends Model
         return clublog::where('userId', $user->id)->count();
     }
 
-    public static function updateLogs() {
-        $users = User::getClublogUsers();
-        foreach ($users as $user) {
-            Clublog::updateClublogs($user);
+    public static function purgeDupes() {
+        // Fetch all clublog duplicate records for logs
+        $dupes = DB::select("
+            SELECT
+                GROUP_CONCAT(
+                    concat(`cl`.`id`, '|', `cl`.`qsl_received`)
+                    order by
+                        `cl`.`qsl_received`='Y' DESC,
+                        `cl`.`id`
+                ) AS `matches`
+            FROM
+                logs `l`
+            INNER JOIN `clublogs` `cl` ON
+                `l`.`userId` = `cl`.`userId`
+                AND `l`.`date` = `cl`.`date`
+                AND `l`.`time` = `cl`.`time`
+                AND `l`.`call` = `cl`.`call`
+                AND `l`.`band` = `cl`.`band`
+            GROUP BY
+                `l`.`userId`,
+                `l`.`date`,
+                `l`.`time`,
+                `l`.`call`,
+                `l`.`band`
+            HAVING
+                COUNT(*) > 1 AND
+                GROUP_CONCAT(`cl`.`qsl_received`) IN ('Y,N', 'N,Y')"
+        );
+        $purgeIds = [];
+        foreach ($dupes as $dupe) {
+            $conf = false;
+            $entries = explode(',', $dupe->matches);
+            foreach ($entries as $entry) {
+                $bits = explode('|', $entry);
+                if (!$conf && $bits[1] === 'Y') {
+                    $conf = true;
+                } else {
+                    $purgeIds[] = $bits[0];
+                }
+            }
         }
+        foreach ($purgeIds as $id) {
+            DB::statement('DELETE FROM clublogs where ID=' . $id);
+        }
+    }
+
+    public static function updateLogs() {
         DB::statement("
             UPDATE
                 `logs` `l`
