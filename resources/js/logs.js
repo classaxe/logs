@@ -314,6 +314,12 @@ var frm = {
         if (filters.conf === 'Y' && log.conf_qc === '') {
             return false;
         }
+        if (filters.conf === 'Q' && log.conf_qc !== '1') {
+            return false;
+        }
+        if (filters.conf === 'C' && log.conf_qc !== '2') {
+            return false;
+        }
         if (filters.call.length && filters.call.toLowerCase() !== log.call.toLowerCase().substring(0, filters.call.length)) {
             return false;
         }
