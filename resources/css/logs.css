@@ -744,15 +744,21 @@ div.scroll div table.results img {
     padding-right: 0.5em;
     width: 2em;
 }
+#usCountiesState table td.b {
+    border-top: 2px solid #000;
+    background: #fee;
+}
+#usCountiesState table td.pc0 {
+    background: #fdd;
+}
 #usCountiesState table td.pc50 {
     background: #feb;
 }
 #usCountiesState table td.pc100 {
     background: #cfc;
 }
-#usCountiesState table td.b {
-    border-top: 2px solid #000;
-    background: #fee;
+#usCountiesState table td.b.pc0 {
+    background: #fbb;
 }
 #usCountiesState table td.b.pc50 {
     background: #fda;

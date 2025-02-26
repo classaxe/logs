@@ -163,6 +163,10 @@ var frm = {
     },
 
     getStats: async () => {
+        await frm.getStatsUsCounties();
+    },
+
+    getStatsUsCounties: async () => {
         var stats = {};
         await $.ajax({
             type: 'GET',
@@ -194,8 +198,8 @@ var frm = {
                 states += (usState && !dc ? 1 : 0);
                 html += "<th" +
                     (dc ?
-                        ' style="cursor:help; font-style:italic" title="According to QRZ\'s rules, a log in DC counts towards MD for the \'USA 50\' United States Award"'
-                        : (!usState ? ' style="cursor:help; font-style:italic" title="This state does not count towards the QRZ \'USA 50\' United States Award"' : '')
+                            ' style="cursor:help; font-style:italic" title="According to QRZ\'s rules, a log in DC counts towards MD for the \'USA 50\' United States Award"'
+                            : (!usState ? ' style="cursor:help; font-style:italic" title="This state does not count towards the QRZ \'USA 50\' United States Award"' : '')
                     ) +
                     ">" +
                     stats.usCounties[row+column]['sp'] + (usState && !dc ? '' : ' *') + "</th>";
@@ -207,6 +211,7 @@ var frm = {
                     break;
                 }
                 html += "<td" +
+                    (stats.usCounties[row+column]['percent'] === 0 ? ' class="pc0"' : '') +
                     (stats.usCounties[row+column]['percent'] >= 50 && stats.usCounties[row+column]['percent'] < 100 ? ' class="pc50"' : '') +
                     (stats.usCounties[row+column]['percent'] === 100 ? ' class="pc100"' : '') +
                     ">" + stats.usCounties[row+column]['logged'] + "</td>";
@@ -219,6 +224,7 @@ var frm = {
                     break;
                 }
                 html += "<td" +
+                    (stats.usCounties[row+column]['percent'] === 0 ? ' class="pc0"' : '') +
                     (stats.usCounties[row+column]['percent'] >= 50 && stats.usCounties[row+column]['percent'] < 100 ? ' class="pc50"' : '') +
                     (stats.usCounties[row+column]['percent'] === 100 ? ' class="pc100"' : '') +
                     ">" +
@@ -231,6 +237,7 @@ var frm = {
                     break;
                 }
                 html += "<td class='b" +
+                    (stats.usCounties[row+column]['percent'] === 0 ? ' pc0' : '') +
                     (stats.usCounties[row+column]['percent'] >= 50 && stats.usCounties[row+column]['percent'] < 100 ? ' pc50' : '') +
                     (stats.usCounties[row+column]['percent'] === 100 ? ' pc100' : '') +
                     "'>" +

@@ -367,23 +367,28 @@ class Log extends Model
     public static function getLogUsStateCountiesForUser(User $user): array
     {
         $states =
-            Log::Select(
-                'logs.itu',
-                'logs.sp',
-                DB::raw('COUNT(DISTINCT(logs.county)) AS count')
+            State::Select(
+                'states.country',
+                'states.sp',
+                DB::raw("
+                (SELECT
+                    COUNT(DISTINCT(county))
+                FROM
+		            `logs` `l`
+                WHERE
+                    `l`.`itu` = `states`.`country`
+                    AND (`l`.`sp` IN(`states`.`sp`) OR `l`.`itu` IN('Alaska', 'Hawaii', 'Puerto Rico', 'US Virgin Islands'))
+                    AND `county` <> ''
+                    AND `userId` = " . (int)$user->id . ") AS count")
             )
-            ->where('userId', $user->id)
-            ->where('conf', 'Y')
-            ->whereNot('county', '')
-            ->whereIn('itu', ['USA', 'Alaska', 'Hawaii', 'Puerto Rico', 'US Virgin Islands'])
-            ->groupBy('itu', 'sp')
+            ->whereIn('country', ['USA', 'Alaska', 'Hawaii', 'Puerto Rico', 'US Virgin Islands'])
             ->orderBy('sp')
             ->get()
             ->toArray();
         $results = [];
         foreach ($states as $state) {
             $sp = $state['sp'];
-            switch ($state['itu']) {
+            switch ($state['country']) {
                 case 'Alaska':
                     $sp = 'AK';
                     break;
@@ -399,7 +404,7 @@ class Log extends Model
             }
             $results[] = [
                 'sp' =>         $sp,
-                'itu' =>        $state['itu'],
+                'itu' =>        $state['country'],
                 'logged' =>     $state['count'],
                 'total' =>      Log::US_COUNTIES[$sp],
                 'percent' =>    (int)round(100 * ($state['count'] / Log::US_COUNTIES[$sp]))
