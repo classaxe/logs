@@ -759,7 +759,7 @@ div.scroll div table.results img {
     background: #cfc;
 }
 #stats table td.b.pc0 {
-    background: #fbb;
+    background: #fcc;
 }
 #stats table td.b.pc50 {
     background: #fda;
@@ -769,6 +769,7 @@ div.scroll div table.results img {
 }
 #stats table td.confIssues {
     cursor: pointer;
+    background: #faa !important;
     font-weight: bold;
     color: #f00;
 }

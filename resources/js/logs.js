@@ -204,7 +204,10 @@ var frm = {
                 if (typeof stats.countries[row+column] === 'undefined') {
                     break;
                 }
-                html += "<td class='" + (stats.countries[row+column]['confirmed'] === 0 ? 'pc0' : 'pc100') + "'>" +
+                html += "<td class='" +
+                    (stats.countries[row+column]['confirmed'] === 0 ? 'pc0' : 'pc100') +
+                    (stats.countries[row+column]['logged'] !== stats.countries[row+column]['confirmed'] ? ' confIssues' : '') +
+                    "'>" +
                     stats.countries[row+column]['confirmed'] + "</td>";
                 confirmed += (stats.countries[row+column]['confirmed'] > 0 ? 1 : 0);
             }
@@ -219,7 +222,6 @@ var frm = {
             ' - assuming that there are no problems with qualifying logs at QRZ.com.'
         );
     },
-
 
     getStatsUsCounties: async () => {
         var stats = {};
@@ -237,7 +239,6 @@ var frm = {
         for (i = 0; i < stats.usCounties.length; i++) {
             countiesTotal += stats.usCounties[i].total;
         }
-
 
         for (row = 0; row + column < stats.usCounties.length + 10; row += 10) {
             html += "<table><tr><th>State</th>";
@@ -283,8 +284,9 @@ var frm = {
                     (stats.usCounties[row+column]['percent'] === 100 ? 'pc100' : '') +
                     (unconfirmed ? ' confIssues' : '') +
                     "'" +
-                    (unconfirmed ? " title='There are " + unconfirmed + " unconfirmed counties'" : '') +
-                    ">" + stats.usCounties[row+column]['confirmed'] + "</td>";
+                    (unconfirmed ? " title='There " +
+                        (unconfirmed === 1 ? "is one unconfirmed county" : "are " + unconfirmed + " unconfirmed counties") : '') +
+                    "'>" + stats.usCounties[row+column]['confirmed'] + "</td>";
                 counties += stats.usCounties[row+column]['confirmed'];
             }
             html += "</tr>";
