@@ -233,7 +233,7 @@ var frm = {
             }
         })
         let html = '', column = 0, row = 0, i, counties = 0, countiesTotal = 0;
-        let dc = false, usState = false, states = 0;
+        let dc = false, usState = false, states = 0, unconfirmed = 0;
         for (i = 0; i < stats.usCounties.length; i++) {
             countiesTotal += stats.usCounties[i].total;
         }
@@ -264,15 +264,31 @@ var frm = {
                 if (typeof stats.usCounties[row+column] === 'undefined') {
                     break;
                 }
-                html += "<td" +
-                    (stats.usCounties[row+column]['percent'] === 0 ? ' class="pc0"' : '') +
-                    (stats.usCounties[row+column]['percent'] >= 50 && stats.usCounties[row+column]['percent'] < 100 ? ' class="pc50"' : '') +
-                    (stats.usCounties[row+column]['percent'] === 100 ? ' class="pc100"' : '') +
-                    ">" + stats.usCounties[row+column]['logged'] + "</td>";
-                counties += stats.usCounties[row+column]['logged'];
+                html += "<td class='" +
+                    (stats.usCounties[row+column]['percent'] === 0 ? 'pc0' : '') +
+                    (stats.usCounties[row+column]['percent'] >= 50 && stats.usCounties[row+column]['percent'] < 100 ? 'pc50' : '') +
+                    (stats.usCounties[row+column]['percent'] === 100 ? 'pc100' : '') +
+                    "'>" + stats.usCounties[row+column]['logged'] + "</td>";
             }
             html += "</tr>";
-            html += "<tr><th>Total</th>";
+            html += "<tr><th>Confirmed</th>";
+            for (column = 0; column < 10; column++) {
+                if (typeof stats.usCounties[row+column] === 'undefined') {
+                    break;
+                }
+                unconfirmed = stats.usCounties[row+column]['logged'] - stats.usCounties[row+column]['confirmed'];
+                html += "<td class='" +
+                    (stats.usCounties[row+column]['percent'] === 0 ? 'pc0' : '') +
+                    (stats.usCounties[row+column]['percent'] >= 50 && stats.usCounties[row+column]['percent'] < 100 ? 'pc50' : '') +
+                    (stats.usCounties[row+column]['percent'] === 100 ? 'pc100' : '') +
+                    (unconfirmed ? ' confIssues' : '') +
+                    "'" +
+                    (unconfirmed ? " title='There are " + unconfirmed + " unconfirmed counties'" : '') +
+                    ">" + stats.usCounties[row+column]['confirmed'] + "</td>";
+                counties += stats.usCounties[row+column]['confirmed'];
+            }
+            html += "</tr>";
+            html += "<tr><th>Available</th>";
             for (column = 0; column < 10; column++) {
                 if (typeof stats.usCounties[row+column] === 'undefined') {
                     break;

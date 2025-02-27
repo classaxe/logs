@@ -6,6 +6,7 @@ use Adif\adif;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class Log extends Model
 {
@@ -395,25 +396,42 @@ class Log extends Model
 
     public static function getLogUsStateCountiesForUser(User $user): array
     {
+//        DB::enableQueryLog();
         $states =
             State::Select(
                 'states.country',
                 'states.sp',
                 DB::raw("
-                (SELECT
-                    COUNT(DISTINCT(county))
-                FROM
-		            `logs` `l`
-                WHERE
-                    `l`.`itu` = `states`.`country`
-                    AND (`l`.`sp` IN(`states`.`sp`) OR `l`.`itu` IN('Alaska', 'Hawaii', 'Puerto Rico', 'US Virgin Islands'))
-                    AND `county` <> ''
-                    AND `userId` = " . (int)$user->id . ") AS count")
+                    (SELECT
+                        COUNT(DISTINCT(county))
+                    FROM
+                        `logs` `l`
+                    WHERE
+                        `userId` = " . (int)$user->id . "
+                        AND `county` <> ''
+                        AND `l`.`itu` = `states`.`country`
+                        AND (`l`.`itu` IN('Alaska', 'Hawaii', 'Puerto Rico', 'US Virgin Islands') OR `l`.`sp` = `states`.`sp`)
+                    ) AS logged"
+                ),
+                DB::raw("
+                    (SELECT
+                        COUNT(DISTINCT(county))
+                    FROM
+                        `logs` `l`
+                    WHERE
+                        `userId` = " . (int)$user->id . "
+                        AND `county` <> ''
+                        AND `l`.`itu` = `states`.`country`
+                        AND (`l`.`itu` IN('Alaska', 'Hawaii', 'Puerto Rico', 'US Virgin Islands') OR `l`.`sp` = `states`.`sp`)
+                        AND `conf` = 'Y'
+                    ) AS confirmed
+                ")
             )
             ->whereIn('country', ['USA', 'Alaska', 'Hawaii', 'Puerto Rico', 'US Virgin Islands'])
             ->orderBy('sp')
             ->get()
             ->toArray();
+//        print_r(DB::getQueryLog());
         $results = [];
         foreach ($states as $state) {
             $sp = $state['sp'];
@@ -434,9 +452,10 @@ class Log extends Model
             $results[] = [
                 'sp' =>         $sp,
                 'itu' =>        $state['country'],
-                'logged' =>     $state['count'],
+                'logged' =>     $state['logged'],
+                'confirmed' =>  $state['confirmed'],
                 'total' =>      Log::US_COUNTIES[$sp],
-                'percent' =>    (int)round(100 * ($state['count'] / Log::US_COUNTIES[$sp]))
+                'percent' =>    (int)round(100 * ($state['confirmed'] / Log::US_COUNTIES[$sp]))
             ];
         }
         usort($results, function ($a, $b) {

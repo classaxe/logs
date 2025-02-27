@@ -767,3 +767,8 @@ div.scroll div table.results img {
 #stats table td.b.pc100 {
     background: #afa;
 }
+#stats table td.confIssues {
+    cursor: pointer;
+    font-weight: bold;
+    color: #f00;
+}
