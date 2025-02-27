@@ -67,44 +67,53 @@ class User extends Authenticatable implements MustVerifyEmail
     ];
 
     private static function calculateEnclosingCircle($points) {
+
         if (count($points) === 0) {
             return null;
         }
-        // Horrible kludgey hack because the welzl routine doesn't seem to work well beyond 3 points.
-        if (count($points) <= 3) {
-            $pointArr = [];
-            foreach ($points as $point) {
-                $pointArr[] = new Point($point['lon'], $point['lat']);
-            }
 
-            $circle = SmallestEnclosingCircle::makeCircle($pointArr);
-            $center = $circle->getCenter();
-            return [
-                'center' => [$center->getY(), $center->getX()],
-                'radius' => $circle->getRadius() * 99500
-            ];
+        // find max/mins
+        [$xmin, $xmax, $ymin, $ymax] = array_reduce($points, function($acc, $p) {
+            [$x, $y] = [$p['lon'], $p['lat']];
+            if ($x < $acc[0]) $acc[0] = $x;
+            if ($x > $acc[1]) $acc[1] = $x;
+            if ($y < $acc[2]) $acc[2] = $y;
+            if ($y > $acc[3]) $acc[3] = $y;
+            return $acc;
+        }, [INF, -INF, INF, -INF]);
+
+        $xmid = ($xmax + $xmin) / 2;
+        $ymid = ($ymax + $ymin) / 2;
+
+        function latLngToMeters($ll, $latmid) {
+            [$lat, $lng] = $ll;
+            $y = $lat * 111111;
+            $x = $lng * 111111 * cos($latmid * pi() / 180);
+            return [$x, $y];
         }
-        $latSum = 0;
-        $lonSum = 0;
-        foreach ($points as $point) {
-            $latSum += $point['lat'];
-            $lonSum += $point['lon'];
+        function metersToLatLng($m, $latmid) {
+            [$x, $y] = $m;
+            $lat = $y / 111111;
+            $lng = $x / 111111 / cos($latmid * pi() / 180);
+            return [$lat, $lng];
         }
-        $centerLat = $latSum / count($points);
-        $centerLon = $lonSum / count($points);
-        $maxDistance = 0;
-        foreach ($points as $point) {
-            $distance = self::calculateDX($centerLat, $centerLon, $point['lat'], $point['lon']);
-            if ($distance > $maxDistance) {
-                $maxDistance = $distance;
-            }
-        }
+
+        $normalizedPoints = array_map(function($p) use ($xmid, $ymid) {
+            [$x, $y] = latLngToMeters([$p['lat'] - $ymid, $p['lon'] - $xmid], $ymid);
+            return new Point($x, $y);
+        }, $points);
+
+        $normalizedPointCircle = SmallestEnclosingCircle::makeCircle($normalizedPoints);
+        $normalCenter = metersToLatLng([$normalizedPointCircle->getCenter()->getX(), $normalizedPointCircle->getCenter()->getY()], $ymid);
+        $normalCenter[0] += $ymid;
+        $normalCenter[1] += $xmid;
+
         return [
-            'center' => [$centerLat, $centerLon],
-            'radius' => $maxDistance // in meters
+            'center' => $normalCenter,
+            'radius' => $normalizedPointCircle->getRadius()
         ];
     }
-
+    
     private static function calculateDX($latFrom, $lonFrom, $latTo, $lonTo, $earthRadius = 6371000) {
 // Convert from degrees to radians
         $latFrom = deg2rad($latFrom);
