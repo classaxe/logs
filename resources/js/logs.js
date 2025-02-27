@@ -163,8 +163,63 @@ var frm = {
     },
 
     getStats: async () => {
+        await frm.getStatsCountries();
         await frm.getStatsUsCounties();
     },
+
+    getStatsCountries: async () => {
+        var stats = {};
+        await $.ajax({
+            type: 'GET',
+            url: '/stats/' + callsign.replace('/', '-') + '/countries',
+            dataType: 'json',
+            data: stats,
+            success: function (result) {
+                stats.countries = result.data;
+            }
+        })
+        let html = '', column = 0, row = 0, i, countries = 0, confirmed = 0, logged = 0;
+
+        for (row = 0; row + column < stats.countries.length + 10; row += 10) {
+            html += "<table style='width: 100%'><tr><th>Country</th>";
+            for (column = 0; column < 10; column++) {
+                if (typeof stats.countries[row+column] === 'undefined') {
+                    break;
+                }
+                html += "<th style='width: 9%'>" + stats.countries[row+column]['country'] + "</th>";
+            }
+            html += "</tr>";
+            html += "<tr><th>Logged</th>";
+            for (column = 0; column < 10; column++) {
+                if (typeof stats.countries[row+column] === 'undefined') {
+                    break;
+                }
+                html += "<td class='" + (stats.countries[row+column]['logged'] === 0 ? 'pc0' : 'pc100') + "'>" +
+                    stats.countries[row+column]['logged'] + "</td>";
+                logged += (stats.countries[row+column]['logged'] > 0 ? 1 : 0);
+            }
+            html += "</tr>";
+            html += "<tr><th>Confirmed</th>";
+            for (column = 0; column < 10; column++) {
+                if (typeof stats.countries[row+column] === 'undefined') {
+                    break;
+                }
+                html += "<td class='" + (stats.countries[row+column]['confirmed'] === 0 ? 'pc0' : 'pc100') + "'>" +
+                    stats.countries[row+column]['confirmed'] + "</td>";
+                confirmed += (stats.countries[row+column]['confirmed'] > 0 ? 1 : 0);
+            }
+            html += "</tr>";
+            html += "</tr></table>";
+        }
+        $('#countries').html(html);
+        $('#countriesTotal').html(
+            'There are <b>' + confirmed + '</b> confirmed ' + (confirmed === 1 ? 'country' : 'countries') +
+            ' and <b>' + logged + '</b> logged '+ (logged === 1 ? 'country' : 'countries') +
+            ' from a total of <b>' + stats.countries.length + '</b> available ' +
+            ' - assuming that there are no problems with qualifying logs at QRZ.com.'
+        );
+    },
+
 
     getStatsUsCounties: async () => {
         var stats = {};
@@ -177,9 +232,8 @@ var frm = {
                 stats.usCounties = result.data;
             }
         })
-        let html = '';
-        let column = 0, row = 0, i, counties = 0, countiesTotal = 0, states = 0;
-        let dc = false, usState = false;
+        let html = '', column = 0, row = 0, i, counties = 0, countiesTotal = 0;
+        let dc = false, usState = false, states = 0;
         for (i = 0; i < stats.usCounties.length; i++) {
             countiesTotal += stats.usCounties[i].total;
         }

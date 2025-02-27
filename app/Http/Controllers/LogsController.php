@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Log;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
@@ -76,7 +77,8 @@ class LogsController extends Controller
         ]);
     }
 
-    public static function logsStats(string $callsign, $mode) {
+    public static function logsStats(string $callsign, $mode): JsonResponse
+    {
         $callsign = str_replace('-','/', $callsign);
 
         if (!$user = User::getUserByCallsign($callsign)) {
@@ -84,6 +86,11 @@ class LogsController extends Controller
         }
 
         switch ($mode) {
+            case 'countries':
+                return response()->json([
+                    'status' => 200,
+                    'data' => Log::getLogCountriesForUser($user)
+                ], 200);
             case 'usCounties':
                 return response()->json([
                     'status' => 200,

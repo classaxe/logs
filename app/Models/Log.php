@@ -364,6 +364,35 @@ class Log extends Model
         return Log::getDBLogsForUser($user);
     }
 
+    public static function getLogCountriesForUser(User $user): array
+    {
+        return Iso3166::Select(
+                'iso3166.country',
+                DB::raw("
+                    (SELECT
+                        COUNT(DISTINCT (itu))
+                    FROM
+                        `logs` `l`
+                    WHERE
+                        `l`.`itu` = `iso3166`.`country`
+                        AND `userId` = " . (int)$user->id . ") AS logged"
+                ),
+                DB::raw("
+                    (SELECT
+                        COUNT(DISTINCT (itu))
+                    FROM
+                        `logs` `l`
+                    WHERE
+                        `l`.`itu` = `iso3166`.`country`
+                        AND `conf` = 'Y'
+                        AND `userId` = " . (int)$user->id . ") AS confirmed"
+                )
+            )
+            ->orderBy('country')
+            ->get()
+            ->toArray();
+    }
+
     public static function getLogUsStateCountiesForUser(User $user): array
     {
         $states =
