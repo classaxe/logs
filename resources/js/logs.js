@@ -163,8 +163,8 @@ var frm = {
     },
 
     getStats: async () => {
-        await frm.getStatsCountries();
         await frm.getStatsUsCounties();
+        await frm.getStatsCountries();
     },
 
     getStatsCountries: async () => {
@@ -458,7 +458,7 @@ var frm = {
                 frm.compact();
                 frm.count();
                 $('#logUpdated').text(data.lastPulled);
-                frm.stats();
+                frm.info();
                 frm.getGridSquares();
 
                 frm.addLinks();
@@ -660,25 +660,23 @@ var frm = {
         });
         $('#show_list, #show_map, #show_stats').click(function() {
             let id = $(this).attr('id');
-            $(['show_list','show_map', 'show_stats']).each(
-                function(idx, val) {
-                    switch(val) {
-                        case 'show_map':
-                            LMap.drawGridSquares();
-                            break;
-                        case 'show_stats':
-                            frm.getStats();
-                            break;
-                    }
-                    if (val === id) {
-                        $('#' + val).removeClass('is-inactive').addClass('is-active');
-                        $('.' + val.substring(5)).show();
-                    } else {
-                        $('#' + val).removeClass('is-active').addClass('is-inactive');
-                        $('.' + val.substring(5)).hide();
-                    }
+            $(['show_list','show_map', 'show_stats']).each((idx, val) => {
+                switch(val) {
+                    case 'show_map':
+                        LMap.drawGridSquares();
+                        break;
+                    case 'show_stats':
+                        frm.getStats();
+                        break;
                 }
-            );
+                if (val === id) {
+                    $('#' + val).removeClass('is-inactive').addClass('is-active');
+                    $('.' + val.substring(5)).show();
+                } else {
+                    $('#' + val).removeClass('is-active').addClass('is-inactive');
+                    $('.' + val.substring(5)).hide();
+                }
+            });
         });
         var $sortable = $('.sortable');
         $sortable.on('click', function(){
@@ -697,8 +695,13 @@ var frm = {
             $('select[name=sortField]').val($this.data('field'));
             frm.update();
         });
+        $('.quicklinks a').on('click', (e) => {
+            $('html, body').animate({
+                scrollTop: $($.attr(this, 'href')).offset().top
+            }, 500);
+            return false;
+        });
     },
-
     setVal: (source, value)=>  {
         switch(source) {
             case 'band':
@@ -733,7 +736,7 @@ var frm = {
         }
     },
 
-    stats: () => {
+    info: () => {
         let sp = frm.getUniqueValues('sp');
         let cont = frm.getUniqueValues('continent');
         $('#statsQsos').text(logsFiltered.length);
@@ -759,7 +762,7 @@ var frm = {
         $('table.list tbody').html(frm.parseLogs());
         frm.compact();
         frm.count();
-        frm.stats();
+        frm.info();
         frm.getGridSquares();
         frm.addLinks();
         if ($('.map').is(':visible')) {

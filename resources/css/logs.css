@@ -251,10 +251,18 @@ table.list a:hover {
 .stats h1 {
     text-align: left;
 }
-
 h1 a {
     color: blue;
     font-weight: bold;
+    text-decoration: underline;
+}
+.quicklinks {
+    font-weight: bold;
+}
+.quicklinks a {
+    color: #00f;
+}
+.quicklinks a:hover {
     text-decoration: underline;
 }
 
