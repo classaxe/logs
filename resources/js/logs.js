@@ -9,7 +9,9 @@ var filters = {
     myQth: '',
     sp: '',
     itu: '',
-    gsq: ''
+    gsq: '',
+    showAll: false,
+    showMax: 100
 }
 var logs = [];
 var logsFiltered = [];
@@ -50,14 +52,24 @@ var frm = {
     count: () => {
         let all = logs.length;
         let shown = logsFiltered.length;
+        if (filters.showMax >= shown) {
+            filters.showAll = true;
+        }
         let msg = 'Showing ' +
             (all === shown ?
-                'all <b>' + shown
+                (filters.showAll ?
+                    'all'
+                :
+                    'first <b>' + filters.showMax + '</b> of'
+                ) + ' <b>' + shown
             :
                 '<b>' + shown + '</b> of <b>' + all
             ) +
             '</b> log' + (shown ===1 ? '' : 's');
         $('#logCount').html(msg);
+        if (!filters.showAll) {
+            $("#showAll").show();
+        }
     },
 
     getFilters: () => {
@@ -468,9 +480,12 @@ var frm = {
         })
     },
 
-    parseLogs: () => {
+    parseLogs: (showAll) => {
         let html = [];
         let sortField = $('select[name=sortField]').val();
+        showAll = typeof showAll !== 'undefined' ? showAll : false;
+        console.log('Parselogs - showAll is ' + (showAll ? 'true' : 'false'));
+
         switch(sortField) {
             case 'county':
                 sortField = 'countyName'
@@ -500,6 +515,9 @@ var frm = {
                 case 'United Nations':
                     bonus = true;
                     break;
+            }
+            if (!showAll && (idx > filters.showMax)) {
+                return false;
             }
             html.push(
                 '<tr' + (bonus ? " class='bonus' title='Bonus Entity for some QRZ Awards'" : "") + ">" +
@@ -700,6 +718,12 @@ var frm = {
                 scrollTop: $($.attr(this, 'href')).offset().top
             }, 500);
             return false;
+        });
+        $('input[name="showAll"]').on('click', (e) => {
+            filters.showAll = true;
+            $('table.list tbody').html(frm.parseLogs(true));
+            $('#showAll').hide();
+            frm.count();
         });
     },
     setVal: (source, value)=>  {
