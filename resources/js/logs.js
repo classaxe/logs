@@ -87,7 +87,7 @@ var frm = {
         filters.dateFrom =  $('input[name=dateFrom]').val();
         filters.dateTo =    $('input[name=dateTo]').val();
         filters.sp =        $('input[name=sp]').val();
-        filters.itu =       $('input[name=itu]').val().replace(' ','');
+        filters.itu =       $('input[name=itu]').val();
         filters.cont =      $('select[name=cont]').val();
         filters.gsq =       $('input[name=gsq]').val();
     },
@@ -529,7 +529,7 @@ var frm = {
                     ) +
                 '</td>' +
                 '<td class="not-compact multi-qth">' + log.myGsq + '</td>' +
-                '<td class="not-compact multi-qth nowrap">' + log.myQth + '</td>' +
+                '<td data-link="myQth" class="not-compact multi-qth nowrap">' + log.myQth + '</td>' +
                 '<td class="nowrap">' + log.date + '</td>' +
                 '<td class="nowrap">' + log.time + '</td>' +
                 '<td data-link="call">' + log.call + '</td>' +
@@ -735,6 +735,9 @@ var frm = {
             case 'mode':
                 $('input[name=' + source + ']').prop('checked', false);
                 $('input[data-mode=' + value + ']').prop('checked', true);
+                break;
+            case 'myQth':
+                $('select[name=' + source + ']').val(value);
                 break;
             default:
                 $('input[name=' + source + ']').val(value);
