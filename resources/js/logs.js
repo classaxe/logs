@@ -480,10 +480,10 @@ var frm = {
         })
     },
 
-    parseLogs: (showAll) => {
+    parseLogs: () => {
         let html = [];
         let sortField = $('select[name=sortField]').val();
-        showAll = typeof showAll !== 'undefined' ? showAll : false;
+        let showAll = filters.showAll;
         console.log('Parselogs - showAll is ' + (showAll ? 'true' : 'false'));
 
         switch(sortField) {
@@ -719,11 +719,12 @@ var frm = {
             }, 500);
             return false;
         });
-        $('input[name="showAll"]').on('click', (e) => {
-            filters.showAll = true;
-            $('table.list tbody').html(frm.parseLogs(true));
-            $('#showAll').hide();
-            frm.count();
+        $('input[name="showAll"]').on('change', function(e) {
+            filters.showAll = $(this).is(':checked');
+            frm.update();
+            // $('table.list tbody').html(frm.parseLogs());
+            // frm.addLinks();
+            // frm.count();
         });
     },
     setVal: (source, value)=>  {

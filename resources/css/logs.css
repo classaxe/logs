@@ -261,6 +261,9 @@ h1 a {
     font-style: italic;
     font-weight: normal
 }
+#showAll input {
+    margin-left: 0.25em;
+}
 .quicklinks {
     font-weight: bold;
 }
@@ -359,9 +362,6 @@ input[name="dateFrom"],
 input[name="dateTo"]{
     font-weight: bold;
 }
-select[name="myQth"] {
-    font-family: "Courier New", monospace;
-}
 footer {
     margin: 0;
     padding: 1em 0 0 0;
@@ -378,6 +378,9 @@ footer a {
 }
 .logs select {
     padding: 0.125em 2em 0.125em 0.5em !important;
+}
+.logs select[name="myQth"] {
+    font-family: "Helvetica", sans-serif;
 }
 
 /* Table sort indicators */
