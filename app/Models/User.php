@@ -110,7 +110,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
         return [
             'center' => $normalCenter,
-            'radius' => $normalizedPointCircle->getRadius()
+            'radius' => $normalizedPointCircle->getRadius() * 1.0045 // accomodate the edge points better
         ];
     }
     
