@@ -20,9 +20,11 @@ class Log extends Model
         'date' =>       ['lbl' =>   'Date',         'class' => ''],
         'time' =>       ['lbl' =>   'UTC',          'class' => ''],
         'call' =>       ['lbl' =>   'Callsign',     'class' => ''],
+        'qsos' =>       ['lbl' =>   'QSOs',         'class' => ''],
+        'qsoBands' =>   ['lbl' =>   'QSO Bands',    'class' => 'not-compact'],
         'name' =>       ['lbl' =>   'Name',         'class' => 'not-compact'],
-        'band' =>       ['lbl' =>   'Band',         'class' => ''],
         'mode' =>       ['lbl' =>   'Mode',         'class' => ''],
+        'band' =>       ['lbl' =>   'Band',         'class' => ''],
         'rx' =>         ['lbl' =>   'RX',           'class' => 'r'],
         'tx' =>         ['lbl' =>   'TX',           'class' => 'r'],
         'pwr' =>        ['lbl' =>   'Pwr',          'class' => 'r'],
@@ -241,7 +243,7 @@ class Log extends Model
             $b =        $item['band'];
             $num =      preg_replace('/[^0-9]/', '', $b);
             $units =    preg_replace('/[^a-zA-Z]/', '', $b);
-            $v =        ($num ? $num * (strtolower($units) === 'm' ? 1000 : 1) : $b);
+            $v =        ($num ? $num * (strtolower($units) === 'm' ? 100 : 1) : $b);
             $out[$v] =  $item['band'];
         }
         krsort($out);
@@ -262,43 +264,54 @@ class Log extends Model
             }
         }
         $logs = Log::Select(
-            'logs.band',
-            'logs.call',
-            'logs.comment',
-            'logs.conf',
-            'logs.clublog_conf',
-            'logs.continent',
-            'logs.county',
-            'logs.date',
-            'logs.deg',
-            'logs.gsq',
-            'logs.itu',
-            'logs.km',
-            'logs.logNum',
-            'logs.mode',
-            'logs.myGsq',
-            'logs.myQth',
-            'logs.name',
-            'logs.pwr',
-            'logs.qth',
-            'logs.rx',
-            'logs.sp',
-            'logs.time',
-            'logs.tx',
-            'iso3166.flag'
-        )->leftJoin(
-            'iso3166',
-            'logs.itu',
-            '=',
-            'iso3166.country'
-        )
-        ->where('userId', $user->id)
-        ->whereNotIn('myGsq', $hide)
-        ->orderBy('time', 'asc')
-        ->orderBy('date', 'desc')
-        ->get()
-        ->toArray();
-
+                'logs.band',
+                'logs.call',
+                DB::raw("
+                    (SELECT
+                        GROUP_CONCAT(`l`.`band` ORDER BY `l`.`band` desc)
+                    FROM
+                        `logs` `l`
+                    WHERE
+                        `l`.`userId` = `logs`.`userId`
+                        AND `l`.`call` = `logs`.`call`
+                    ) `qsos`"
+                ),
+                'logs.comment',
+                'logs.conf',
+                'logs.clublog_conf',
+                'logs.continent',
+                'logs.county',
+                'logs.date',
+                'logs.deg',
+                'logs.gsq',
+                'logs.itu',
+                'logs.km',
+                'logs.logNum',
+                'logs.mode',
+                'logs.myGsq',
+                'logs.myQth',
+                'logs.name',
+                'logs.pwr',
+                'logs.qth',
+                'logs.rx',
+                'logs.sp',
+                'logs.time',
+                'logs.tx',
+                'iso3166.flag'
+            )->leftJoin(
+                'iso3166',
+                'logs.itu',
+                '=',
+                'iso3166.country'
+            )
+            ->where('userId', $user->id)
+            ->whereNotIn('myGsq', $hide)
+            ->orderBy('time', 'asc')
+            ->orderBy('date', 'desc')
+            ->get()
+            ->toArray();
+//        $sql = Str::replaceArray('?', $query->getBindings(), $query->toSql());
+//        print_r($sql);die;
         foreach ($logs as &$log) {
             $log['conf_qc'] = ($log['conf'] === 'Y' ? '1' : ($log['clublog_conf'] === 'Y' ? '2' : ''));
         }

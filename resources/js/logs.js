@@ -28,7 +28,7 @@ var frm = {
     },
 
     addLinks: () => {
-        $('td[data-link]').each(function() {
+        $('td[data-link], span[data-link]').each(function() {
             let link = $(this).attr('data-link');
             let html = $("<a href=\"#\">" + $(this).html() + "</a>");
             $(html).on('click', function() {
@@ -172,6 +172,32 @@ var frm = {
             gsqs.push(gsqs_tmp[gsq]);
         }
         LMap.fitToBox();
+    },
+
+    getQsos:(qsos)  => {
+        let bands = [];
+        let tmp = qsos.split(',');
+        let band = '';
+        let num = 0;
+        let units = 0;
+        let val = 0;
+        let html = '';
+
+        for (var i=0; i<tmp.length; i++) {
+            band = tmp[i];
+            num = band.replace(/[^0-9\.]/, '');
+            units = band.replace(/[^a-zA-Z]/, '');
+            val = num * (units === 'm' ? 100 : 1);
+            if (typeof bands[val] === 'undefined') {
+                bands[val] = { band: band, count: 0 };
+            }
+            bands[val].count++;
+        }
+        bands.sort();
+        for (i in bands) {
+            html += '<span class="band band' + bands[i].band + '"><span data-link="band">' + bands[i].band + '</span>' + (bands[i].count > 1 ? ' <i>[' + bands[i].count + ']</i>' : '') + '</span>';
+        }
+        return html;
     },
 
     getStats: async () => {
@@ -533,9 +559,11 @@ var frm = {
                 '<td class="nowrap">' + log.date + '</td>' +
                 '<td class="nowrap">' + log.time + '</td>' +
                 '<td data-link="call">' + log.call + '</td>' +
+                '<td class="nowrap">' + (log.qsos.split(',').length) + '</td>' +
+                '<td class="not-compact nowrap">' + frm.getQsos(log.qsos) + '</td>' +
                 '<td class="not-compact">' + log.name + '</td>' +
-                '<td data-link="band"><span class="band band' + log.band + '">' + log.band + '</span></td>' +
                 '<td data-link="mode"><span class="mode m' + log.mode + '">' + log.mode + '</span></td>' +
+                '<td data-link="band"><span class="band band' + log.band + '">' + log.band + '</span></td>' +
                 '<td class="r">' + log.rx + '</td>' +
                 '<td class="r">' + log.tx + '</td>' +
                 '<td class="r">' + log.pwr + '</td>' +
@@ -763,6 +791,7 @@ var frm = {
             });
         }
     },
+
 
     info: () => {
         let sp = frm.getUniqueValues('sp');
