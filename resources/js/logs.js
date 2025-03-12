@@ -32,7 +32,7 @@ var frm = {
             let link = $(this).attr('data-link');
             let html = $("<a href=\"#\">" + $(this).html() + "</a>");
             $(html).on('click', function() {
-                return frm.setVal(link, $(this).text());
+                return frm.setVal(link, $(this).text().split('(')[0].trim());
             })
             $(this).html(html);
         })
@@ -195,7 +195,11 @@ var frm = {
         }
         bands.sort();
         for (i in bands) {
-            html += '<span class="band band' + bands[i].band + '"><span data-link="band">' + bands[i].band + '</span>' + (bands[i].count > 1 ? ' <i>[' + bands[i].count + ']</i>' : '') + '</span>';
+            html +=
+                '<span data-link="band"><span class="band band' + bands[i].band + '">' +
+                bands[i].band +
+                (bands[i].count > 1 ? ' <i>(' + bands[i].count + ')</i>&nbsp;' : '') +
+                '</span></span>';
         }
         return html;
     },
