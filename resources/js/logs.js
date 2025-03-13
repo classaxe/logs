@@ -182,8 +182,10 @@ var frm = {
         let units = 0;
         let val = 0;
         let html = '';
+        let text = [];
 
-        for (var i=0; i<tmp.length; i++) {
+        let count = tmp.length;
+        for (var i=0; i < count; i++) {
             band = tmp[i];
             num = band.replace(/[^0-9\.]/, '');
             units = band.replace(/[^a-zA-Z]/, '');
@@ -200,8 +202,9 @@ var frm = {
                 bands[i].band +
                 (bands[i].count > 1 ? ' <i>(' + bands[i].count + ')</i>&nbsp;' : '') +
                 '</span></span>';
+            text.push(bands[i].band + (bands[i].count > 1 ? ' (' + bands[i].count + ')' : ''));
         }
-        return html;
+        return { count: count, html: html, text: text.join(', ') };
     },
 
     getStats: async () => {
@@ -549,6 +552,7 @@ var frm = {
             if (!showAll && (idx > filters.showMax)) {
                 return false;
             }
+            let qsos = frm.getQsos(log.qsos);
             html.push(
                 '<tr' + (bonus ? " class='bonus' title='Bonus Entity for some QRZ Awards'" : "") + ">" +
                 '<td class="r">' + (log.logNum)+ '</td>' +
@@ -563,8 +567,8 @@ var frm = {
                 '<td class="nowrap">' + log.date + '</td>' +
                 '<td class="nowrap">' + log.time + '</td>' +
                 '<td data-link="call">' + log.call + '</td>' +
-                '<td class="nowrap">' + (log.qsos.split(',').length) + '</td>' +
-                '<td class="not-compact nowrap">' + frm.getQsos(log.qsos) + '</td>' +
+                '<td class="nowrap" title="' + qsos.text + '" style="cursor: pointer">' + qsos.count + '</td>' +
+                '<td class="not-compact nowrap">' + qsos.html + '</td>' +
                 '<td class="not-compact">' + log.name + '</td>' +
                 '<td data-link="mode"><span class="mode m' + log.mode + '">' + log.mode + '</span></td>' +
                 '<td data-link="band"><span class="band band' + log.band + '">' + log.band + '</span></td>' +

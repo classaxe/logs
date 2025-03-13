@@ -20,7 +20,7 @@ class Log extends Model
         'date' =>       ['lbl' =>   'Date',         'class' => ''],
         'time' =>       ['lbl' =>   'UTC',          'class' => ''],
         'call' =>       ['lbl' =>   'Callsign',     'class' => ''],
-        'qsos' =>       ['lbl' =>   'QSOs',         'class' => ''],
+        'qsoCount' =>   ['lbl' =>   'QSOs',         'class' => ''],
         'qsoBands' =>   ['lbl' =>   'QSO Bands',    'class' => 'not-compact'],
         'name' =>       ['lbl' =>   'Name',         'class' => 'not-compact'],
         'mode' =>       ['lbl' =>   'Mode',         'class' => ''],
@@ -264,46 +264,56 @@ class Log extends Model
             }
         }
         $logs = Log::Select(
-                'logs.band',
-                'logs.call',
-                DB::raw("
+            'logs.band',
+            'logs.call',
+            DB::raw("
+                (SELECT
+                    GROUP_CONCAT(`l`.`band`)
+                FROM
+                    `logs` `l`
+                WHERE
+                    `l`.`userId` = `logs`.`userId`
+                    AND `l`.`call` = `logs`.`call`
+                ) `qsos`"
+            ),
+            DB::raw("
                     (SELECT
-                        GROUP_CONCAT(`l`.`band` ORDER BY `l`.`band` desc)
+                        COUNT(*)
                     FROM
                         `logs` `l`
                     WHERE
                         `l`.`userId` = `logs`.`userId`
                         AND `l`.`call` = `logs`.`call`
-                    ) `qsos`"
-                ),
-                'logs.comment',
-                'logs.conf',
-                'logs.clublog_conf',
-                'logs.continent',
-                'logs.county',
-                'logs.date',
-                'logs.deg',
-                'logs.gsq',
-                'logs.itu',
-                'logs.km',
-                'logs.logNum',
-                'logs.mode',
-                'logs.myGsq',
-                'logs.myQth',
-                'logs.name',
-                'logs.pwr',
-                'logs.qth',
-                'logs.rx',
-                'logs.sp',
-                'logs.time',
-                'logs.tx',
-                'iso3166.flag'
-            )->leftJoin(
-                'iso3166',
-                'logs.itu',
-                '=',
-                'iso3166.country'
-            )
+                    ) `qsoCount`"
+            ),
+            'logs.comment',
+            'logs.conf',
+            'logs.clublog_conf',
+            'logs.continent',
+            'logs.county',
+            'logs.date',
+            'logs.deg',
+            'logs.gsq',
+            'logs.itu',
+            'logs.km',
+            'logs.logNum',
+            'logs.mode',
+            'logs.myGsq',
+            'logs.myQth',
+            'logs.name',
+            'logs.pwr',
+            'logs.qth',
+            'logs.rx',
+            'logs.sp',
+            'logs.time',
+            'logs.tx',
+            'iso3166.flag'
+        )->leftJoin(
+            'iso3166',
+            'logs.itu',
+            '=',
+            'iso3166.country'
+        )
             ->where('userId', $user->id)
             ->whereNotIn('myGsq', $hide)
             ->orderBy('time', 'asc')
