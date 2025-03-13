@@ -200,7 +200,7 @@ var frm = {
             html +=
                 '<span data-link="band"><span class="band band' + bands[i].band + '">' +
                 bands[i].band +
-                (bands[i].count > 1 ? ' <i>(' + bands[i].count + ')</i>&nbsp;' : '') +
+                (bands[i].count > 1 ? ' <i>(' + bands[i].count + ')</i>' : '') +
                 '</span></span>';
             text.push(bands[i].band + (bands[i].count > 1 ? ' (' + bands[i].count + ')' : ''));
         }
@@ -531,6 +531,12 @@ var frm = {
         }
         let sortZa = $('input[name=sortZA]').prop('checked') ? false : true;
         if (sortField) {
+            switch (sortField) {
+                case 'qsoCount':
+                case 'km':
+                    sortZa = !sortZa;
+                    break;
+            }
             frm.sortLogs(sortField, sortZa);
         }
         logsFiltered = [];

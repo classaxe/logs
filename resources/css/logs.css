@@ -312,12 +312,12 @@ label.band {
     border: 1px solid #888;
     background-color: grey;
     border-radius: 1em;
-    padding: 0.1em 0.2em 0.2em 0.2em;
+    padding: 0.25em;
     color: white;
     font-size: 0.9em;
     font-family: Arial, Helvetica, sans-serif;
-    line-height: 1em;
-    min-width: 3em;
+    line-height: 1.25em;
+    min-width: 2em;
     text-align:center;
     margin-right: 0.125em;
 }
