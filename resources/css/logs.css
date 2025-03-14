@@ -462,11 +462,13 @@ th.sortable:hover::after {
     width: 15px; height: 15px;
     margin: 0 auto;
     background-image: url("$images/star_c.svg");
+    background-repeat: no-repeat;
 }
 .conf_q {
     width: 15px; height: 15px;
     margin: 0 auto;
     background-image: url("$images/star_q.svg");
+    background-repeat: no-repeat;
 }
 .map {
     margin: 0;

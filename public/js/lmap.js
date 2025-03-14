@@ -354,9 +354,22 @@ var LMap = {
         }
     },
 
-    drawGridSquare: (idx, gsq, bounds, conf) => {
-        let rgb = conf ? '#FF0000' : '#FFFF00';
-        let rgbb = conf ? '#800000' : '#808000';
+    drawGridSquare: (idx, gsq, bounds, conf_qc) => {
+        let rgb, rgbb;
+        switch(conf_qc) {
+            case '1': // QRZ confirmed
+                rgb = '#FF0000';
+                rgbb = '#800000'
+                break;
+            case '2': // Clublog confirmed
+                rgb = '#008080';
+                rgbb = '#002020'
+                break;
+            default: // unconfirmed
+                rgb = '#FFFF00';
+                rgbb = '#808000'
+                break;
+        }
         let square = new google.maps.Rectangle({
             strokeColor: rgbb,
             strokeOpacity: 0.85,
@@ -374,7 +387,7 @@ var LMap = {
             new LMap.TxtOverlay(
                 new google.maps.LatLng(bounds.north - 0.45, bounds.east - 1.5),
                 gsq,
-                'gridLabel ' + (conf ? 'pink' : 'brown')
+                'gridLabel ' + (conf_qc === '1' ? 'pink' : 'brown')
             )
         );
         return square;
@@ -400,7 +413,7 @@ var LMap = {
                 i,
                 gsqs[i].gsq,
                 LMap.gsq4Bounds(gsqs[i].gsq),
-                gsqs[i].conf === 'Y'
+                gsqs[i].conf_qc
             );
             html += LMap.drawGridSquareListEntry(
                 i,
@@ -428,6 +441,7 @@ var LMap = {
     },
 
     drawGridSquareListEntry: (idx, gsq) => {
+        console.log(gsq.conf_qc);
         return "<tr data-id='" + idx + "'>" +
             "<td>" + gsq.gsq +"</td>" +
             "<td class='show_map_bands'>" + gsq.bands_html + "</td>" +
@@ -435,7 +449,12 @@ var LMap = {
             "<td class='r show_map_calls'>" + gsq.bands_count + "</td>" +
             "<td class='r show_map_bands'>" + gsq.calls_count + "</td>" +
             "<td class='r'>" + gsq.logs_count + "</td>" +
-            "<td class='r'>" + gsq.conf + "</td>" +
+            "<td class='r'>" +
+            (gsq.conf_qc === '1' ?
+                    "<div class='conf_q' title='Confirmed in QRZ'></div>"
+                    : (gsq.conf_qc === '2' ? "<div class='conf_c' title='Confirmed in Clublog'></div>" : '')
+            ) +
+            "</td>" +
             "</tr>";
     },
 
@@ -694,13 +713,18 @@ var LMap = {
                 "<td>" + log.rx + "</td>" +
                 "<td>" + log.tx + "</td>" +
                 "<td>" + log.pwr + "</td>" +
-                "<td class='r'>" + log.conf + "</td>" +
+                "<td class='r'>" +
+                (log.conf_qc === '1' ?
+                    "<div class='conf_q' title='Confirmed in QRZ'></div>"
+                    : (log.conf_qc === '2' ? "<div class='conf_c' title='Confirmed in Clublog'></div>" : '')
+                ) +
                 "</tr>";
         }
         let infoHtml =
             "<div class=\"map_info\">" +"" +
             "<h3>" +
-            "<b>Grid Square <strong>" + data.gsq + "</strong></b> - " + data.logs.length +" logs in date order (Square " + (data.conf === 'Y' ? "is" : "not") + " confirmed)" +
+            "<b>Grid Square <strong>" + data.gsq + "</strong></b> - " + data.logs.length +" logs in date order (Square " +
+            (data.conf_qc === '' ? "not confirmed" : "confirmed in " + (data.conf_qc === '1' ? "QRZ.com" : "Clublog")) + ")" +
             "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
             "</h3>" +
             "<table class='results'>" +

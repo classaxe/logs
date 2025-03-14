@@ -113,8 +113,7 @@ var frm = {
                         calls: [],
                         calls_count: 0,
                         calls_html: '',
-                        conf: '',
-                        clublog_conf: '',
+                        conf_qc: '',
                         deg: 0,
                         gsq: gsq,
                         km: 0,
@@ -144,11 +143,17 @@ var frm = {
                         lon: lon_max
                     }];
                 }
-                if (log.conf === 'Y') {
-                    gsqs_tmp[gsq].conf = 'Y'
-                }
-                if (log.clublog_conf === 'Y') {
-                    gsqs_tmp[gsq].conf = 'Y'
+                console.log(log.conf_qc);
+                // log.conf_qc: QRZ = '1', Clublog = '2', unconfirmed = ''
+
+                if (gsqs_tmp[gsq].conf_qc !== '1') {
+                    // Not already confirmed in QRZ
+                    if (log.conf_qc === '2') {
+                        gsqs_tmp[gsq].conf_qc = '2';
+                    }
+                    if (log.conf_qc === '1') {
+                        gsqs_tmp[gsq].conf_qc = '1';
+                    }
                 }
                 gsqs_tmp[gsq].logs.push(log);
                 gsqs_tmp[gsq].bands[log.band] = log.band;
