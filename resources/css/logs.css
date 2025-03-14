@@ -470,6 +470,11 @@ th.sortable:hover::after {
     background-image: url("$images/star_q.svg");
     background-repeat: no-repeat;
 }
+span.conf_c,
+span.conf_q {
+    display: inline-block;
+    align-content: baseline;
+}
 .map {
     margin: 0;
 }

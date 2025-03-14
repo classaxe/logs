@@ -30,8 +30,8 @@
             <label><input type="radio" id="conf_Y" name="conf" value="Y">Y</label>
             <label><input type="radio" id="conf_N" name="conf" value="N">N</label>
             @if($user->clublog_call)
-                <label><input type="radio" id="conf_Q" name="conf" value="Q" title="QRZ Only">QRZ</label>
-                <label><input type="radio" id="conf_C" name="conf" value="C" title="Clublog Only">CL</label>
+                <label><input type="radio" id="conf_Q" name="conf" value="Q" title="QRZ Only"><span class="conf_q"></span>QRZ</label>
+                <label><input type="radio" id="conf_C" name="conf" value="C" title="Clublog Only"><span class="conf_c"></span>Clublog</label>
             @endif
             <label><input type="radio" id="conf_All" name="conf" value="" checked="checked">All</label>
         </div><br>
