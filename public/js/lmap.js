@@ -460,73 +460,79 @@ var LMap = {
 
     drawLocations: () => {
         $(locations).each(function(idx, l) {
-            let a, d, gsq, home, i, icon, lat, lng, logs, n, name, nFull, p;
-            d = l.days;
-            logs = l.logs;
-            lat = l.lat;
-            lng = l.lng;
-            home = l.home;
-            name = l.name;
-            gsq = l.gsq;
-
-            icon = l.pota !=='' ? '/green-pushpin.png' : (home ? '/blue-pushpin.png' : '/yellow-pushpin.png');
-            a = new google.maps.Marker({
-                position: { lat: lat, lng: lng },
+            let icon = l.pota !=='' ? '/green-pushpin.png' : (l.home ? '/blue-pushpin.png' : '/yellow-pushpin.png');
+            let a = new google.maps.Marker({
+                position: { lat: l.lat, lng: l.lng },
                 map: LMap.map,
                 icon: {
-                    scaledSize: (home ? new google.maps.Size(30,30) : new google.maps.Size(20,20)),
+                    scaledSize: (l.home ? new google.maps.Size(30,30) : new google.maps.Size(20,20)),
                     url: base_image + icon
                 },
                 title: l.name,
                 zIndex: 100
             });
-            if (!l.pota) {
-                a.addListener('click', function() {
-                    let g = LMap.convertDegGsq(lat, lng);
-                    let html =
-                        "<div class=\"map_info\">" +
-                        "<h3><b>" + qth.call + "</b> - " + qth.name + " @ <b>" + gsq + "</b>" +
-                        "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
-                        "</h3>" +
-                        "<p>" + name + "</p>" +
-                        "</div>";
-                    LMap.infoWindow.setContent(html);
-                    LMap.infoWindow.set('pixelOffset', new google.maps.Size(0, -20));
-                    LMap.infoWindow.setPosition(new google.maps.LatLng(lat, lng));
-                    LMap.infoWindow.open(LMap.map);
-                    setTimeout(() => {
-                        $('#close').focus();
-                    }, 10);
-                });
-                layers.locs.push(a);
+            if (l.pota) {
+                LMap.drawLocationPota(l, a);
             } else {
-                p = l.name.split(' ')[1];
-                n = l.name . substring(14);
-                nFull = LMap.strTr(n, LMap.arrayFlip(LMap.nameSubs));
-                a.addListener('click', function() {
-                    let g = l.gsq;
-                    let html =
-                        "<div class=\"map_info\">" + "" +
-                        "<h3>POTA: <strong><a style=\"color: #00f\" href=\"https://pota.app/#/park/" + p + "\" target='_blank'>" + p + "</a></strong>" +
-                        "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
-                        "</h3>" +
-                        "<p><b><a href='https://k7fry.com/grid/?qth=" + g + "' style='color: #00f' target='_blank'>" + g + "</a> &nbsp " +
-                        "<span title='" + nFull + "'>" + n + "</span>" +
-                        " &nbsp; <a href='https://google.com/maps/place/" + lat + "," + lng + "' class='btn o' target='_blank'>Goto</a>" +
-                        " <a href='#' title=\"Get Potashell command for this location\" class='btn blk' target='_blank' onclick=\"return LMap.copyToClipboard('potashell " + p + " " + g + "')\">PS</a>" +
-                        "</b></p>" +
-                        "<p>Sessions: <b>" + d + "</b>, <a href='/logs/" + qth.call.replace('/', '-') + "/?q[]=myQth|" + l.name + "' style='color: #00f' target='_blank'>Logs: <b>" + logs + "</b></a></p>";
-                    LMap.infoWindow.setContent(html);
-                    LMap.infoWindow.set('pixelOffset', new google.maps.Size(0, -20));
-                    LMap.infoWindow.setPosition(new google.maps.LatLng(lat, lng));
-                    LMap.infoWindow.open(LMap.map);
-                    setTimeout(() => {
-                        $('#close').focus();
-                    }, 10);
-                });
-                layers.potaV.push(a);
+                LMap.drawLocationOther(l, a);
             }
         });
+    },
+
+    drawLocationOther: (l, a) => {
+        a.addListener('click', function() {
+            let html =
+                "<div class=\"map_info\">" +
+                "<h3><b>" + qth.call + "</b> - " + qth.name + " @ <b>" +
+                "<a href='https://k7fry.com/grid/?qth=" + l.gsq + "' style='color: #00f' target='_blank'>" + l.gsq + "</a>" +
+                "</b>" +
+                "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
+                "</h3>" +
+                "<p>" + l.name + "</p>" +
+                "<p>Sessions: <b>" + l.days + "</b>, " +
+                "<a href='/logs/" + qth.call.replace('/', '-') + "/?q[]=myQth|" + l.name + "'" +
+                " style='color: #00f' target='_blank'>Logs: <b>" + l.logs + "</b></a></p></div>";
+            LMap.infoWindow.setContent(html);
+            LMap.infoWindow.set('pixelOffset', new google.maps.Size(0, -20));
+            LMap.infoWindow.setPosition(new google.maps.LatLng(l.lat, l.lng));
+            LMap.infoWindow.open(LMap.map);
+            setTimeout(() => {
+                $('#close').focus();
+            }, 10);
+        });
+        layers.locs.push(a);
+    },
+
+    drawLocationPota: (l, a) => {
+        let p = l.name.split(' ')[1];
+        let n = l.name . substring(14);
+        let nFull = LMap.strTr(n, LMap.arrayFlip(LMap.nameSubs));
+        a.addListener('click', function() {
+            let html =
+                "<div class=\"map_info\">" + "" +
+                "<h3>POTA: " +
+                "<strong><a style=\"color: #00f\" href=\"https://pota.app/#/park/" + p + "\" target='_blank'>" + p + "</a></strong>" +
+                "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
+                "</h3>" +
+                "<p><b>" +
+                "<a href='https://k7fry.com/grid/?qth=" + l.gsq + "' style='color: #00f' target='_blank'>" + l.gsq + "</a>" +
+                " &nbsp " + "<span title='" + nFull + "'>" + n + "</span>" +
+                " &nbsp; <a href='https://google.com/maps/place/" + l.lat + "," + l.lng + "' class='btn o' target='_blank'>Goto</a>" +
+                " <a href='#' title=\"Get Potashell command for this location\" class='btn blk' target='_blank'" +
+                " onclick=\"return LMap.copyToClipboard('potashell " + p + " " + l.gsq + "')\">PS</a>" +
+                "</b></p>" +
+                "<p>Sessions: <b>" + l.days + "</b>, " +
+                "<a href='/logs/" + qth.call.replace('/', '-') + "/?q[]=myQth|" + l.name + "'" +
+                " style='color: #00f' target='_blank'>Logs: <b>" + l.logs + "</b></a></p></div>";
+            LMap.infoWindow.setContent(html);
+            LMap.infoWindow.set('pixelOffset', new google.maps.Size(0, -20));
+            LMap.infoWindow.setPosition(new google.maps.LatLng(l.lat, l.lng));
+            LMap.infoWindow.open(LMap.map);
+            setTimeout(() => {
+                $('#close').focus();
+            }, 10);
+        });
+        layers.potaV.push(a);
     },
 
     drawPotaUnvisited: () => {
