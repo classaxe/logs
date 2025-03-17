@@ -688,7 +688,16 @@ class Log extends Model
     public static function getQthsForUser(User $user): array
     {
         $hideGsqs = User::getHideGsqsForUser($user);
-        $items = Log::selectRaw('COUNT(*) as logCount, MIN(date) as logFirst, MAX(date) as logLast, COUNT(DISTINCT date) as logDays, myGsq, myQth')
+        $items = Log::selectRaw('
+                COUNT(*) as logCount,
+                MIN(date) as logFirst,
+                MAX(date) as logLast,
+                COUNT(DISTINCT date) as logDays,
+                COUNT(DISTINCT band) as logBands,
+                GROUP_CONCAT(DISTINCT band ORDER BY band) as logBandNames,
+                myGsq,
+                myQth'
+            )
             ->where('userId', $user->id)
             ->whereNotIn('myGsq', $hideGsqs)
             ->groupBy('myQth', 'myGsq')
@@ -704,15 +713,17 @@ class Log extends Model
             $lat = $latlon['lat'];
             $lon = $latlon['lon'];
             $out[$item['myQth']] = [
-                'gsq' =>        $item['myGsq'],
-                'home' =>       $lat === $user['lat'] && $lon === $user['lon'] || count(array_keys($myQthNames)) === 1,
-                'lat' =>        $latlon['lat'],
-                'lon' =>        $latlon['lon'],
-                'logs' =>       $item['logCount'],
-                'logDays' =>    $item['logDays'],
-                'logFirst' =>   $item['logFirst'],
-                'logLast' =>    $item['logLast'],
-                'pota' =>       str_contains($item['myQth'], 'POTA:') ? explode(' ', $item['myQth'])[1] : ""
+                'gsq' =>            $item['myGsq'],
+                'home' =>           $lat === $user['lat'] && $lon === $user['lon'] || count(array_keys($myQthNames)) === 1,
+                'lat' =>            $latlon['lat'],
+                'lon' =>            $latlon['lon'],
+                'logs' =>           $item['logCount'],
+                'logBands' =>       $item['logBands'],
+                'logBandNames' =>   $item['logBandNames'],
+                'logDays' =>        $item['logDays'],
+                'logFirst' =>       $item['logFirst'],
+                'logLast' =>        $item['logLast'],
+                'pota' =>           str_contains($item['myQth'], 'POTA:') ? explode(' ', $item['myQth'])[1] : ""
             ];
         }
         ksort($out);

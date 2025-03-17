@@ -105,9 +105,10 @@
                     {{ $u->log_count }}
                     @if(Auth::user() && Auth::user()->admin)<a class="u_logs_purge" href="#" title="Removes all logs for {{ $u->call }}">Purge</a>@endif
                 </td>
-                <td class="r">
-                    @if($u->qth_count>0)<a href="{{ route('summaryMap', ['callsign' => str_replace('/', '-', $u->call)]) }}" title="View Locations Map" target="_blank">{{ $u->qth_count }}</a>
-                    @else{{ $u->qth_count }}
+                <td class="r" style="font-style: normal">
+                    @if($u->qth_count>0)
+                        <a href="{{ route('summaryMap', ['callsign' => str_replace('/', '-', $u->call)]) }}" title="View Locations Map" target="_blank">{{ $u->qth_count }}</a>
+                        <a href="{{ route('summary', ['callsign' => str_replace('/', '-', $u->call)]) }}" title="View Locations Summary" target="_blank">ℹ️</a>
                     @endif
                 </td>
                 <td class="mobile">

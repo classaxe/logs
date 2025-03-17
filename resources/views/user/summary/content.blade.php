@@ -22,6 +22,7 @@
             @if(!$hidestats)
                 <th>Dates</th>
                 <th title="Days actively logging">*Days</th>
+                <th>Bands</th>
                 <th>Logs</th>
             @endif
         </tr>
@@ -67,8 +68,10 @@
                         <td>{{ $q['logFirst'] }}@if($q['logDays'] === 2), {{ $q['logLast'] }}@endif
                             @if($q['logDays'] > 2) - {{ $q['logLast'] }}@endif</td>
                         <td class="r">{{ $q['logDays'] }}</td>
+                        <td class="r help" title="{{ str_replace(',', ', ', $q['logBandNames']) }}">{{ $q['logBands'] }}</td>
                         <td class="r">{{ $q['logs'] }}</td>
                     @else
+                        <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
@@ -82,6 +85,7 @@
                 <td{{ ($user->pota ? ' colspan=2' : '') }}><a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}" style="font-weight: normal" target="_blank">({{ count($qths) ===2 ? 'Both' : 'All ' . count($qths) }} locations)</a></td>
                 <td style="white-space: nowrap">{{ substr($user['first_log'], 0, 10) }}@if(substr($user['first_log'], 0, 10) !== substr($user['last_log'], 0, 10)) - {{ substr($user['last_log'], 0, 10) }}@endif</td>
                 <td class="r">{{ $user['log_days'] ?: 0 }}</td>
+                <td>&nbsp;</td>
                 <td class="r">{{ $user['log_count'] }}</td>
             </tr>
         @endif
