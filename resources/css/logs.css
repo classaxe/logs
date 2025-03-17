@@ -248,6 +248,11 @@ table.list a:hover {
     font-size: 80%;
     margin: 0 auto;
 }
+.summary table td.statsinfo {
+    cursor: pointer;
+    font-weight: bold;
+    text-decoration: underline;
+}
 .stats h1 {
     text-align: left;
 }
@@ -795,4 +800,11 @@ div.scroll div table.results img {
     background: #faa !important;
     font-weight: bold;
     color: #f00;
+}
+
+#stats table td.wrongSp {
+    cursor: pointer;
+    background: #ccf !important;
+    font-weight: bold;
+    color: #00f;
 }

@@ -441,7 +441,6 @@ var LMap = {
     },
 
     drawGridSquareListEntry: (idx, gsq) => {
-        console.log(gsq.conf_qc);
         return "<tr data-id='" + idx + "'>" +
             "<td>" + gsq.gsq +"</td>" +
             "<td class='show_map_bands'>" + gsq.bands_html + "</td>" +

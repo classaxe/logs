@@ -143,7 +143,6 @@ var frm = {
                         lon: lon_max
                     }];
                 }
-                console.log(log.conf_qc);
                 // log.conf_qc: QRZ = '1', Clublog = '2', unconfirmed = ''
 
                 if (gsqs_tmp[gsq].conf_qc !== '1') {
@@ -286,6 +285,7 @@ var frm = {
         })
         let html = '', column = 0, row = 0, i, counties = 0, countiesTotal = 0;
         let dc = false, usState = false, states = 0, unconfirmed = 0;
+        let wrongSpLogs = '', wrongSpCount = 0;
         for (i = 0; i < stats.usCounties.length; i++) {
             countiesTotal += stats.usCounties[i].total;
         }
@@ -320,6 +320,22 @@ var frm = {
                     (stats.usCounties[row+column]['percent'] >= 50 && stats.usCounties[row+column]['percent'] < 100 ? 'pc50' : '') +
                     (stats.usCounties[row+column]['percent'] === 100 ? 'pc100' : '') +
                     "'>" + stats.usCounties[row+column]['logged'] + "</td>";
+            }
+            html += "</tr>";
+            html += "<tr><th style='white-space: nowrap'>Wrong State</thstyle>";
+            for (column = 0; column < 10; column++) {
+                if (typeof stats.usCounties[row+column] === 'undefined') {
+                    break;
+                }
+                wrongSpCount = stats.usCounties[row+column]['wrongSpCount'];
+                html += "<td class='" +
+                    (wrongSpCount === 0 ? '' : 'wrongSp') +
+                    "'" +
+                    (wrongSpCount ? " title='There " +
+                        (wrongSpCount === 1 ? "is one county in the wrong state:\n\n" : "are " + wrongSpCount + " counties in the wrong state:\n\n") +
+                        stats.usCounties[row+column]['wrongSpLogs']
+                        :
+                    '') + "'>" + wrongSpCount + "</td>";
             }
             html += "</tr>";
             html += "<tr><th>Confirmed</th>";
@@ -816,12 +832,13 @@ var frm = {
         let sp = frm.getUniqueValues('sp');
         let cont = frm.getUniqueValues('continent');
         $('#statsQsos').text(logsFiltered.length);
+        $('#statsCalls').text(frm.getUniqueValues('call').count);
         $('#statsCounties').html(frm.getUniqueValuesStats('county'));
         $('#statsSps').html(frm.getUniqueValuesStats('sp'));
         $('#statsItus').html(frm.getUniqueValuesStats('itu'));
         $('#statsContinents').html(frm.getUniqueValuesStats('continent'));
-        $('#statsCalls').text(frm.getUniqueValues('call').count);
         $('#statsGsqs').text(frm.getUniqueValues('gsq').count);
+        $('#statsBands').html(frm.getUniqueValuesStats('band'));
         $('#statsItuBands').text(frm.getUniqueValues('ituband').count);
         $('#statsCallBands').text(frm.getUniqueValues('callband').count);
     },

@@ -6,6 +6,10 @@
                     <th>
                         QSOs
                     </th>
+                    <th title="Confirmed logs qualify for QRZ 'World Radio Friendship' and '30 Years of QRZ' Awards" style="cursor: help">
+                        <span>&#9432;</span>
+                        Callsigns
+                    </th>
                     <th title="Gridsquares
 Confirmed logs qualify for QRZ 'Grid Squared' Awards" style="cursor: help">
                         <span>&#9432;</span>
@@ -29,9 +33,8 @@ Confirmed USA logs qualify for QRZ 'United States' Award - remember to add Alask
                         <span>&#9432;</span>
                         Continents
                     </th>
-                    <th title="Confirmed logs qualify for QRZ 'World Radio Friendship' and '30 Years of QRZ' Awards" style="cursor: help">
-                        <span>&#9432;</span>
-                        Callsigns
+                    <th>
+                        Bands
                     </th>
                     <th title="Confirmed logs qualify for QRZ 'Master of Communications' Awards -
 Add Bonus Entities such as United Nations and ITU Geneva if you have them." style="cursor: help">
@@ -46,12 +49,13 @@ Add Bonus Entities such as United Nations and ITU Geneva if you have them." styl
             <tbody>
                 <tr>
                     <td id="statsQsos"></td>
-                    <td id="statsGsqs"></td>
-                    <td id="statsCounties"></td>
-                    <td id="statsSps"></td>
-                    <td id="statsItus"></td>
-                    <td id="statsContinents"></td>
                     <td id="statsCalls"></td>
+                    <td id="statsGsqs"></td>
+                    <td id="statsCounties" class="statsinfo"></td>
+                    <td id="statsSps" class="statsinfo"></td>
+                    <td id="statsItus" class="statsinfo"></td>
+                    <td id="statsContinents" class="statsinfo"></td>
+                    <td id="statsBands" class="statsinfo"></td>
                     <td id="statsItuBands"></td>
                     <td id="statsCallBands"></td>
                 </tr>

@@ -419,7 +419,7 @@ class Log extends Model
 
     public static function getLogUsStateCountiesForUser(User $user): array
     {
-//        DB::enableQueryLog();
+        // DB::enableQueryLog();
         $states =
             State::Select(
                 'states.country',
@@ -434,6 +434,7 @@ class Log extends Model
                         AND `county` <> ''
                         AND `l`.`itu` = `states`.`country`
                         AND (`l`.`itu` IN('Alaska', 'Hawaii', 'Puerto Rico', 'US Virgin Islands') OR `l`.`sp` = `states`.`sp`)
+                        AND SUBSTR(`l`.`county`, 1, 2) = `l`.`sp`
                     ) AS logged"
                 ),
                 DB::raw("
@@ -446,15 +447,42 @@ class Log extends Model
                         AND `county` <> ''
                         AND `l`.`itu` = `states`.`country`
                         AND (`l`.`itu` IN('Alaska', 'Hawaii', 'Puerto Rico', 'US Virgin Islands') OR `l`.`sp` = `states`.`sp`)
+                        AND SUBSTR(`l`.`county`, 1, 2) = `l`.`sp`
                         AND `conf` = 'Y'
                     ) AS confirmed
-                ")
+                "),
+                DB::raw("
+                    (SELECT
+                        COUNT(DISTINCT(county))
+                    FROM
+                        `logs` `l`
+                    WHERE
+                        `userId` = " . (int)$user->id . "
+                        AND `county` <> ''
+                        AND `l`.`itu` = `states`.`country`
+                        AND (`l`.`itu` IN('Alaska', 'Hawaii', 'Puerto Rico', 'US Virgin Islands') OR `l`.`sp` = `states`.`sp`)
+                        AND SUBSTR(`l`.`county`, 1, 2) != `l`.`sp`
+                    ) AS wrongSpCount"
+                ),
+                DB::raw("
+                    (SELECT
+                        GROUP_CONCAT(CONCAT(' * ', `date`, ' ', `time`, ' ', `call`, ' ', `band`, '\n    SP:', `sp`, ' ITU:', `itu`, ' County:', county) SEPARATOR '\n\n')
+                    FROM
+                        `logs` `l`
+                    WHERE
+                        `userId` = " . (int)$user->id . "
+                        AND `county` <> ''
+                        AND `l`.`itu` = `states`.`country`
+                        AND (`l`.`itu` IN('Alaska', 'Hawaii', 'Puerto Rico', 'US Virgin Islands') OR `l`.`sp` = `states`.`sp`)
+                        AND SUBSTR(`l`.`county`, 1, 2) != `l`.`sp`
+                    ) AS wrongSpLogs"
+                ),
             )
             ->whereIn('country', ['USA', 'Alaska', 'Hawaii', 'Puerto Rico', 'US Virgin Islands'])
             ->orderBy('sp')
             ->get()
             ->toArray();
-//        print_r(DB::getQueryLog());
+        // print_r(DB::getQueryLog());
         $results = [];
         foreach ($states as $state) {
             $sp = $state['sp'];
@@ -473,12 +501,14 @@ class Log extends Model
                     break;
             }
             $results[] = [
-                'sp' =>         $sp,
-                'itu' =>        $state['country'],
-                'logged' =>     $state['logged'],
-                'confirmed' =>  $state['confirmed'],
-                'total' =>      Log::US_COUNTIES[$sp],
-                'percent' =>    (int)round(100 * ($state['confirmed'] / Log::US_COUNTIES[$sp]))
+                'sp' =>             $sp,
+                'itu' =>            $state['country'],
+                'logged' =>         $state['logged'],
+                'confirmed' =>      $state['confirmed'],
+                'wrongSpCount' =>   $state['wrongSpCount'],
+                'wrongSpLogs' =>    $state['wrongSpLogs'],
+                'total' =>          Log::US_COUNTIES[$sp],
+                'percent' =>        (int)round(100 * ($state['confirmed'] / Log::US_COUNTIES[$sp]))
             ];
         }
         usort($results, function ($a, $b) {
@@ -725,20 +755,28 @@ class Log extends Model
             }
             try {
                 $itu =      $i['COUNTRY'];
-                $sp =       $i['STATE'] ?? '';
                 $county =   $i['CNTY'] ?? '';
                 switch ($itu) {
                     case 'Australia':
                     case 'Canada':
-                        $county = '';
+                        $county =   '';
+                        $sp =       $i['STATE'] ?? '';
                         break;
                     case 'Alaska':
+                        $sp = 'AK';
+                        break;
                     case 'Hawaii':
+                        $sp = 'HI';
+                        break;
                     case 'Puerto Rico':
+                        $sp = 'PR';
+                        break;
                     case 'US Virgin Islands':
+                        $sp = 'VI';
                         break;
                     case 'United States':
-                        $itu = 'USA';
+                        $itu =  'USA';
+                        $sp =   $i['STATE'] ?? '';
                         break;
                     default:
                         $sp = '';
