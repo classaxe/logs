@@ -99,11 +99,6 @@
     white-space: nowrap;
     overflow: hidden;
 }
-#qthinfo table th.dates,
-#qthinfo table td.dates {
-    white-space: wrap;
-    max-width: 9em;
-}
 #qthinfo table .bandnames {
     white-space: nowrap;
 }
