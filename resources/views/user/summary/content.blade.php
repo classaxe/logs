@@ -31,16 +31,14 @@
         @if(Auth::user() && (Auth::user()->admin || $user->call === Auth::user()->call))
             <tr>
                 <form method="get" action="{{ $url }}">
-                    <td class="test">
+                    <td colspan="{{ ($user->pota ? 1 : 0) + ($hidestats ? 2 : 6) }}">
                         <input type="hidden" name="action" value="testgsq">
                         @if($hidestats)
                             <input type="hidden" name="hidestats" value="1">
                         @endif
-                        <input type="text" name="testgsq" value="{{ request('testgsq') ?? '' }}"
+                        <input type="text" class="test" name="testgsq" value="{{ request('testgsq') ?? '' }}"
                                pattern="^(?:[a-rA-R]{2}[0-9]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}|[a-rA-R]{2}[0-9]{2}[a-xA-X]{2}[0-9]{2})$"
                                title="Valid 4, 6 or 8 character grid square">
-                    </td>
-                    <td colspan="{{ ($user->pota ? 1 : 0) + ($hidestats ? 2 : 4) }}">
                         &lt;-- Test a gridsquare here
                         <input style="float:right" type="submit" class="btn b" value="Test">
                     </td>
@@ -73,11 +71,11 @@
                     @if(isset($q['logFirst']))
                         <td class="dates">{{ $q['logFirst'] }}@if($q['logDays'] === 2), {{ $q['logLast'] }}@endif
                             @if($q['logDays'] > 2) - {{ $q['logLast'] }}@endif</td>
-                        <td class="r">{{ $q['logDays'] }}</td>
-                        <td class="bandnames">{{ COUNT(explode(',', $q['logBandNames'])) }}
+                        <td class="r"><strong>{{ $q['logDays'] }}</strong></td>
+                        <td class="bandnames"><strong>{{ COUNT(explode(',', $q['logBandNames'])) }}</strong>
                             @foreach(explode(',', $q['logBandNames']) as $band)<span class="band band{{ $band }}">{{$band}}</span>@endforeach
                         </td>
-                        <td class="r">{{ $q['logs'] }}</td>
+                        <td class="r"><strong>{{ $q['logs'] }}</strong></td>
                     @else
                         <td>&nbsp;</td>
                         <td>&nbsp;</td>
@@ -92,9 +90,9 @@
                 <td><a href="{{ route('summaryMap', ['callsign' => str_replace('/', '-', $user->call)]) }}" title="Show map" target="_blank">Totals</a></td>
                 <td{{ ($user->pota ? ' colspan=2' : '') }}><a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}" style="font-weight: normal" target="_blank">({{ count($qths) ===2 ? 'Both' : 'All ' . count($qths) }} locations)</a></td>
                 <td class="dates">{{ substr($user['first_log'], 0, 10) }}@if(substr($user['first_log'], 0, 10) !== substr($user['last_log'], 0, 10)) - {{ substr($user['last_log'], 0, 10) }}@endif</td>
-                <td class="r">{{ $user['log_days'] ?: 0 }}</td>
+                <td class="r"><strong>{{ $user['log_days'] ?: 0 }}</strong></td>
                 <td>&nbsp;</td>
-                <td class="r">{{ $user['log_count'] }}</td>
+                <td class="r"><strong>{{ $user['log_count'] }}</strong></td>
             </tr>
         @endif
         </tbody>

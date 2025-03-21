@@ -62,10 +62,11 @@
 #qthinfo table thead th {
     background: #888;
     color: #fff;
-    font-family: Figtree,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji"
+    font-family: Figtree,ui-sans-serif,system-ui,sans-serif,"Apple Color Emoji","Segoe UI Emoji",Segoe UI Symbol,"Noto Color Emoji";
 }
 #qthinfo table tbody td {
-    font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace
+    font-family: ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace;
+    font-size: 70%;
 }
 #qthinfo table tbody tr.totals td {
     font-weight: bold;
@@ -101,7 +102,7 @@
 #qthinfo table th.dates,
 #qthinfo table td.dates {
     white-space: wrap;
-    max-width: 8em;
+    max-width: 9em;
 }
 #qthinfo table .bandnames {
     white-space: nowrap;
@@ -124,16 +125,16 @@
     background-color: #ff8;
     text-decoration: underline;
 }
-#qthinfo table td.test {
+#qthinfo table td input.test {
     background: #afa;
 }
-#qthinfo table td.test input,
-#qthinfo table td.test input:focus {
-    border: none !important;
+#qthinfo table td input.test,
+#qthinfo table td input.test:focus {
+    border: 1px solid #008;
     padding: 0;
     color: #040;
     font-weight: bold;
-    background: transparent;
+    background: #c0ffc0;
 }
 #qthinfo p.cta {
     margin-top: 0.5em;
