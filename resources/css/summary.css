@@ -91,6 +91,25 @@
     text-decoration: underline;
     cursor: pointer;
 }
+#qthinfo table th.qth,
+#qthinfo table td.qth {
+    max-width: 20em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+#qthinfo table th.dates,
+#qthinfo table td.dates {
+    white-space: wrap;
+    max-width: 8em;
+}
+#qthinfo table .bandnames {
+    white-space: nowrap;
+}
+#qthinfo table span.band {
+    margin: 0 0.1em;
+    padding: 0.05em 0.25em;
+}
 #qthinfo table td a {
     text-decoration: none;
     color: #00f;

@@ -694,7 +694,7 @@ class Log extends Model
                 MAX(date) as logLast,
                 COUNT(DISTINCT date) as logDays,
                 COUNT(DISTINCT band) as logBands,
-                GROUP_CONCAT(DISTINCT band ORDER BY band) as logBandNames,
+                GROUP_CONCAT(DISTINCT band ORDER BY CAST(band AS FLOAT) DESC) as logBandNames,
                 myGsq,
                 myQth'
             )

@@ -17,10 +17,10 @@
         <thead>
         <tr>
             <th>Grid</th>
-            <th>Location (Click for logs)</th>
+            <th class="qth">Location (Click for logs)</th>
             @if($user->pota)<th>POTA</th>@endif
             @if(!$hidestats)
-                <th>Dates</th>
+                <th class="dates">Dates</th>
                 <th title="Days actively logging">*Days</th>
                 <th>Bands</th>
                 <th>Logs</th>
@@ -55,7 +55,13 @@
                 <td class="gsq" title="Lat: {{ $q['lat'] }}, Lon: {{ $q['lon'] }} - click for Map">
                     <a target="_blank" href="https://k7fry.com/grid/?qth={{ $q['gsq'] }}">{{ $q['gsq'] }}</a>
                 </td>
-                <td>@if($label === 'Test Location'){{ $label }}@else<a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}/?q[]=myQth|{{ $label }}" target="_blank">{{ $label }}</a>@endif</td>
+                <td @if(!$hidestats) class="qth" @endif title="{{ $label }}">
+                    @if($label === 'Test Location')
+                        {{ $label }}
+                    @else
+                        <a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}/?q[]=myQth|{{ $label }}" target="_blank">{{ $label }}</a>
+                    @endif
+                </td>
                 @if($user->pota)
                     <td>
                         @if(substr($label, 0, 4) === 'POTA')
@@ -65,10 +71,12 @@
                 @endif
                 @if(!$hidestats)
                     @if(isset($q['logFirst']))
-                        <td>{{ $q['logFirst'] }}@if($q['logDays'] === 2), {{ $q['logLast'] }}@endif
+                        <td class="dates">{{ $q['logFirst'] }}@if($q['logDays'] === 2), {{ $q['logLast'] }}@endif
                             @if($q['logDays'] > 2) - {{ $q['logLast'] }}@endif</td>
                         <td class="r">{{ $q['logDays'] }}</td>
-                        <td class="r help" title="{{ str_replace(',', ', ', $q['logBandNames']) }}">{{ $q['logBands'] }}</td>
+                        <td class="bandnames">{{ COUNT(explode(',', $q['logBandNames'])) }}
+                            @foreach(explode(',', $q['logBandNames']) as $band)<span class="band band{{ $band }}">{{$band}}</span>@endforeach
+                        </td>
                         <td class="r">{{ $q['logs'] }}</td>
                     @else
                         <td>&nbsp;</td>
@@ -83,7 +91,7 @@
             <tr class="totals">
                 <td><a href="{{ route('summaryMap', ['callsign' => str_replace('/', '-', $user->call)]) }}" title="Show map" target="_blank">Totals</a></td>
                 <td{{ ($user->pota ? ' colspan=2' : '') }}><a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}" style="font-weight: normal" target="_blank">({{ count($qths) ===2 ? 'Both' : 'All ' . count($qths) }} locations)</a></td>
-                <td style="white-space: nowrap">{{ substr($user['first_log'], 0, 10) }}@if(substr($user['first_log'], 0, 10) !== substr($user['last_log'], 0, 10)) - {{ substr($user['last_log'], 0, 10) }}@endif</td>
+                <td class="dates">{{ substr($user['first_log'], 0, 10) }}@if(substr($user['first_log'], 0, 10) !== substr($user['last_log'], 0, 10)) - {{ substr($user['last_log'], 0, 10) }}@endif</td>
                 <td class="r">{{ $user['log_days'] ?: 0 }}</td>
                 <td>&nbsp;</td>
                 <td class="r">{{ $user['log_count'] }}</td>
