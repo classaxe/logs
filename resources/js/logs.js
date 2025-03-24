@@ -621,15 +621,6 @@ var frm = {
             $('input#compact_Y').prop('checked','checked') :
             $('input#compact_N').prop('checked','checked')
         );
-        if (typeof q.myQth === 'string') {
-            $('select[name=myQth]').val(q.myQth);
-        }
-        if (typeof q.dateFrom === 'string') {
-            $('input[name=dateFrom]').val(q.dateFrom);
-        }
-        if (typeof q.dateTo === 'string') {
-            $('input[name=dateTo]').val(q.dateTo);
-        }
         if (typeof q.band === 'string') {
             let bands = q.band.split(',');
             $('input[name=band]').prop('checked', false);
@@ -637,6 +628,30 @@ var frm = {
                 $('input[data-band="' + bands[i]  + '"]').prop('checked', 'checked');
             }
             $('.bandsAll').prop('checked', $('input[name=band]:not(:checked)').length ? false : 'checked');
+        }
+        if (typeof q.dateFrom === 'string') {
+            $('input[name=dateFrom]').val(q.dateFrom);
+        }
+        if (typeof q.dateTo === 'string') {
+            $('input[name=dateTo]').val(q.dateTo);
+        }
+        if (typeof q.call === 'string') {
+            $('input[name=call]').val(q.call);
+        }
+        if (typeof q.sp === 'string') {
+            $('input[name=sp]').val(q.sp);
+        }
+        if (typeof q.itu === 'string') {
+            $('input[name=sp]').val(q.sp);
+        }
+        if (typeof q.cont === 'string') {
+            $('select[name=cont]').val(q.cont);
+        }
+        if (typeof q.gsq === 'string') {
+            $('input[name=gsq]').val(q.gsq);
+        }
+        if (typeof q.myQth === 'string') {
+            $('select[name=myQth]').val(q.myQth);
         }
         $('input[name=band]').click(function(e) {
             if (e.shiftKey) {
