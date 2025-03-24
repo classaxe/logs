@@ -8,7 +8,8 @@
 <head>
 <title>{{ $title }}</title>
 @vite([
-    'resources/css/summary.css'
+    'resources/css/summary.css',
+    'resources/js/app.js'
 ])
 </head>
 <body>

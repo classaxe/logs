@@ -1,3 +1,14 @@
+<script>
+function copyToClipboard(text) {
+    console.log(text);
+    var temp = $("<textarea>");
+    $("body").append(temp);
+    temp.val(text).select();
+    document.execCommand("copy");
+    temp.remove();
+    return false;
+}
+</script>
 <div id="qthinfo">
     <h2>{!! $title !!}
         <a class="btn r" style="margin-left: 2em" href="{{ $url }}{{ $hidestats ? '?hidestats=1' : '' }}">Reload</a>
@@ -64,10 +75,8 @@
                 </td>
                 @if($user->pota)
                     <td>
-                        <a href='https://google.com/maps/place/{{ $q['lat'] }},{{ $q['lon'] }}' class='btn o' target='_blank'>Goto</a>
                         @if($q['pota'])
-                            <a class='btn g' target="_blank" href="https://pota.app/#/park/{{ explode(' ', $label)[1] }}">View</a>
-                            <a href='#' title="Get Potashell command for this location" class='btn blk' target='_blank' onclick="return copyToClipboard('potashell {{ explode(' ', $label)[1] }} {{ $q['gsq'] }}')">PS</a>
+                            <a href='https://google.com/maps/place/{{ $q['lat'] }},{{ $q['lon'] }}' class='btn o' target='_blank'>Goto</a><a class='btn g' target="_blank" href="https://pota.app/#/park/{{ explode(' ', $label)[1] }}">View</a><a href='#' title="Get Potashell command for this location" class='btn blk' target='_blank' onclick="return copyToClipboard('potashell {{ explode(' ', $label)[1] }} {{ $q['gsq'] }}')">PS</a>
                         @endif
                     </td>
                 @endif
