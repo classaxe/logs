@@ -49,7 +49,9 @@
             @if(!isset($q['gsq']))
                 @continue
             @endif
-            <tr @if($label === 'Test Location') class="testGsq" @endif>
+            <tr
+                @if($label === 'Test Location') class="testGsq" @endif
+                @if($q['pota'] && $q['logBands']>=10) class="bandsTen" title="This park qualifies towards the POTA N1CC Award - ten bands at ten parks" @endif">
                 <td class="gsq" title="Lat: {{ $q['lat'] }}, Lon: {{ $q['lon'] }} - click for Map">
                     <a target="_blank" href="https://k7fry.com/grid/?qth={{ $q['gsq'] }}">{{ $q['gsq'] }}</a>
                 </td>
@@ -62,8 +64,10 @@
                 </td>
                 @if($user->pota)
                     <td>
-                        @if(substr($label, 0, 4) === 'POTA')
-                            <a href='https://google.com/maps/place/{{ $q['lat'] }},{{ $q['lon'] }}' class='btn o' target='_blank'>Goto</a><a class='btn g' target="_blank" href="https://pota.app/#/park/{{ explode(' ', $label)[1] }}">View</a><a href='#' title="Get Potashell command for this location" class='btn blk' target='_blank' onclick="return copyToClipboard('potashell {{ explode(' ', $label)[1] }} {{ $q['gsq'] }}')">PS</a>
+                        <a href='https://google.com/maps/place/{{ $q['lat'] }},{{ $q['lon'] }}' class='btn o' target='_blank'>Goto</a>
+                        @if($q['pota'])
+                            <a class='btn g' target="_blank" href="https://pota.app/#/park/{{ explode(' ', $label)[1] }}">View</a>
+                            <a href='#' title="Get Potashell command for this location" class='btn blk' target='_blank' onclick="return copyToClipboard('potashell {{ explode(' ', $label)[1] }} {{ $q['gsq'] }}')">PS</a>
                         @endif
                     </td>
                 @endif
@@ -72,7 +76,7 @@
                         <td class="dates">{{ $q['logFirst'] }}@if($q['logDays'] === 2), {{ $q['logLast'] }}@endif
                             @if($q['logDays'] > 2) - {{ $q['logLast'] }}@endif</td>
                         <td class="r"><strong>{{ $q['logDays'] }}</strong></td>
-                        <td class="bandnames"><strong>{{ COUNT(explode(',', $q['logBandNames'])) }}</strong>
+                        <td class="bandnames"><div class="bandCount">{{ $q['logBands'] }}</div>
                             @foreach(explode(',', $q['logBandNames']) as $band)<span class="band band{{ $band }}">{{$band}}</span>@endforeach
                         </td>
                         <td class="r"><strong>{{ $q['logs'] }}</strong></td>

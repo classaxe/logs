@@ -10,7 +10,20 @@ class DashboardController extends Controller
 {
     public function view(Request $request): View
     {
-        return view('user.dashboard', ['user' => Auth::user()]);
+        $params = [
+            'user' => Auth::user(),
+            'urlIframe' => route('embed', [
+                'method' => 'iframe',
+                'mode' => 'summary',
+                'callsign' => str_replace('/', '-', Auth::user()->call)
+            ]),
+            'urlJs' => route('embed', [
+                'method' => 'js',
+                'mode' => 'summary',
+                'callsign' => str_replace('/', '-', Auth::user()->call)
+            ])
+        ];
+        return view('user.dashboard', $params);
     }
 
 }
