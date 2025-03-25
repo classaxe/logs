@@ -77,7 +77,7 @@ foreach($qths as $name => $qth) {
         }
         var locations = [
 @foreach($qths as $name => $qth)
-            { days: {{ $qth['logDays'] }}, home: {{ $qth['home'] ? 1 : 0 }}, lat: {{ $qth['lat'] }}, lng: {{ $qth['lon'] }}, gsq: '{{ $qth['gsq'] }}', logs: {{ $qth['logs'] }}, name: "{{ $name }}", pota: "{{ $qth['pota'] }}" },
+            { name: "{{ $name }}", pota: "{{ $qth['pota'] }}", home: {{ $qth['home'] ? 1 : 0 }}, lat: {{ $qth['lat'] }}, lng: {{ $qth['lon'] }}, gsq: '{{ $qth['gsq'] }}', days: {{ $qth['logDays'] }}, logs: {{ $qth['logs'] }}, logBands: {{ $qth['logBands'] }} },
 @endforeach
         ];
         var center = { lat: {{ $qth_bounds['center'][0] }}, lng: {{ $qth_bounds['center'][1] }} }

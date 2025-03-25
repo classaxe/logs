@@ -459,7 +459,7 @@ var LMap = {
 
     drawLocations: () => {
         $(locations).each(function(idx, l) {
-            let icon = l.pota !=='' ? '/green-pushpin.png' : (l.home ? '/blue-pushpin.png' : '/yellow-pushpin.png');
+            let icon = l.pota !=='' ? (l.logBands >= 10 ? '/lightgreen-pushpin.png' : '/green-pushpin.png') : (l.home ? '/blue-pushpin.png' : '/yellow-pushpin.png');
             let a = new google.maps.Marker({
                 position: { lat: l.lat, lng: l.lng },
                 map: LMap.map,
@@ -467,7 +467,7 @@ var LMap = {
                     scaledSize: (l.home ? new google.maps.Size(30,30) : new google.maps.Size(20,20)),
                     url: base_image + icon
                 },
-                title: l.name,
+                title: l.name + "\n" + l.logBands + " band" + (l.logBands === 1 ? '' : 's') + (l.pota && l.logBands >= 10 ? " - Qualifies for N1CC Award" : ""),
                 zIndex: 100
             });
             if (l.pota) {
