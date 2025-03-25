@@ -1,8 +1,10 @@
 <?php
 $pota_v = 0;
+$pota_10 = 0;
 $other = 0;
 foreach($qths as $name => $qth) {
     $pota_v += $qth['pota'] ? 1 : 0;
+    $pota_10 += $qth['pota'] && $qth['logBands'] >= 10 ? 1 : 0;
     $other +=  $qth['pota'] ? 0 : ($qth['home'] ? 0 : 1);
 }
 ?>
@@ -27,11 +29,14 @@ foreach($qths as $name => $qth) {
                     <fieldset>
                         <img src="{{ asset('images/blue-pushpin.png') }}" alt="Blue Pushpin" style="display: inline; height: 30px">Home QTH &nbsp;
                         @if ($pota_v)
-                            <img src="{{ asset('images/green-pushpin.png') }}" alt="Green Pushpin" style="display: inline; height: 20px">POTA (visited): <span id="count_pota_v">{{ $pota_v }}</span>&nbsp;
+                            <img src="{{ asset('images/green-pushpin.png') }}" alt="Green Pushpin" style="display: inline; height: 20px">POTA Park with 1-9 bands: <b id="count_pota_v">{{ $pota_v - $pota_10 }}</b>&nbsp;
+                            @if ($pota_10)
+                                <img src="{{ asset('images/lightgreen-pushpin.png') }}" alt="Light Green Pushpin" style="display: inline; height: 20px">POTA Park with 10 bands: <b id="count_pota_10">{{ $pota_10 }}</b>&nbsp;
+                            @endif
                         @endif
                         <img src="{{ asset('images/red-pushpin.png') }}" alt="Red Pushpin" style="display: inline; height: 20px">POTA (unvisited)
                         @if ($other)
-                            <img src="{{ asset('images/yellow-pushpin.png') }}" alt="Yellow Pushpin" style="display: inline; height: 20px">Other location: {{ $other }}
+                            <img src="{{ asset('images/yellow-pushpin.png') }}" alt="Yellow Pushpin" style="display: inline; height: 20px">Other location: <b id="count_other">{{ $other }}</b>
                         @endif
                         <span id="currentLocation" style="display: none">
                             <a href="#" id="btnCurrent" title="Click to show your current location">
@@ -77,7 +82,17 @@ foreach($qths as $name => $qth) {
         }
         var locations = [
 @foreach($qths as $name => $qth)
-            { name: "{{ $name }}", pota: "{{ $qth['pota'] }}", home: {{ $qth['home'] ? 1 : 0 }}, lat: {{ $qth['lat'] }}, lng: {{ $qth['lon'] }}, gsq: '{{ $qth['gsq'] }}', days: {{ $qth['logDays'] }}, logs: {{ $qth['logs'] }}, logBands: {{ $qth['logBands'] }} },
+            { name: "{{ $name
+            }}", pota: "{{ $qth['pota']
+            }}", home: {{ $qth['home'] ? 1 : 0
+            }}, lat: {{ $qth['lat']
+            }}, lng: {{ $qth['lon']
+            }}, gsq: '{{ $qth['gsq']
+            }}', days: {{ $qth['logDays']
+            }}, logs: {{ $qth['logs']
+            }}, logBands: {{ $qth['logBands']
+            }}, logBandNames: "{{ $qth['logBandNames']
+            }}"},
 @endforeach
         ];
         var center = { lat: {{ $qth_bounds['center'][0] }}, lng: {{ $qth_bounds['center'][1] }} }

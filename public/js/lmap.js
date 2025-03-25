@@ -490,7 +490,13 @@ var LMap = {
                 "<p>" + l.name + "</p>" +
                 "<p>Sessions: <b>" + l.days + "</b>, " +
                 "<a href='/logs/" + qth.call.replace('/', '-') + "/?q[]=myQth|" + l.name + "'" +
-                " style='color: #00f' target='_blank'>Logs: <b>" + l.logs + "</b></a></p></div>";
+                " style='color: #00f' target='_blank'>Logs: <b>" + l.logs + "</b></a></p>" +
+                "<p>Bands: <span class='markerBands'>";
+            let bands = l.logBandNames.split(',');
+            for(i in bands) {
+                html += "<span class=\"band band" + bands[i] + "\">" + bands[i] + "</span>"
+            }
+            html += "</span></p></div>";
             LMap.infoWindow.setContent(html);
             LMap.infoWindow.set('pixelOffset', new google.maps.Size(0, -20));
             LMap.infoWindow.setPosition(new google.maps.LatLng(l.lat, l.lng));
@@ -522,7 +528,13 @@ var LMap = {
                 "</b></p>" +
                 "<p>Sessions: <b>" + l.days + "</b>, " +
                 "<a href='/logs/" + qth.call.replace('/', '-') + "/?q[]=myQth|" + l.name + "'" +
-                " style='color: #00f' target='_blank'>Logs: <b>" + l.logs + "</b></a></p></div>";
+                " style='color: #00f' target='_blank'>Logs: <b>" + l.logs + "</b></a></p>" +
+                "<p>Bands: <span class='markerBands'>";
+            let bands = l.logBandNames.split(',');
+            for(i in bands) {
+                html += "<span class=\"band band" + bands[i] + "\">" + bands[i] + "</span>"
+            }
+            html += "</span></p></div>";
             LMap.infoWindow.setContent(html);
             LMap.infoWindow.set('pixelOffset', new google.maps.Size(0, -20));
             LMap.infoWindow.setPosition(new google.maps.LatLng(l.lat, l.lng));

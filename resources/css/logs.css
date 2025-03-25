@@ -349,6 +349,9 @@ label.band {
 .banduhf{background-color:rgba(255, 147, 147, 0.6);color:black;}
 .bandvlf{background-color:rgba(255, 131, 0, 0.6);color:black;}
 
+.markerBands {
+    font-size: 80%;
+}
 .mode {
     border: 1px solid gray;
     background-color: grey;
