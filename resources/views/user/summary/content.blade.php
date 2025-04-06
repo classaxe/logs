@@ -22,6 +22,9 @@ function copyToClipboard(text) {
     </h2>
     @if (!$hidestats && count($qths) > 1)
         <p>@if(count($qths) === 2)Both @else All <b>{{count($qths)}}</b>@endif locations are situated within a radius of <b>{{ ceil($qth_bounds['radius'] / 1000) }} Km</b> ({{ ceil(0.6213712 * ($qth_bounds['radius'] / 1000)) }} Miles)</p>
+        <p>Last log was made at <b>{{ substr($user['last_log'], 11, 5) }}</b> on <b>{{ substr($user['last_log'], 0, 10) }}</b>
+            from <a class="url" href="#lastQth"><b>{{ $user['lastQth'] }}</b></a>
+        </p>
     @endif
     <p>Click the links below to view live logs and an interactive gridsquares map.</p>
     <table border="1" cellpadding="2" cellspacing="0">
@@ -62,7 +65,9 @@ function copyToClipboard(text) {
             @endif
             <tr
                 @if($label === 'Test Location') class="testGsq" @endif
-                @if($q['pota'] && $q['logBands']>=10) class="bandsTen" title="This park qualifies towards the POTA N1CC Award - ten bands at ten parks" @endif">
+                @if($q['pota'] && $q['logBands']>=10) class="bandsTen" title="This park qualifies towards the POTA N1CC Award - ten bands at ten parks" @endif"
+                @if(!$hidestats && ($user['lastQth'] === $label)) id="lastQth" title="This is the last location logs were made at" @endif"
+            >
                 <td class="gsq" title="Lat: {{ $q['lat'] }}, Lon: {{ $q['lon'] }} - click for Map">
                     <a target="_blank" href="https://k7fry.com/grid/?qth={{ $q['gsq'] }}">{{ $q['gsq'] }}</a>
                 </td>

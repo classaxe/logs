@@ -113,7 +113,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'radius' => $normalizedPointCircle->getRadius() * 1.0045 // accomodate the edge points better
         ];
     }
-    
+
     private static function calculateDX($latFrom, $lonFrom, $latTo, $lonTo, $earthRadius = 6371000) {
 // Convert from degrees to radians
         $latFrom = deg2rad($latFrom);
@@ -195,7 +195,11 @@ class User extends Authenticatable implements MustVerifyEmail
         if (isset($result[$callsign])) {
             return $result[$callsign];
         }
-        $result[$callsign] = User::where('call', '=', $callsign)->firstOrFail();
+        $result[$callsign] = User::selectRaw('
+                *,
+                (SELECT myQth FROM logs where userId = users.id ORDER BY date DESC, time DESC limit 1) AS `lastQth`'
+            )->where('call', '=', $callsign)
+            ->firstOrFail();
         return $result[$callsign];
     }
 

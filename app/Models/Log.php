@@ -265,7 +265,33 @@ class Log extends Model
         }
         $logs = Log::Select(
             'logs.band',
+            DB::raw("
+                    (SELECT
+                        COUNT(DISTINCT `band`)
+                    FROM
+                        `logs` `l`
+                    WHERE
+                        `l`.`userId` = `logs`.`userId`
+                        AND `l`.`call` = `logs`.`call`
+                    ) `bandCount`"
+            ),
             'logs.call',
+            'logs.comment',
+            'logs.conf',
+            'logs.clublog_conf',
+            'logs.continent',
+            'logs.county',
+            'logs.date',
+            'logs.deg',
+            'logs.gsq',
+            'logs.itu',
+            'logs.km',
+            'logs.logNum',
+            'logs.mode',
+            'logs.myGsq',
+            'logs.myQth',
+            'logs.name',
+            'logs.pwr',
             DB::raw("
                 (SELECT
                     GROUP_CONCAT(`l`.`band`)
@@ -286,22 +312,6 @@ class Log extends Model
                         AND `l`.`call` = `logs`.`call`
                     ) `qsoCount`"
             ),
-            'logs.comment',
-            'logs.conf',
-            'logs.clublog_conf',
-            'logs.continent',
-            'logs.county',
-            'logs.date',
-            'logs.deg',
-            'logs.gsq',
-            'logs.itu',
-            'logs.km',
-            'logs.logNum',
-            'logs.mode',
-            'logs.myGsq',
-            'logs.myQth',
-            'logs.name',
-            'logs.pwr',
             'logs.qth',
             'logs.rx',
             'logs.sp',

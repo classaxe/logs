@@ -57,6 +57,20 @@
     background: #dfd;
     font-weight: bolder;
 }
+a.url {
+    color: #00f;
+    font-weight: bold;
+    text-decoration: underline;
+}
+a.url:hover {
+    color: #f00;
+    background: #ffc;
+}
+#lastQth {
+    color: #ff0;
+    background: #ffc;
+    font-weight: bolder;
+}
 .bandCount {
     display: inline-block;
     text-align: right;

@@ -549,6 +549,9 @@ var frm = {
             case 'itu':
                 sortField = 'itusp';
                 break;
+            case 'qsoBands':
+                sortField = 'bandCount';
+                break;
         }
         let sortZa = $('input[name=sortZA]').prop('checked') ? false : true;
         if (sortField) {
@@ -595,7 +598,7 @@ var frm = {
                 '<td class="nowrap">' + log.time + '</td>' +
                 '<td data-link="call">' + log.call + '</td>' +
                 '<td class="nowrap" title="' + qsos.text + '" style="cursor: pointer">' + qsos.count + '</td>' +
-                '<td class="not-compact nowrap">' + qsos.html + '</td>' +
+                '<td class="not-compact nowrap"><b>' + log.bandCount + '</b> ' + qsos.html + '</td>' +
                 '<td class="not-compact">' + log.name + '</td>' +
                 '<td data-link="mode"><span class="mode m' + log.mode + '">' + log.mode + '</span></td>' +
                 '<td data-link="band"><span class="band band' + log.band + '">' + log.band + '</span></td>' +

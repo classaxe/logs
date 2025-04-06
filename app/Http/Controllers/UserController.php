@@ -64,7 +64,7 @@ class UserController extends Controller
                         $Image = new Image();
                         $labels = [
                             [
-                                'text' => sprintf("Locations and Stats for %s - %s", $u->name, $u->call),
+                                'text' => sprintf("Locations and Stats for %s - %s", $u->getName(), $u->call),
                                 'font' => 'arial.ttf',
                                 'size' => 12,
                                 'color' => 'black',
@@ -184,7 +184,7 @@ class UserController extends Controller
             (count($u['qths']) > 1 ? 's' : ''),
             ($hidestats ? "" : " and Stats"),
             $u['user']->name,
-            '<a style="color:#00f;" href="'
+            '<a class="url" href="'
             . route('logs.page', ['callsign' => str_replace('/', '-', $u['user']->call)]) . '">'
             . $u['user']->call
             . "</a>"
