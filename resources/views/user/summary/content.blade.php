@@ -63,10 +63,27 @@ function copyToClipboard(text) {
             @if(!isset($q['gsq']))
                 @continue
             @endif
+
+            @php
+                $id =    '';
+                $class = [];
+                $title = [];
+                if ($label === 'Test Location') {
+                    $class[] =  'testGsq';
+                }
+                if (!$hidestats && ($user['lastQth'] === $label)) {
+                    $id =       'lastQth';
+                    $title[] =  'Last location logs were recorded at.';
+                }
+                if ($q['pota'] && $q['logBands']>=10) {
+                    $class[] =  'bandsTen';
+                    $title[] =  'Qualifies towards the POTA N1CC Award - ten bands at ten parks.';
+                }
+            @endphp
             <tr
-                @if($label === 'Test Location') class="testGsq" @endif
-                @if($q['pota'] && $q['logBands']>=10) class="bandsTen" title="This park qualifies towards the POTA N1CC Award - ten bands at ten parks" @endif"
-                @if(!$hidestats && ($user['lastQth'] === $label)) id="lastQth" title="This is the last location logs were made at" @endif"
+                @if($id) id="{{ $id }}" @endif
+                @if($class) class="{{ implode(' ', $class) }}" @endif
+                @if($title) title="{{ implode("\n", $title) }}" @endif
             >
                 <td class="gsq" title="Lat: {{ $q['lat'] }}, Lon: {{ $q['lon'] }} - click for Map">
                     <a target="_blank" href="https://k7fry.com/grid/?qth={{ $q['gsq'] }}">{{ $q['gsq'] }}</a>

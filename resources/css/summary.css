@@ -52,8 +52,12 @@
     text-decoration: underline;
     color:#f00;
 }
+#lastQth {
+    border: 4px solid #f00;
+    background: #ffc;
+}
 .bandsTen {
-    color: #080;
+    border: 2px solid #080;
     background: #dfd;
     font-weight: bolder;
 }
@@ -65,11 +69,6 @@ a.url {
 a.url:hover {
     color: #f00;
     background: #ffc;
-}
-#lastQth {
-    color: #ff0;
-    background: #ffc;
-    font-weight: bolder;
 }
 .bandCount {
     display: inline-block;
