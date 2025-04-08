@@ -17,12 +17,13 @@
         @vite([
             'resources/css/app.css',
             'resources/css/logs.css',
-            'resources/js/app.js'
+            'resources/css/print-elements.css',
+            'resources/js/app.js',
         ])
         <?php echo str_replace(' /><', ">\n        <", ob_get_clean()) ?>
     </head>
     <body class="font-sans antialiased">
-        <div class="min-h-screen bg-gray-100 pt-1">
+        <div class="min-h-screen bg-gray-100 print:bg-transparent pt-1">
             <header>
                 @include('layouts.nav')
             </header>

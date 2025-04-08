@@ -9,9 +9,10 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/css/logs.css',
                 'resources/css/summary.css',
+                'resources/css/print-elements.css',
                 'resources/js/app.js',
                 'resources/js/callsigns.js',
-                'resources/js/logs.js',
+                'resources/js/logs.js'
             ],
             refresh: true,
         }),

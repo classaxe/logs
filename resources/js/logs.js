@@ -16,6 +16,36 @@ var filters = {
 var logs = [];
 var logsFiltered = [];
 
+var COOKIE = {
+    clear: function(which, path) {
+        document.cookie =
+            which +
+            '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=' +
+            ('string' === typeof path ? path : '/');
+    },
+    get: function(which) {
+        var cookies =		document.cookie;
+        var pos =		cookies.indexOf(which+"=");
+        if (pos === -1) {
+            return false;
+        }
+        var start =	pos + which.length+1;
+        var end =	cookies.indexOf(";",start);
+        if (end === -1) {
+            end =	cookies.length;
+        }
+        return unescape(cookies.substring(start, end));
+    },
+    set: function(which, value, path) {
+        var nextYear =	new Date();
+        nextYear.setFullYear(nextYear.getFullYear()+1);
+        document.cookie =
+            which +
+            '=' + value + ';expires=' + nextYear.toGMTString() + '; path=' +
+            ('string' === typeof path ? path : '/');
+    },
+}
+
 var frm = {
     start: null,
 
@@ -270,6 +300,10 @@ var frm = {
             ' from a total of <b>' + stats.countries.length + '</b> available ' +
             ' - assuming that there are no problems with qualifying logs at QRZ.com.'
         );
+        $("#countriesPrint").click(function(){
+            PrintElements.print([document.getElementById('rptCountries')]);
+            return false;
+        });
     },
 
     getStatsUsCounties: async () => {
@@ -391,6 +425,10 @@ var frm = {
             'Note that for the QRZ "US-50" states award, neither PR nor VI logs count towards the 50, and ' +
             'any log seen for DC counts as a log in MD.'
         );
+        $('#usCountiesStatePrint').click(function() {
+            PrintElements.print([document.getElementById('rptUsCounties')]);
+            return false;
+        });
     },
 
     getUniqueValues: (field) => {
@@ -794,10 +832,12 @@ var frm = {
             $('select[name=sortField]').val($this.data('field'));
             frm.update();
         });
-        $('.quicklinks a').on('click', (e) => {
-            $('html, body').animate({
-                scrollTop: $($.attr(this, 'href')).offset().top
-            }, 500);
+        $('.quicklinks a').on('click', function() {
+            if ($.attr(this, 'href') !== '#') {
+                $('html, body').animate({
+                    scrollTop: $($.attr(this, 'href')).offset().top
+                }, 500);
+            }
             return false;
         });
         $('input[name="showAll"]').on('change', function(e) {
@@ -900,35 +940,81 @@ var frm = {
     },
 }
 
-var COOKIE = {
-    clear: function(which, path) {
-        document.cookie =
-            which +
-            '=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=' +
-            ('string' === typeof path ? path : '/');
-    },
-    get: function(which) {
-        var cookies =		document.cookie;
-        var pos =		cookies.indexOf(which+"=");
-        if (pos === -1) {
-            return false;
-        }
-        var start =	pos + which.length+1;
-        var end =	cookies.indexOf(";",start);
-        if (end === -1) {
-            end =	cookies.length;
-        }
-        return unescape(cookies.substring(start, end));
-    },
-    set: function(which, value, path) {
-        var nextYear =	new Date();
-        nextYear.setFullYear(nextYear.getFullYear()+1);
-        document.cookie =
-            which +
-            '=' + value + ';expires=' + nextYear.toGMTString() + '; path=' +
-            ('string' === typeof path ? path : '/');
-    },
-}
+// https://github.com/szepeshazi/print-elements - András Szepesházi
+var PrintElements = (function () {
+    "use strict";
 
+    var hideFromPrintClass = "pe-no-print";
+    var preservePrintClass = "pe-preserve-print";
+    var preserveAncestorClass = "pe-preserve-ancestor";
+    var bodyElementName = "BODY";
+
+    var _hide = function (element) {
+        if (!element.classList.contains(preservePrintClass)) {
+            element.classList.add(hideFromPrintClass);
+        }
+    };
+
+    var _preserve = function (element, isStartingElement) {
+        element.classList.remove(hideFromPrintClass);
+        element.classList.add(preservePrintClass);
+        if (!isStartingElement) {
+            element.classList.add(preserveAncestorClass);
+        }
+    };
+
+    var _clean = function (element) {
+        element.classList.remove(hideFromPrintClass);
+        element.classList.remove(preservePrintClass);
+        element.classList.remove(preserveAncestorClass);
+    };
+
+    var _walkSiblings = function (element, callback) {
+        var sibling = element.previousElementSibling;
+        while (sibling) {
+            callback(sibling);
+            sibling = sibling.previousElementSibling;
+        }
+        sibling = element.nextElementSibling;
+        while (sibling) {
+            callback(sibling);
+            sibling = sibling.nextElementSibling;
+        }
+    };
+
+    var _attachPrintClasses = function (element, isStartingElement) {
+        _preserve(element, isStartingElement);
+        _walkSiblings(element, _hide);
+    };
+
+    var _cleanup = function (element, isStartingElement) {
+        _clean(element);
+        _walkSiblings(element, _clean);
+    };
+
+    var _walkTree = function (element, callback) {
+        var currentElement = element;
+        callback(currentElement, true);
+        currentElement = currentElement.parentElement;
+        while (currentElement && currentElement.nodeName !== bodyElementName) {
+            callback(currentElement, false);
+            currentElement = currentElement.parentElement;
+        }
+    };
+
+    var _print = function (elements) {
+        for (var i = 0; i < elements.length; i++) {
+            _walkTree(elements[i], _attachPrintClasses);
+        }
+        window.print();
+        for (i = 0; i < elements.length; i++) {
+            _walkTree(elements[i], _cleanup);
+        }
+    };
+
+    return {
+        print: _print
+    };
+})();
 
 frm._init();

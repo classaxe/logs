@@ -46,7 +46,7 @@
             }
         </style>
     @endif
-    <div class="flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
+    <div class="flex flex-col sm:justify-center items-center pt-6 sm:pt-0">
         @include('logs.partials.logs-form')
         @include('logs.partials.logs-summary')
         @include('logs.partials.logs-tips')

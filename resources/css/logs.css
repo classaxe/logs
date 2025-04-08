@@ -125,6 +125,14 @@ main:not(.compact)  {
     padding: 0.5em;
     background: #ddf;
 }
+@media print {
+    #content {
+        background: none;
+    }
+    .quicklinks {
+        display: none;
+    }
+}
 table.list {
     border-collapse: collapse;
     background: #fff;
