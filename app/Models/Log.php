@@ -698,42 +698,65 @@ class Log extends Model
     public static function getQthsForUser(User $user): array
     {
         $hideGsqs = User::getHideGsqsForUser($user);
-        $items = Log::selectRaw('
-                COUNT(*) as logCount,
+        $hideGsqPlaceholders = array_fill(0, count($hideGsqs), '?');
+        $items = DB::select("
+            SELECT
+                COUNT(distinct logs.id) as logCount,
                 MIN(date) as logFirst,
                 MAX(date) as logLast,
                 COUNT(DISTINCT date) as logDays,
-                COUNT(DISTINCT band) as logBands,
-                GROUP_CONCAT(DISTINCT band ORDER BY CAST(band AS FLOAT) DESC) as logBandNames,
-                myGsq,
-                myQth'
-            )
-            ->where('userId', $user->id)
-            ->whereNotIn('myGsq', $hideGsqs)
-            ->groupBy('myQth', 'myGsq')
-            ->get()
-            ->toArray();
+                COUNT(DISTINCT logs.band) as logBands,
+                GROUP_CONCAT(DISTINCT bc.bandCount order by CAST(bandCount AS FLOAT) DESC) as logBandNames,
+                logs.myGsq,
+                logs.myQth
+            FROM
+                logs
+            INNER JOIN (
+                SELECT
+                    myGsq,
+                    myQth,
+                    userId,
+                    CONCAT(band, '|', COUNT(*)) AS bandCount
+                FROM
+                    logs
+                GROUP BY
+                    userId,
+                    myGsq,
+                    myQth,
+                    band
+                ) bc ON
+                bc.userId = logs.userId AND
+                bc.myGsq = logs.myGsq AND
+                bc.myQth = logs.myQth
+            WHERE
+                logs.userId = ?
+                " .($hideGsqs ? " AND logs.myGsq NOT IN(" . implode(',', $hideGsqPlaceholders) . ")" : "") . "
+            GROUP BY
+                myQth,
+                myGsq",
+            [   $user->id, ...$hideGsqs ]
+        );
         $out = [];
         $myQthNames = [];
         foreach($items as $item) {
-            $myQthNames[$item['myQth']] = true;
+            $myQthNames[$item->myQth] = true;
         }
         foreach($items as $item) {
-            $latlon = self::convertGsqToDegrees($item['myGsq']);
+            $latlon = self::convertGsqToDegrees($item->myGsq);
             $lat = $latlon['lat'];
             $lon = $latlon['lon'];
-            $out[$item['myQth']] = [
-                'gsq' =>            $item['myGsq'],
+            $out[$item->myQth] = [
+                'gsq' =>            $item->myGsq,
                 'home' =>           $lat === $user['lat'] && $lon === $user['lon'] || count(array_keys($myQthNames)) === 1,
                 'lat' =>            $latlon['lat'],
                 'lon' =>            $latlon['lon'],
-                'logs' =>           $item['logCount'],
-                'logBands' =>       $item['logBands'],
-                'logBandNames' =>   $item['logBandNames'],
-                'logDays' =>        $item['logDays'],
-                'logFirst' =>       $item['logFirst'],
-                'logLast' =>        $item['logLast'],
-                'pota' =>           str_contains($item['myQth'], 'POTA:') ? explode(' ', $item['myQth'])[1] : ""
+                'logs' =>           $item->logCount,
+                'logBands' =>       $item->logBands,
+                'logBandNames' =>   $item->logBandNames,
+                'logDays' =>        $item->logDays,
+                'logFirst' =>       $item->logFirst,
+                'logLast' =>        $item->logLast,
+                'pota' =>           str_contains($item->myQth, 'POTA:') ? explode(' ', $item->myQth)[1] : ""
             ];
         }
         ksort($out);

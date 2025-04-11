@@ -108,7 +108,7 @@ function copyToClipboard(text) {
                             @if($q['logDays'] > 2) - {{ $q['logLast'] }}@endif</td>
                         <td class="r"><strong>{{ $q['logDays'] }}</strong></td>
                         <td class="bandnames"><div class="bandCount">{{ $q['logBands'] }}</div>
-                            @foreach(explode(',', $q['logBandNames']) as $band)<span class="band band{{ $band }}">{{$band}}</span>@endforeach
+                            @foreach(explode(',', $q['logBandNames']) as $band)<span title="{{ explode('|', $band)[1] }} log{{ explode('|', $band)[1]==='1' ? '' : 's' }}" class="band band{{ explode('|', $band)[0] }}">{{ explode('|', $band)[0] }}</span>@endforeach
                         </td>
                         <td class="r"><strong>{{ $q['logs'] }}</strong></td>
                     @else
