@@ -509,6 +509,7 @@ var LMap = {
     },
 
     drawLocationPota: (l, a) => {
+        let bandInfo = [];
         let p = l.name.split(' ')[1];
         let n = l.name . substring(14);
         let nFull = LMap.strTr(n, LMap.arrayFlip(LMap.nameSubs));
@@ -532,7 +533,11 @@ var LMap = {
                 "<p>Bands: <span class='markerBands'>";
             let bands = l.logBandNames.split(',');
             for(i in bands) {
-                html += "<span class=\"band band" + bands[i] + "\">" + bands[i] + "</span>"
+                bandInfo = bands[i].split('|')
+                html += "<span title=\"" + bandInfo[1] + " log" + (bandInfo[1]==='1' ? '' : 's') + "\"" +
+                    " class=\"band band" + bandInfo[0] + (parseInt(bandInfo[1]) >= 10 ? ' band10logs' : '')  + "\">" +
+                    bandInfo[0] +
+                    "</span>"
             }
             html += "</span></p></div>";
             LMap.infoWindow.setContent(html);

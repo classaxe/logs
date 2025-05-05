@@ -90,6 +90,7 @@ a.url:hover {
     min-width: 2em;
     text-align:center;
     margin-right: 0.125em;
+    font-weight: 100;
 }
 .band160m{background-color:rgba(124, 252, 0, 0.6);color:black;}
 .band80m{background-color:rgba(229, 80, 229, 0.6);color:black;}
@@ -113,7 +114,10 @@ a.url:hover {
 .bandSpare{background-color:rgba(153, 0, 102, 0.6);color:black;}
 .banduhf{background-color:rgba(255, 147, 147, 0.6);color:black;}
 .bandvlf{background-color:rgba(255, 131, 0, 0.6);color:black;}
-
+.band10logs {
+    font-family: "Arial Black";
+    font-weight: 900;
+}
 #currentGsq {
     width: 8em;
     padding: 0;
