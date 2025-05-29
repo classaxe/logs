@@ -18,8 +18,10 @@ foreach($qths as $name => $qth) {
                 <div class="p-6 text-gray-900">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">{!! $title !!}</h2>
                     @if (count($qths) > 1)
-                        <p>@if(count($qths) === 2)Both @else All <b>{{count($qths)}}</b>@endif locations are situated within a radius of
-                            <b>{{ ceil($qth_bounds['radius'] / 1000) }} Km</b> ({{ ceil(0.6213712 * ($qth_bounds['radius'] / 1000)) }} Miles)
+                        <p>@if(count($qths) === 2)Both @else All <b>{{ count($qths) }}</b>@endif locations
+                            @if($pota_v)- including <b>{{ $pota_v }}</b> <a class="url" target="_blank" href="https://pota.app/#/profile/{{ explode('/',$user->call)[0] }}">POTA Park{{ $pota_v > 1 ? 's' : '' }}</a> - @endif
+                            are situated within a radius of
+                            <b>{{ round($qth_bounds['radius'] / 1000, 1) }} Km</b> ({{ round(0.6213712 * ($qth_bounds['radius'] / 1000),1) }} Miles)
                             - indicated by the <span style="color:green">green</span> circle.
                         </p>
                     @endif
@@ -39,7 +41,7 @@ foreach($qths as $name => $qth) {
                             <img src="{{ asset('images/yellow-pushpin.png') }}" alt="Yellow Pushpin" style="display: inline; height: 20px">Other location: <b id="count_other">{{ $other }}</b>
                         @endif
                         <span id="currentLocation" style="display: none">
-                            <a href="#" id="btnCurrent" title="Click to show your current location">
+                            <a class="url" href="#" id="btnCurrent" title="Click to show your current location">
                                 <img src="{{ asset('images/purple-pushpin.png') }}" style="display: inline; height: 20px">Your Location</a>:
                             <input type="text" id="currentGsq">
                         </span>
