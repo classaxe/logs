@@ -38,8 +38,8 @@ function copyToClipboard(text) {
             included logs on 10 or more bands, qualifying towards the <a href="https://docs.pota.app/docs/awards.html#james-f-laporta-n1cc-awards" target="_blank" class="url">POTA N1CC Award</a>.
             @endif
         </p>
-        <p>Last log was made at <b>{{ substr($user['last_log'], 11, 5) }}</b> on <b>{{ substr($user['last_log'], 0, 10) }}</b>
-            from <a class="url" href="#lastQth"><b>{{ $user['lastQth'] }}</b></a>
+        <p>Last log was made on <b>{{ substr($user['last_log'], 0, 10) }}</b> at <b>{{ substr($user['last_log'], 11, 5) }} UTC</b>
+            from <a class="url" href="#lastQth">{{ $user['lastQth'] }}</a>
         </p>
     @endif
     <p>Click the links below to view live logs and an interactive gridsquares map.</p>
@@ -153,7 +153,9 @@ function copyToClipboard(text) {
         @endif
         </tbody>
     </table>
+    @if(!$hidestats)
     <p><b>*Days</b> means days with recorded logs.</p>
+    @endif
     @if($cta)
         <p class="cta">Share your <a href="https://qrz.com">QRZ.com</a> live logs, maps and stats at <a href="https://logs.classaxe.com" target="_blank">https://logs.classaxe.com</a></p>
     @endif
