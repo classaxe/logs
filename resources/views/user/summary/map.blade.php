@@ -23,6 +23,9 @@ foreach($qths as $name => $qth) {
                             are situated within a radius of
                             <b>{{ round($qth_bounds['radius'] / 1000, 1) }} Km</b> ({{ round(0.6213712 * ($qth_bounds['radius'] / 1000),1) }} Miles)
                             - indicated by the <span style="color:green">green</span> circle.
+                        @if($pota_10)<br>{!! $pota_10 === 1 ? '<b>One</b> park' : 'A total of <b>' . $pota_10 . '</b> parks' !!}
+                            included logs on 10 or more bands, qualifying towards the <a href="https://docs.pota.app/docs/awards.html#james-f-laporta-n1cc-awards" target="_blank" class="url">POTA N1CC Award</a>.
+                        @endif
                         </p>
                     @endif
                     <p>Most QRZ awards require locations used to qualify be within 50 miles radius of a given point

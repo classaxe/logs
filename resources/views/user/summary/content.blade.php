@@ -33,7 +33,11 @@ function copyToClipboard(text) {
     @if (!$hidestats && count($qths) > 1)
         <p>@if(count($qths) === 2)Both @else All <b>{{count($qths)}}</b>@endif locations
             @if($pota_v)- including <b>{{ $pota_v }}</b> <a class="url" target="_blank" href="https://pota.app/#/profile/{{ explode('/',$user->call)[0] }}">POTA Park{{ $pota_v > 1 ? 's' : '' }}</a> - @endif
-            are situated within a radius of <b>{{ round($qth_bounds['radius'] / 1000, 1) }} Km</b> ({{ round(0.6213712 * ($qth_bounds['radius'] / 1000), 1) }} Miles)</p>
+            are situated within a radius of <b>{{ round($qth_bounds['radius'] / 1000, 1) }} Km</b> ({{ round(0.6213712 * ($qth_bounds['radius'] / 1000), 1) }} Miles)
+            @if($pota_10)<br>{!! $pota_10 === 1 ? '<b>One</b> park' : 'A total of <b>' . $pota_10 . '</b> parks' !!}
+            included logs on 10 or more bands, qualifying towards the <a href="https://docs.pota.app/docs/awards.html#james-f-laporta-n1cc-awards" target="_blank" class="url">POTA N1CC Award</a>.
+            @endif
+        </p>
         <p>Last log was made at <b>{{ substr($user['last_log'], 11, 5) }}</b> on <b>{{ substr($user['last_log'], 0, 10) }}</b>
             from <a class="url" href="#lastQth"><b>{{ $user['lastQth'] }}</b></a>
         </p>
