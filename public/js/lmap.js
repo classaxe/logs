@@ -118,7 +118,9 @@ var LMap = {
             new google.maps.LatLng(box[0].lat - 0.05, box[0].lng - 0.1), //sw
             new google.maps.LatLng(box[1].lat + 0.05, box[1].lng + 0.1) //ne
         )
-        bounds = LMap.drawBoundsRing();
+        if (drawRing) {
+            bounds = LMap.drawBoundsRing();
+        }
         LMap.map.fitBounds(bounds);
 
         LMap.infoWindow = new google.maps.InfoWindow();
@@ -459,7 +461,22 @@ var LMap = {
 
     drawLocations: () => {
         $(locations).each(function(idx, l) {
-            let icon = l.pota !=='' ? (l.logBands >= 10 ? '/lightgreen-pushpin.png' : '/green-pushpin.png') : (l.home ? '/blue-pushpin.png' : '/yellow-pushpin.png');
+            let icon = '';
+            if (!l.primary) {
+                icon = '/grey-pushpin.png';
+            } else {
+                if (l.pota !== '') {
+                    if (l.logBands >= 10) {
+                        icon = '/lightgreen-pushpin.png';
+                    } else {
+                        icon = '/green-pushpin.png';
+                    }
+                } else if(l.home) {
+                    icon = '/blue-pushpin.png'
+                } else {
+                    icon = '/yellow-pushpin.png';
+                }
+            }
             let a = new google.maps.Marker({
                 position: { lat: l.lat, lng: l.lng },
                 map: LMap.map,

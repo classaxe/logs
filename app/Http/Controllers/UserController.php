@@ -207,7 +207,7 @@ class UserController extends Controller
 
     public function summaryMap(Request $request, string $callsign) {
         $callsign = str_replace('-', '/', $callsign);
-        if (!$u = User::getUserDataByCallsign($callsign)) {
+        if (!$u = User::getUserDataByCallsign($callsign, null, true)) {
             return redirect(url('/'));
         }
         $fetchLogs = $request->query('action') ?: null === 'fetch';

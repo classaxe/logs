@@ -695,11 +695,23 @@ class Log extends Model
      * @param User $user
      * @return array
      */
-    public static function getQthsForUser(User $user): array
+    public static function getQthsForUser(User $user, $withAssociated = false): array
     {
+        $query = DB::select(
+            "SELECT `id`, `call` FROM `users` where SUBSTRING_INDEX(`call`, '/', 1) = ?",
+            [explode('/', $user->call)[0]]
+        );
+        $identities = [];
+        foreach ($query as $q) {
+            $identities[$q->id] = $q->call;
+        }
         $hideGsqs = User::getHideGsqsForUser($user);
         $hideGsqPlaceholders = array_fill(0, count($hideGsqs), '?');
-        $items = DB::select("
+
+        $userIds = array_keys($identities);
+        $userIdPlaceholders = array_fill(0, count($userIds), '?');
+
+        $sql = "
             SELECT
                 COUNT(distinct logs.id) as logCount,
                 MIN(date) as logFirst,
@@ -707,15 +719,16 @@ class Log extends Model
                 COUNT(DISTINCT date) as logDays,
                 COUNT(DISTINCT logs.band) as logBands,
                 GROUP_CONCAT(DISTINCT bc.bandCount order by CAST(bandCount AS FLOAT) DESC) as logBandNames,
+                logs.userId,
                 logs.myGsq,
                 logs.myQth
             FROM
                 logs
             INNER JOIN (
                 SELECT
+                    userId,
                     myGsq,
                     myQth,
-                    userId,
                     CONCAT(band, '|', COUNT(*)) AS bandCount
                 FROM
                     logs
@@ -729,13 +742,19 @@ class Log extends Model
                 bc.myGsq = logs.myGsq AND
                 bc.myQth = logs.myQth
             WHERE
-                logs.userId = ?
+                logs.userId IN(" . implode(',', $userIdPlaceholders) . ")
                 " .($hideGsqs ? " AND logs.myGsq NOT IN(" . implode(',', $hideGsqPlaceholders) . ")" : "") . "
             GROUP BY
+                userId,
                 myQth,
-                myGsq",
-            [   $user->id, ...$hideGsqs ]
-        );
+                myGsq
+            ";
+        if (is_string($sql)) {
+            $items = DB::select(
+                $sql,
+                [ ...$userIds, ...$hideGsqs ]
+            );
+        }
         $out = [];
         $myQthNames = [];
         foreach($items as $item) {
@@ -746,6 +765,8 @@ class Log extends Model
             $lat = $latlon['lat'];
             $lon = $latlon['lon'];
             $out[$item->myQth] = [
+                'userId' =>         $item->userId,
+                'call' =>           $identities[$item->userId],
                 'gsq' =>            $item->myGsq,
                 'home' =>           $lat === $user['lat'] && $lon === $user['lon'] || count(array_keys($myQthNames)) === 1,
                 'lat' =>            $latlon['lat'],

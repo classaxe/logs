@@ -175,16 +175,6 @@ class User extends Authenticatable implements MustVerifyEmail
             ->get();
     }
 
-    public static function array_column_pair(array $inputArray, string $column1, string $column2): array
-    {
-        $result = [];
-        foreach ($inputArray as $row) {
-            if (isset($row[$column1]) && isset($row[$column2])) {
-                $result[] = [$column1 => $row[$column1], $column2 => $row[$column2]];
-            }
-        }
-        return $result;
-    }
     /**
      * @param string $callsign
      * @return User|Exception
@@ -203,7 +193,7 @@ class User extends Authenticatable implements MustVerifyEmail
         return $result[$callsign];
     }
 
-    public static function getUserDataByCallsign(string $callsign, $testGsq = null): Array|Exception
+    public static function getUserDataByCallsign(string $callsign, $testGsq = null, $withAssociated = false): Array|Exception
     {
         $user = static::getUserByCallsign($callsign);
         $latlon = Log::convertGsqToDegrees($user['gsq']);
@@ -213,23 +203,24 @@ class User extends Authenticatable implements MustVerifyEmail
         if ($testGsq !== null) {
             $qths['Test Location'] = $coords = Log::convertGsqToDegrees($testGsq);
         }
-        $qths += Log::getQthsForUser($user);
+        $qths += Log::getQthsForUser($user, $withAssociated);
         $user['pota'] = array_filter(array_keys($qths), function($lbl) {
             return str_contains($lbl, 'POTA:');
         }) ? true : false;
-        $coords = self::array_column_pair($qths,'lat', 'lon');
-        $bounds = self::calculateEnclosingCircle($coords);
-        //dump($bounds);
-        // 44.16351145111103 -79.67774031160585 0.7622065421564141
-        // $bounds = ['center' => [44.16351145111103, -79.67774031160585], 'radius' =>0.7622065421564141 ];
-        //dd($bounds);
+
+        $coords = [];
+        foreach ($qths as $row) {
+            if ($user['id'] === $row['userId'] && isset($row['lat']) && isset($row['lon'])) {
+                $coords[] = ['lat' => $row['lat'], 'lon' => $row['lon']];
+            }
+        }
         return [
             'bands' =>      Log::getBandsForUser($user),
             'modes' =>      Log::getModesForUser($user),
             'gsqs' =>       Log::getGsqsForUser($user),
             'qths' =>       $qths,
             'qth_names' =>  $user['qth_names'],
-            'qth_bounds' => $bounds,
+            'qth_bounds' => self::calculateEnclosingCircle($coords),
             'user' =>       $user
         ];
     }
