@@ -697,13 +697,17 @@ class Log extends Model
      */
     public static function getQthsForUser(User $user, $withAssociated = false): array
     {
-        $query = DB::select(
-            "SELECT `id`, `call` FROM `users` where SUBSTRING_INDEX(`call`, '/', 1) = ?",
-            [explode('/', $user->call)[0]]
-        );
         $identities = [];
-        foreach ($query as $q) {
-            $identities[$q->id] = $q->call;
+        if ($withAssociated) {
+            $query = DB::select(
+                "SELECT `id`, `call` FROM `users` where SUBSTRING_INDEX(`call`, '/', 1) = ?",
+                [explode('/', $user->call)[0]]
+            );
+            foreach ($query as $q) {
+                $identities[$q->id] = $q->call;
+            }
+        } else {
+            $identities[$user->id] = $user->call;
         }
         $hideGsqs = User::getHideGsqsForUser($user);
         $hideGsqPlaceholders = array_fill(0, count($hideGsqs), '?');

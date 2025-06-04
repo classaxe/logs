@@ -1,16 +1,30 @@
 <?php
 $isMain = strpos($user['call'], '/') === false;
+$home = 0;
 $pota_v = 0;
-$pota_v_alt = 0;
 $pota_10 = 0;
 $other = 0;
-$userQths = 0;
+$locations = 0;
+
+$alt_home = 0;
+$alt_pota_v = 0;
+$alt_pota_10 = 0;
+$alt_other = 0;
+$alt_locations = 0;
 foreach ($qths as $name => $qth) {
-    $userQths += $qth['call'] === $user->call ? 1 : 0;
-    $pota_v += $qth['pota'] && $qth['call'] === $user->call ? 1 : 0;
-    $pota_v_alt += $qth['pota'] && $qth['call'] !== $user->call ? 1 : 0;
-    $pota_10 += $qth['pota'] && $qth['call'] === $user->call && $qth['logBands'] >= 10 ? 1 : 0;
-    $other += $qth['pota'] && $qth['call'] === $user->call ? 0 : ($qth['home'] ? 0 : 1);
+    if ($qth['call'] === $user->call) {
+        $home += $qth['home'] ? 1 : 0;
+        $locations += 1;
+        $pota_v += $qth['pota'] ? 1 : 0;
+        $pota_10 += $qth['pota'] && $qth['logBands'] >= 10 ? 1 : 0;
+        $other += !$qth['pota'] && !$qth['home'] ? 1 : 0;
+    } else {
+        $alt_home += $qth['home'] ? 1 : 0;
+        $alt_locations += 1;
+        $alt_pota_v += $qth['pota'] ? 1 : 0;
+        $alt_pota_10 += $qth['pota'] && $qth['logBands'] >= 10 ? 1 : 0;
+        $alt_other += !$qth['pota'] && !$qth['home'] ? 1 : 0;
+    }
 }
 ?>
 <x-app-layout>
@@ -22,11 +36,11 @@ foreach ($qths as $name => $qth) {
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
                     <h2 class="font-semibold text-xl text-gray-800 leading-tight">{!! $title !!}</h2>
-                    @if ($isMain && $userQths > 1)
-                        <p>@if($userQths === 2)
+                    @if ($isMain && $locations > 1)
+                        <p>@if($locations === 2)
                                 Both
                             @else
-                                All <b>{{ $userQths }}</b>
+                                All <b>{{ $locations }}</b>
                             @endif locations
                             @if($pota_v)
                                 - including <b>{{ $pota_v }}</b> <a class="url" target="_blank"
@@ -46,12 +60,14 @@ foreach ($qths as $name => $qth) {
                         </p>
                     @endif
                     @if($isMain)
-                    <p>Most QRZ awards require locations used to qualify be within 50 miles radius of a given point
-                        - indicated by the <span style="color:red">red</span> circle.</p>
+                        <p>Most QRZ awards require locations used to qualify be within 50 miles radius of a given point
+                            - indicated by the <span style="color:red">red</span> circle.</p>
                     @endif
                     <fieldset>
+                        @if($home)
                         <img src="{{ asset('images/blue-pushpin.png') }}" alt="Blue Pushpin"
                              style="display: inline; height: 30px">Home QTH &nbsp;
+                        @endif
                         @if ($pota_v)
                             <img src="{{ asset('images/green-pushpin.png') }}" alt="Green Pushpin"
                                  style="display: inline; height: 20px">POTA Park with 1-9 bands: <b
@@ -62,13 +78,18 @@ foreach ($qths as $name => $qth) {
                                     id="count_pota_10">{{ $pota_10 }}</b>&nbsp;
                             @endif
                         @endif
-                        <img src="{{ asset('images/red-pushpin.png') }}" alt="Red Pushpin"
-                             style="display: inline; height: 20px">POTA (unvisited)
                         @if ($other)
                             <img src="{{ asset('images/yellow-pushpin.png') }}" alt="Yellow Pushpin"
                                  style="display: inline; height: 20px">Other location: <b
                                 id="count_other">{{ $other }}</b>
                         @endif
+                        @if ($alt_locations)
+                            <img src="{{ asset('images/grey-pushpin.png') }}" alt="Grey Pushpin"
+                                 style="display: inline; height: 20px">Other Callsign: <b
+                                id="count_alt_location">{{ $alt_locations }}</b>
+                        @endif
+                            <img src="{{ asset('images/red-pushpin.png') }}" alt="Red Pushpin"
+                                 style="display: inline; height: 20px">POTA (unvisited)
                         <span id="currentLocation" style="display: none">
                             <a class="url" href="#" id="btnCurrent" title="Click to show your current location">
                                 <img src="{{ asset('images/purple-pushpin.png') }}"
