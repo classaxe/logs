@@ -2,7 +2,7 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Potapark;
+use App\Models\Park;
 use App\Models\User;
 use Illuminate\Console\Command;
 
@@ -35,7 +35,7 @@ class getPotaParks extends Command
             $prefixes = User::getAllUserItus();
         }
         foreach($prefixes as $prefix) {
-            $count = Potapark::updateParks($prefix);
+            $count = Park::updateParks($prefix);
             print "$prefix: $count parks\n";
         }
         return Command::SUCCESS;

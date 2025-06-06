@@ -586,7 +586,7 @@ var LMap = {
         let lng0 = LMap.map.getBounds().getNorthEast().lng().toFixed(3);
         let lat1 = LMap.map.getBounds().getSouthWest().lat().toFixed(3);
         let lng1 = LMap.map.getBounds().getSouthWest().lng().toFixed(3);
-        let url = `/park/grids/${lat0}/${lng0}/${lat1}/${lng1}/0`;
+        let url = `/parks/grid/${lat0}/${lng0}/${lat1}/${lng1}/0`;
         $.ajax({
             type: 'GET',
             url: url,

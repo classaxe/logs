@@ -4,7 +4,7 @@ use App\Http\Controllers\ChangesController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LogsController;
-use App\Http\Controllers\PotaparksController;
+use App\Http\Controllers\ParksController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -39,7 +39,8 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/changes', [ChangesController::class, 'index'])->name('changes');
 Route::get('/logs/{callsign}', [LogsController::class, 'logsPage'])->name('logs.page');
 Route::get('/logs/{callsign}/logs', [LogsController::class, 'logs'])->name('logs');
-Route::get('/park/grids/{lat0}/{lng0}/{lat1}/{lng1}/0', [PotaparksController::class, 'parkGrids'])->name('pota.parks');
+Route::get('/park/{id}', [ParksController::class, 'park'])->name('pota.park');
+Route::get('/parks/grid/{lat0}/{lng0}/{lat1}/{lng1}/0', [ParksController::class, 'parkGrids'])->name('pota.parks');
 Route::get('/stats/{callsign}/{mode}', [LogsController::class, 'logsStats'])->name('logsStats');
 
 Route::get('/summary/{callsign}', [UserController::class, 'summary'])->name('summary');
