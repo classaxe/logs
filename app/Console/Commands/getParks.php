@@ -6,21 +6,21 @@ use App\Models\Park;
 use App\Models\User;
 use Illuminate\Console\Command;
 
-class getPotaParks extends Command
+class getParks extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'logs:fetchPota {prefix?}';
+    protected $signature = 'logs:fetchParks {extras?}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Downloads Parks from POTA for user countries, or provide csv list of 2-char country codes.';
+    protected $description = 'Downloads Parks from POTA for user countries, augmented with optional csv list of 2-char country codes.';
 
     /**
      * Execute the console command.
@@ -28,12 +28,15 @@ class getPotaParks extends Command
      * @return int
      */
     public function handle() {
-        $prefixes = [];
-        if ($this->argument('prefix')) {
-            $prefixes = explode(',', $this->argument('prefix'));
-        } else {
-            $prefixes = User::getAllUserItus();
+        $prefixes = User::getAllUserItus();
+        if ($this->argument('extras')) {
+            $extras = explode(',', $this->argument('extras'));
+            foreach ($extras as $extra) {
+                $prefixes[] = $extra;
+            }
         }
+        $prefixes = array_unique($prefixes);
+        sort($prefixes);
         foreach($prefixes as $prefix) {
             $count = Park::updateParks($prefix);
             print "$prefix: $count parks\n";
