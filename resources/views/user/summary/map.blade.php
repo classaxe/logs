@@ -76,42 +76,52 @@ foreach ($qths as $name => $qth) {
                         </p>
     @endif
                         <fieldset id="key">
-    @if($home)
                             <span class="nowrap">
-                                <img src="{{ asset('images/blue-pushpin.png') }}" alt="Home QTH" style="height: 30px">Home
-                            </span>
+    @if($home)
+                                <span class="nowrap">
+                                    <img src="{{ asset('images/yellow-pushpin.png') }}" alt="Home QTH" style="height: 30px">Home
+                                </span>
     @endif
     @if ($park_v)
-                            <span class="nowrap">
-                                <img src="{{ asset('images/green-pushpin.png') }}" alt="Visited park with 1-9 bands worked">Visited Park:
-                                <b>{{ $park_v - $park_10b }}</b>
-                            </span>
+                                <span class="nowrap">
+                                    <img src="{{ asset('images/green-pushpin.png') }}" alt="Visited park with 1-9 bands worked">Activated Park:
+                                    <b>{{ $park_v - $park_10b }}</b>
+                                </span>
         @if ($park_10b)
-                            <span class="nowrap">
-                                <img src="{{ asset('images/lightgreen-pushpin.png') }}" alt="Visited park with 10 bands worked">Park worked on 10 bands:
-                                <b>{{ $park_10b }}</b>
-                            </span>
+                                <span class="nowrap">
+                                    <img src="{{ asset('images/lightgreen-pushpin.png') }}" alt="Visited park with 10 bands worked">Park on 10 bands:
+                                    <b>{{ $park_10b }}</b>
+                                </span>
         @endif
     @endif
     @if ($other)
-                            <span class="nowrap">
-                                <img src="{{ asset('images/yellow-pushpin.png') }}" alt="Other non-park location">Other location:
-                                <b>{{ $other }}</b>
-                            </span>
+                                <span class="nowrap">
+                                    <img src="{{ asset('images/yellow-pushpin.png') }}" alt="Other non-park location">Other QTH:
+                                    <b>{{ $other }}</b>
+                                </span>
     @endif
+                            </span>
     @if ($alt_locations)
                             <span class="nowrap">
-                                <img src="{{ asset('images/grey-pushpin.png') }}" alt="Visited location worked with other callsign">Other Callsign:
+                                <img src="{{ asset('images/grey-pushpin.png') }}" alt="Visited location worked with other callsign">Alt Callsign:
                                 <b>{{ $alt_locations }}</b>
                             </span>
     @endif
                             <span class="nowrap">
-                                <img src="{{ asset('images/red-pushpin.png') }}" alt="Park - Unvisited">Park (unvisited)
+                                <span class="nowrap">
+                                    <img src="{{ asset('images/red-pushpin.png') }}" alt="POTA Park - Unvisited">POTA Park
+                                </span>
+                                <span class="nowrap">
+                                    <img src="{{ asset('images/blue-pushpin.png') }}" alt="WWFF Park - Unvisited">WWFF Park
+                                </span>
+                                <span class="nowrap">
+                                    <img src="{{ asset('images/purple-pushpin.png') }}" alt="POTA and WWFF Park - Unvisited">Dual Park
+                                </span>
                             </span>
                             <span class="nowrap">
                                 <span id="currentLocation" style="display: none">
                                     <a class="url" href="#" id="btnCurrent" title="Click to show your current location">
-                                    <img src="{{ asset('images/purple-pushpin.png') }}">Your Location</a>:
+                                    <img src="{{ asset('images/black-pushpin.png') }}">Your Location</a>:
                                     <input type="text" id="currentGsq">
                                 </span>
                             </span>

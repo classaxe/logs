@@ -617,12 +617,16 @@ var LMap = {
                         map: LMap.map,
                         icon: {
                             scaledSize: new google.maps.Size(20, 20),
-                            url: base_image + '/red-pushpin.png'
+                            url: base_image +
+                                (p.program === 'POTA' ?
+                                    '/red-pushpin.png'
+                                    : (p.program === 'BOTH' ? '/purple-pushpin.png' : '/blue-pushpin.png')
+                                )
                         },
                         title: (
-                            p.program === 'POTA' || p.program === 'BOTH' ?
-                            "POTA " + p.pota + "\n" + n + "\n(Unvisited)"
-                            : "WWFF: " + p.wwff + "\n" + n + "\n(Unvisited)"
+                            (p.program === 'POTA' ? "POTA " + p.pota + "\n" + n + "\n(Unvisited)" : '') +
+                            (p.program === 'WWFF' ? "WWFF " + p.wwff + "\n" + n + "\n(Unvisited)" : '') +
+                            (p.program === 'BOTH' ? "POTA " + p.pota + " | " + "WWFF " + p.wwff + "\n" + n + "\n(Unvisited)" : '')
                         ),
                         zIndex: 100
                     });
@@ -678,7 +682,7 @@ var LMap = {
             map: LMap.map,
             icon: {
                 scaledSize: new google.maps.Size(30,30),
-                url: base_image + '/blue-pushpin.png'
+                url: base_image + '/yellow-pushpin.png'
             },
             title: qth.callsign,
             zIndex: 100
