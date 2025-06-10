@@ -20,7 +20,7 @@ class getParks extends Command
      *
      * @var string
      */
-    protected $description = 'Downloads Parks from POTA for user countries, augmented with optional csv list of 2-char country codes.';
+    protected $description = 'Downloads Parks from POTA and WWFF for user countries, augmented with optional csv list of 2-char country codes.';
 
     /**
      * Execute the console command.
@@ -37,10 +37,7 @@ class getParks extends Command
         }
         $prefixes = array_unique($prefixes);
         sort($prefixes);
-        foreach($prefixes as $prefix) {
-            $count = Park::updateParks($prefix);
-            print "$prefix: $count parks\n";
-        }
+        Park::updateParks($prefixes);
         return Command::SUCCESS;
     }
 }

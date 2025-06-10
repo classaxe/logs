@@ -16,15 +16,16 @@ class ParksController extends Controller
             $data[] = [
                 'type' => 'Feature',
                 'properties' => [
-                    'program' => $park['program'],
-                    'reference' => $park['reference'],
-                    'name' => $park['name']
+                    'program' => $park->program,
+                    'pota' => $park->pota,
+                    'wwff' => $park->wwff,
+                    'name' => $park->name
                 ],
                 'geometry' => [
                     'type' => 'Point',
                     'coordinates' => [
-                        (float)$park['lng'],
-                        (float)$park['lat']
+                        (float)$park->lng,
+                        (float)$park->lat
                     ]
                 ]
             ];
@@ -38,6 +39,11 @@ class ParksController extends Controller
     public static function park(string $id): JsonResponse
     {
         $park = Park::where('reference', $id)->first();
+        if (!$park) {
+            return response()->json([
+                'type' => 'Park',
+            ], 404);
+        }
         return response()->json([
             'name' => $park->name,
             'program' => $park->program,

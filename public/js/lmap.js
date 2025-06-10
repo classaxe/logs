@@ -596,11 +596,13 @@ var LMap = {
                 $(data.features).each(function (idx, feature) {
                     let a, f, g, i, l, n, nFull, p, u, lat, lng;
                     f = feature;
-                    p = f.properties.reference;
+                    p = f.properties;
                     for (i in locations) {
                         l = locations[i];
-                        if (p === l.pota) {
-                            // Not unvisited
+                        if ((p.program === 'BOTH' || p.program === 'POTA') && p.pota !== '' && p.pota === l.pota) {
+                            return;
+                        }
+                        if ((p.program === 'BOTH' || p.program === 'WWFF') && p.wwff !== '' && p.wwff === l.wwff) {
                             return;
                         }
                     }
@@ -617,13 +619,19 @@ var LMap = {
                             scaledSize: new google.maps.Size(20, 20),
                             url: base_image + '/red-pushpin.png'
                         },
-                        title: "POTA: " + p + "\n" + n + "\n(Unvisited)",
+                        title: (
+                            p.program === 'POTA' || p.program === 'BOTH' ?
+                            "POTA " + p.pota + "\n" + n + "\n(Unvisited)"
+                            : "WWFF: " + p.wwff + "\n" + n + "\n(Unvisited)"
+                        ),
                         zIndex: 100
                     });
                     a.addListener('click', function() {
                         let infoHtml =
-                            "<div class=\"map_info\">" +"" +
-                            "<h3>POTA: <strong><a style='color: #00f' href='https://pota.app/#/park/" + p + "' target='_blank'>" + p + "</a></strong>" +
+                            "<div class=\"map_info\">" + "<h3>" +
+                            (p.pota ? "POTA: <strong><a style='color: #00f' href='https://pota.app/#/park/" + p.pota + "' target='_blank'>" + p.pota + "</a></strong>" : "") +
+                            (p.pota && p.wwff ? " | " : "") +
+                            (p.wwff ? "WWFF: <strong>" + p.wwff + "</strong>" : "") +
                             "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
                             "</h3>" +
                             "<p><b><a href='https://k7fry.com/grid/?qth=" + g + "' style='color: #00f' target='_blank'>" + g + "</a> &nbsp " +

@@ -781,7 +781,8 @@ class Log extends Model
                 'logDays' =>        $item->logDays,
                 'logFirst' =>       $item->logFirst,
                 'logLast' =>        $item->logLast,
-                'pota' =>           str_contains($item->myQth, 'POTA:') ? explode(' ', $item->myQth)[1] : ""
+                'pota' =>           str_contains($item->myQth, 'POTA:') ? explode(' ', $item->myQth)[1] : "",
+                'wwff' =>           str_contains($item->myQth, 'WWFF:') ? explode(' ', $item->myQth)[1] : ""
             ];
         }
         ksort($out);
