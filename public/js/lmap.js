@@ -134,7 +134,7 @@ var LMap = {
                 if (window.scheduledUpdate) {
                     clearTimeout(window.scheduledUpdate);
                 }
-                window.scheduledUpdate = setTimeout(LMap.drawPotaUnvisited, 500);
+                window.scheduledUpdate = setTimeout(LMap.drawParksUnvisited, 500);
             }
         );
 
@@ -472,7 +472,7 @@ var LMap = {
                         icon = '/green-pushpin.png';
                     }
                 } else if(l.home) {
-                    icon = '/blue-pushpin.png'
+                    icon = '/yellow-pushpin.png'
                 } else {
                     icon = '/yellow-pushpin.png';
                 }
@@ -493,6 +493,16 @@ var LMap = {
                 LMap.drawLocationOther(l, a);
             }
         });
+
+        $('#togglePota').click(function() {
+            let active, $this;
+            $this = $(this);
+            active = $this.prop('checked');
+            active = false;
+            console.log([active])
+            LMap.setLayer('parkPota', active ? LMap.map : null)
+        })
+
     },
 
     drawLocationOther: (l, a) => {
@@ -574,14 +584,22 @@ var LMap = {
         layers.potaV.push(a);
     },
 
-    drawPotaUnvisited: () => {
+    drawParksUnvisited: () => {
         if (LMap.map.getZoom() < 7) {
             return;
         }
-        for (i in layers.potaU) {
-            layers.potaU[i].setMap(null);
+        for (i in layers.parkPota) {
+            layers.parkPota[i].setMap(null);
         }
-        layers.potaU = [];
+        for (i in layers.parkWwff) {
+            layers.parkWwff[i].setMap(null);
+        }
+        for (i in layers.parkBoth) {
+            layers.parkBoth[i].setMap(null);
+        }
+        layers.parkPota = [];
+        layers.parkWwff = [];
+        layers.parkBoth = [];
         let lat0 = LMap.map.getBounds().getNorthEast().lat().toFixed(3);
         let lng0 = LMap.map.getBounds().getNorthEast().lng().toFixed(3);
         let lat1 = LMap.map.getBounds().getSouthWest().lat().toFixed(3);
@@ -652,7 +670,17 @@ var LMap = {
                             $('#close').focus();
                         }, 10);
                     });
-                    layers.potaU.push(a);
+                    switch(p.program) {
+                        case 'POTA':
+                            layers.parkPota.push(a);
+                            break;
+                        case 'WWFF':
+                            layers.parkWwff.push(a);
+                            break;
+                        case 'BOTH':
+                            layers.parkBoth.push(a);
+                            break;
+                    }
                 });
             }
         });
@@ -910,6 +938,13 @@ var LMap = {
             }
             LMap.drawGridSquares();
         });
+    },
+
+    setLayer: (layer, state) => {
+        let i;
+        for (i in layers.layer) {
+            layers.layer[i].setMap(state ? LMap.map : null);
+        }
     },
 
     sortBands: (a,b) => {

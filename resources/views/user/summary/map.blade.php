@@ -113,6 +113,7 @@ foreach ($qths as $name => $qth) {
                                 </span>
                                 <span class="nowrap">
                                     <img src="{{ asset('images/blue-pushpin.png') }}" alt="WWFF Park - Unvisited">WWFF Park
+                                    <i><a href="#" style="color:red" onclick="for (var i in layers.parkWwff) { layers.parkWwff[i].setMap(null); }">(Hide)</a></i>
                                 </span>
                                 <span class="nowrap">
                                     <img src="{{ asset('images/purple-pushpin.png') }}" alt="POTA and WWFF Park - Unvisited">Dual Park
