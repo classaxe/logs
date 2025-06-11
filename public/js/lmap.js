@@ -659,7 +659,8 @@ var LMap = {
                             "<p><b><a href='https://k7fry.com/grid/?qth=" + g + "' style='color: #00f' target='_blank'>" + g + "</a> &nbsp " +
                             "<span title='" + nFull + "'>" + n + "</span>" +
                             " &nbsp; <a href='https://google.com/maps/place/" + lat + "," + lng + "' class='btn o' target='_blank'>Goto</a>" +
-                            " <a href='#' title=\"Get Potashell command for this location\" class='btn blk' target='_blank' onclick=\"return LMap.copyToClipboard('potashell " + p + " " + g + "')\">PS</a>" +
+                            " <a href='#' title=\"Get Potashell command for this location\" class='btn blk' target='_blank'" +
+                            " onclick=\"return LMap.copyToClipboard('potashell " + (p.pota ? p.pota : p.wwff) + " " + g + "')\">PS</a>" +
                             "</b></p>" +
                             "<p style='text-align: center'><i>(Unvisited)</i></p>";
                         LMap.infoWindow.setContent(infoHtml);
