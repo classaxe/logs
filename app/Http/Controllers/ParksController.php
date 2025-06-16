@@ -10,7 +10,7 @@ class ParksController extends Controller
 {
     public static function parkGrids(string $lat0, $lng0, $lat1, $lng1): JsonResponse
     {
-        $parks = Park::getParks($lat0, $lng0, $lat1, $lng1);
+        $parks = Park::getParksByBounds($lat0, $lng0, $lat1, $lng1);
         $data = [];
         foreach ($parks as $park) {
             $data[] = [
@@ -38,7 +38,7 @@ class ParksController extends Controller
 
     public static function park(string $id): JsonResponse
     {
-        $park = Park::where('reference', $id)->first();
+        $park = Park::getParkById($id);
         if (!$park) {
             return response()->json([
                 'type' => 'Park',
@@ -49,6 +49,8 @@ class ParksController extends Controller
             'program' => $park->program,
             'latitude' => $park->lat,
             'longitude' => $park->lng,
+            'alt_program' => $park->alt_program,
+            'alt_ref' => $park->alt_ref,
         ], 200);
     }
 }

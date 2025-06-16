@@ -82,7 +82,33 @@ class Park extends Model
             . " parks\n";
     }
 
-    public static function getParks($lat0, $lng0, $lat1, $lng1) {
+    public static function getParkById($id) {
+        $park = Park::where('reference', $id)->first();
+        $park = DB::select(
+            DB::raw("SELECT
+                `p1`.*,
+                COALESCE(
+                    (SELECT `ref1` from `park_matches` `pm` where `p1`.`reference` = `pm`.`ref2`),
+                    (SELECT `ref2` from `park_matches` `pm` where `p1`.`reference` = `pm`.`ref1`),
+                    ''
+                ) AS `alt_ref`,
+                COALESCE(
+                    (SELECT `p2`.`program` from `park_matches` `pm` INNER JOIN `parks` `p2` ON `pm`.`ref1` = `p2`.`reference` where `p1`.`reference` = `pm`.`ref2`),
+                    (SELECT `p2`.`program` from `park_matches` `pm` INNER JOIN `parks` `p2` ON `pm`.`ref2` = `p2`.`reference` where `p1`.`reference` = `pm`.`ref1`),
+                    ''
+                ) AS `alt_program`
+            FROM
+                `parks` `p1`
+            WHERE
+                `p1`.`reference` = '$id'"
+            )
+        );
+        if (count($park) > 0) {
+            return $park[0];
+        }
+    }
+
+    public static function getParksByBounds($lat0, $lng0, $lat1, $lng1) {
         return DB::select(DB::raw("SELECT
                 * FROM (
                     SELECT 'BOTH' AS `program`,
