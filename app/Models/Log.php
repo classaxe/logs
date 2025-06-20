@@ -725,7 +725,11 @@ class Log extends Model
                 GROUP_CONCAT(DISTINCT bc.bandCount order by CAST(bandCount AS FLOAT) DESC) as logBandNames,
                 logs.userId,
                 logs.myGsq,
-                logs.myQth
+                logs.myQth,
+                logs.program,
+                logs.locId,
+                logs.altProgram,
+                logs.altLocId
             FROM
                 logs
             INNER JOIN (
@@ -751,7 +755,11 @@ class Log extends Model
             GROUP BY
                 userId,
                 myQth,
-                myGsq
+                myGsq,
+                program,
+                locId,
+                altProgram,
+                altLocId
             ";
         if (is_string($sql)) {
             $items = DB::select(
@@ -781,8 +789,8 @@ class Log extends Model
                 'logDays' =>        $item->logDays,
                 'logFirst' =>       $item->logFirst,
                 'logLast' =>        $item->logLast,
-                'pota' =>           str_contains($item->myQth, 'POTA:') ? explode(' ', $item->myQth)[1] : "",
-                'wwff' =>           str_contains($item->myQth, 'WWFF:') ? explode(' ', $item->myQth)[1] : ""
+                'pota' =>           $item->program === 'POTA' ? $item->locId : ($item->altProgram === 'POTA' ? $item->altLocId : ''),
+                'wwff' =>           $item->program === 'WWFF' ? $item->locId : ($item->altProgram === 'WWFF' ? $item->altLocId : ''),
             ];
         }
         ksort($out);
