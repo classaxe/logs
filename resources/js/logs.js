@@ -153,25 +153,27 @@ var frm = {
                         logs_count: 0,
                         marker: null
                     };
-                    if (latlon.lat > lat_max) {
-                        lat_max = latlon.lat;
+                    if (latlon.lat < 85 && latlon.lat > -85) {
+                        if (latlon.lat > lat_max) {
+                            lat_max = latlon.lat;
+                        }
+                        if (latlon.lat < lat_min) {
+                            lat_min = latlon.lat;
+                        }
+                        if (latlon.lon > lon_max) {
+                            lon_max = latlon.lon;
+                        }
+                        if (latlon.lon < lon_min) {
+                            lon_min = latlon.lon;
+                        }
+                        box = [{
+                            lat: lat_min,
+                            lon: lon_min
+                        }, {
+                            lat: lat_max,
+                            lon: lon_max
+                        }];
                     }
-                    if (latlon.lat < lat_min) {
-                        lat_min = latlon.lat;
-                    }
-                    if (latlon.lon > lon_max) {
-                        lon_max = latlon.lon;
-                    }
-                    if (latlon.lon < lon_min) {
-                        lon_min = latlon.lon;
-                    }
-                    box = [{
-                        lat: lat_min,
-                        lon: lon_min
-                    }, {
-                        lat: lat_max,
-                        lon: lon_max
-                    }];
                 }
                 // log.conf_qc: QRZ = '1', Clublog = '2', unconfirmed = ''
 
