@@ -158,18 +158,18 @@ foreach ($qths as $name => $qth) {
             lng: {{ $user['lon'] }},
             name: "{{ $user['name'] }}",
         }
-        @if($isMain)
+@if($isMain)
         var drawRing = true;
-        @else
+@else
         var drawRing = false;
-        @endif
+@endif
         var qthBounds = {
             lat: {{ $qth_bounds['center'][0] }},
             lng: {{ $qth_bounds['center'][1] }},
             radius: {{ $qth_bounds['radius'] }}
         }
         var locations = [
-                @foreach($qths as $name => $qth)
+@foreach($qths as $name => $qth)
             {
                 name: "{{ $name
             }}", pota: "{{ $qth['pota']
@@ -185,7 +185,7 @@ foreach ($qths as $name => $qth) {
             }}, logBandNames: "{{ $qth['logBandNames']
             }}"
             },
-            @endforeach
+@endforeach
         ];
         var center = {lat: {{ $qth_bounds['center'][0] }}, lng: {{ $qth_bounds['center'][1] }}}
         window.addEventListener("DOMContentLoaded", () => {

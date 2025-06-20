@@ -488,7 +488,7 @@ var LMap = {
                 zIndex: 100
             });
             if (l.pota) {
-                LMap.drawLocationPota(l, a);
+                LMap.drawLocationParkVisited(l, a);
             } else {
                 LMap.drawLocationOther(l, a);
             }
@@ -540,7 +540,7 @@ var LMap = {
         layers.locs.push(a);
     },
 
-    drawLocationPota: (l, a) => {
+    drawLocationParkVisited: (l, a) => {
         let bandInfo = [];
         let p = l.name.split(' ')[1];
         let n = l.name . substring(14);
@@ -548,9 +548,10 @@ var LMap = {
         let i;
         a.addListener('click', function() {
             let html =
-                "<div class=\"map_info\">" + "" +
-                "<h3>POTA: " +
-                "<strong><a style=\"color: #00f\" href=\"https://pota.app/#/park/" + p + "\" target='_blank'>" + p + "</a></strong>" +
+                "<div class=\"map_info\"><h3>" + "" +
+                (l.pota!=='' ? "POTA: <strong><a style=\"color: #00f\" href=\"https://pota.app/#/park/" + l.pota + "\" target='_blank'>" + l.pota + "</a></strong>" : "") +
+                (l.pota!=='' && l.wwff!=='' ? ' &nbsp;|&nbsp; ' : '') +
+                (l.wwff!=='' ? "WWFF: <strong><a style=\"color: #00f\" href=\"https://wwff.co/directory/?showRef=" + l.wwff + "\" target='_blank'>" + l.wwff + "</a></strong>" : "") +
                 "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
                 "</h3>" +
                 "<p><b>" +
@@ -653,7 +654,7 @@ var LMap = {
                             "<div class=\"map_info\">" + "<h3>" +
                             (p.pota ? "POTA: <strong><a style='color: #00f' href='https://pota.app/#/park/" + p.pota + "' target='_blank'>" + p.pota + "</a></strong>" : "") +
                             (p.pota && p.wwff ? " | " : "") +
-                            (p.wwff ? "WWFF: <strong>" + p.wwff + "</strong>" : "") +
+                            (p.wwff ? "WWFF: <strong><a style='color: #00f' href='https://wwff.co/directory/?showRef=" + p.wwff + "' target='_blank'>" + p.wwff + "</a></strong>" : "") +
                             "<a id='close' href='#' onclick=\"return LMap.gsqInfoWindowClose()\">X</a>" +
                             "</h3>" +
                             "<p><b><a href='https://k7fry.com/grid/?qth=" + g + "' style='color: #00f' target='_blank'>" + g + "</a> &nbsp " +
