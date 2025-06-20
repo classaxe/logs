@@ -808,11 +808,13 @@ class Log extends Model
     /**
      * @param User $user
      * @param $qrzItems
-     * @return array
+     * @return false
      */
-    public static function parseQrzLogData(User $user, $qrzItems): array {
+    public static function parseQrzLogData(User $user, $qrzItems): array|bool
+    {
         $qthNames = User::getQthNamesForUser($user);
         $items = [];
+        $altLocIds = ['POTA' => [], 'WWFF' => []];
         foreach ($qrzItems as $i) {
             if (!isset($i['APP_QRZLOG_LOGID'])) {
                 continue;
@@ -865,12 +867,19 @@ class Log extends Model
                 $deg =              Log::calculateBearing($my_gsq, $log_gsq);
                 $name =             $i['NAME'] ?? '';
                 $name =             (strtoupper($name) === $name ? ucwords(strtolower($name)) : $name);
-
+                preg_match("/(POTA|WWFF): ([A-Z]+-[0-9]+)/i", $my_qth, $loc_bits);
+                $program =          $loc_bits[1] ?? '';
+                $locId =            $loc_bits[2] ?? '';
+                if ($program && !isset($altLocIds[$program][$locId])) {
+                    $altLocIds[$program][$locId] = [];
+                }
                 $items[] = [
                     'userId' =>     $user['id'],
                     'qrzId' =>      $i['APP_QRZLOG_LOGID'],
                     'myGsq' =>      $my_gsq,
                     'myQth' =>      $my_qth,
+                    'program' =>    $program,
+                    'locId' =>      $locId,
                     'date' =>       substr($i['QSO_DATE'], 0, 4) . '-' . substr($i['QSO_DATE'], 4, 2) . '-' . substr($i['QSO_DATE'], 6, 2),
                     'time' =>       substr($i['TIME_ON'], 0, 2) . ':' . substr($i['TIME_ON'], 2, 2),
                     'call' =>       $i['CALL'],
@@ -897,9 +906,29 @@ class Log extends Model
                 return false;
             }
         }
+        $pota_refs = array_keys($altLocIds['POTA']);
+        sort($pota_refs);
+        $results = ParkMatch::select(['ref1','ref2'])->wherein('ref1', $pota_refs)->get()->toArray();
+        foreach ($results as $result) {
+            $altLocIds['POTA'][$result['ref1']] = ['WWFF', $result['ref2']];
+        }
+
+        $wwff_refs = array_keys($altLocIds['WWFF']);
+        sort($wwff_refs);
+        $results = ParkMatch::select(['ref1','ref2'])->wherein('ref2', $wwff_refs)->get()->toArray();
+        foreach ($results as $result) {
+            $altLocIds['WWFF'][$result['ref2']] = ['POTA', $result['ref1']];
+        }
+
         usort($items, function ($a, $b) {
             return $a['date'] . $a['time'] <=> $b['date'] . $b['time'];
         });
+
+        foreach ($items as &$item) {
+            $item['altProgram'] = $altLocIds[$item['program']][$item['locId']][0] ?? null;
+            $item['altLocId'] = $altLocIds[$item['program']][$item['locId']][1] ?? null;
+        }
+
         return $items;
     }
 
