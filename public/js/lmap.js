@@ -472,7 +472,7 @@ var LMap = {
                         icon = '/green-pushpin.png';
                     }
                 } else if(l.home) {
-                    icon = '/yellow-pushpin.png'
+                    icon = '/orange-pushpin.png'
                 } else {
                     icon = '/yellow-pushpin.png';
                 }
@@ -711,7 +711,7 @@ var LMap = {
             map: LMap.map,
             icon: {
                 scaledSize: new google.maps.Size(30,30),
-                url: base_image + '/yellow-pushpin.png'
+                url: base_image + '/orange-pushpin.png'
             },
             title: qth.callsign,
             zIndex: 100

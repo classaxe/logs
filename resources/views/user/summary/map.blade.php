@@ -79,7 +79,7 @@ foreach ($qths as $name => $qth) {
                             <span class="nowrap">
     @if($home)
                                 <span class="nowrap">
-                                    <img src="{{ asset('images/yellow-pushpin.png') }}" alt="Home QTH" style="height: 30px">Home
+                                    <img src="{{ asset('images/orange-pushpin.png') }}" alt="Home QTH" style="height: 30px">Home
                                 </span>
     @endif
     @if ($park_v)
