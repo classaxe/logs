@@ -487,7 +487,7 @@ var LMap = {
                 title: l.name + "\n" + l.logBands + " band" + (l.logBands === 1 ? '' : 's') + (l.pota && l.logBands >= 10 ? " - Qualifies for N1CC Award" : ""),
                 zIndex: 100
             });
-            if (l.pota) {
+            if (l.pota || l.wwff) {
                 LMap.drawLocationParkVisited(l, a);
             } else {
                 LMap.drawLocationOther(l, a);
