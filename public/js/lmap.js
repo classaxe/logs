@@ -465,8 +465,8 @@ var LMap = {
             if (!l.primary) {
                 icon = '/grey-pushpin.png';
             } else {
-                if (l.pota !== '') {
-                    if (l.logBands >= 10) {
+                if (l.pota !== '' || l.wwff !== '') {
+                    if (l.pota !== '' && l.logBands >= 10) {
                         icon = '/lightgreen-pushpin.png';
                     } else {
                         icon = '/green-pushpin.png';

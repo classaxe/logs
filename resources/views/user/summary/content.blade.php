@@ -1,9 +1,9 @@
 <?php
-$pota_v = 0;
+$park_v = 0;
 $pota_10 = 0;
 $other = 0;
 foreach($qths as $name => $qth) {
-    $pota_v += $qth['pota'] ? 1 : 0;
+    $park_v += $qth['pota'] || $qth['wwff'] ? 1 : 0;
     $pota_10 += $qth['pota'] && $qth['logBands'] >= 10 ? 1 : 0;
     $other +=  $qth['pota'] ? 0 : ($qth['home'] ? 0 : 1);
 }
@@ -32,7 +32,7 @@ function copyToClipboard(text) {
     </h2>
     @if (!$hidestats && count($qths) > 1)
         <p>@if(count($qths) === 2)Both @else All <b>{{count($qths)}}</b>@endif locations
-            @if($pota_v)- including <b>{{ $pota_v }}</b> <a class="url" target="_blank" href="https://pota.app/#/profile/{{ explode('/',$user->call)[0] }}">POTA Park{{ $pota_v > 1 ? 's' : '' }}</a> - @endif
+            @if($park_v)- including <b>{{ $park_v }}</b> <a class="url" target="_blank" href="https://pota.app/#/profile/{{ explode('/',$user->call)[0] }}">Park{{ $park_v > 1 ? 's' : '' }}</a> - @endif
             are situated within a radius of <b>{{ round($qth_bounds['radius'] / 1000, 1) }} Km</b> ({{ round(0.6213712 * ($qth_bounds['radius'] / 1000), 1) }} Miles)
             @if($pota_10)<br>{!! $pota_10 === 1 ? '<b>One</b> park' : 'A total of <b>' . $pota_10 . '</b> parks' !!}
             included logs on 10 or more bands, qualifying towards the <a href="https://docs.pota.app/docs/awards.html#james-f-laporta-n1cc-awards" target="_blank" class="url">POTA N1CC Award</a>.
@@ -51,7 +51,7 @@ function copyToClipboard(text) {
             @if(!$hidestats)
             <th title="Click to view logs">Logs</th>
             @endif
-            @if($user->pota)<th>POTA</th>@endif
+            @if($user->park)<th>Actions</th>@endif
             @if(!$hidestats)
                 <th class="dates">Dates</th>
                 <th title="Days actively logging">*Days</th>
@@ -63,7 +63,7 @@ function copyToClipboard(text) {
         @if(Auth::user() && (Auth::user()->admin || $user->call === Auth::user()->call))
             <tr>
                 <form method="get" action="{{ $url }}">
-                    <td colspan="{{ ($user->pota ? 1 : 0) + ($hidestats ? 2 : 6) }}">
+                    <td colspan="{{ ($user->park ? 1 : 0) + ($hidestats ? 2 : 6) }}">
                         <input type="hidden" name="action" value="testgsq">
                         @if($hidestats)
                             <input type="hidden" name="hidestats" value="1">
@@ -116,9 +116,9 @@ function copyToClipboard(text) {
                 @if(!$hidestats)
                 <td class="r"><a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}/?q[]=myQth|{{ $label }}" target="_blank"><strong>{{ $q['logs'] }}</strong></a></td>
                 @endif
-                @if($user->pota)
+                @if($user->park)
                     <td>
-                        @if($q['pota'])
+                        @if($q['pota'] || $q['wwff'])
                             <a href='https://google.com/maps/place/{{ $q['lat'] }},{{ $q['lon'] }}' class='btn o' target='_blank'>Goto</a><a class='btn g' target="_blank" href="https://pota.app/#/park/{{ explode(' ', $label)[1] }}">Info</a><a href='#' title="Get Potashell command for this location" class='btn blk' target='_blank' onclick="return copyToClipboard('potashell {{ explode(' ', $label)[1] }} {{ $q['gsq'] }}')">PS</a>
                         @endif
                     </td>
@@ -145,7 +145,7 @@ function copyToClipboard(text) {
             <tr class="totals">
                 <td><a href="{{ route('summaryMap', ['callsign' => str_replace('/', '-', $user->call)]) }}" title="Show map" target="_blank">Totals</a></td>
                 <td class="r"><strong>{{ $user['log_count'] }}</strong></td>
-                <td{{ ($user->pota ? ' colspan=2' : '') }}><a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}" style="font-weight: normal" target="_blank">({{ count($qths) ===2 ? 'Both' : 'All ' . count($qths) }} locations)</a></td>
+                <td{{ ($user->park ? ' colspan=2' : '') }}><a href="{{ route('home') }}/logs/{{ str_replace('/', '-', $user->call) }}" style="font-weight: normal" target="_blank">({{ count($qths) ===2 ? 'Both' : 'All ' . count($qths) }} locations)</a></td>
                 <td class="dates">{{ substr($user['first_log'], 0, 10) }}@if(substr($user['first_log'], 0, 10) !== substr($user['last_log'], 0, 10)) - {{ substr($user['last_log'], 0, 10) }}@endif</td>
                 <td class="r"><strong>{{ $user['log_days'] ?: 0 }}</strong></td>
                 <td>&nbsp;</td>

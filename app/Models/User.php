@@ -204,8 +204,8 @@ class User extends Authenticatable implements MustVerifyEmail
             $qths['Test Location'] = $coords = Log::convertGsqToDegrees($testGsq);
         }
         $qths += Log::getQthsForUser($user, $withAssociated);
-        $user['pota'] = array_filter(array_keys($qths), function($lbl) {
-            return str_contains($lbl, 'POTA:');
+        $user['park'] = array_filter(array_keys($qths), function($lbl) {
+            return str_contains($lbl, 'POTA:') || str_contains($lbl, 'WWFF:');
         }) ? true : false;
 
         $coords = [];

@@ -15,15 +15,15 @@ foreach ($qths as $name => $qth) {
     if ($qth['call'] === $user->call) {
         $home += $qth['home'] ? 1 : 0;
         $locations += 1;
-        $park_v += $qth['pota'] ? 1 : 0;
+        $park_v += $qth['pota'] || $qth['wwff'] ? 1 : 0;
         $park_10b += $qth['pota'] && $qth['logBands'] >= 10 ? 1 : 0;
-        $other += !$qth['pota'] && !$qth['home'] ? 1 : 0;
+        $other += !$qth['pota'] && !$qth['wwff'] && !$qth['home'] ? 1 : 0;
     } else {
         $alt_home += $qth['home'] ? 1 : 0;
         $alt_locations += 1;
-        $alt_park_v += $qth['pota'] ? 1 : 0;
+        $alt_park_v += $qth['pota'] || $qth['wwff'] ? 1 : 0;
         $alt_park_10b += $qth['pota'] && $qth['logBands'] >= 10 ? 1 : 0;
-        $alt_other += !$qth['pota'] && !$qth['home'] ? 1 : 0;
+        $alt_other += !$qth['pota'] && !$qth['wwff'] && !$qth['home'] ? 1 : 0;
     }
 }
 ?>
@@ -54,8 +54,8 @@ foreach ($qths as $name => $qth) {
                                 All <b>{{ $locations }}</b>
                             @endif locations
                             @if($park_v)
-                                - including <b>{{ $park_v }}</b> <a class="url" target="_blank"
-                                                                    href="https://pota.app/#/profile/{{ explode('/',$user->call)[0] }}">POTA
+                                - including
+                                <a class="url" target="_blank" href="https://pota.app/#/profile/{{ explode('/',$user->call)[0] }}"><b>{{ $park_v }}</b>
                                     Park{{ $park_v > 1 ? 's' : '' }}</a> -
                             @endif
                             are situated within a radius of
