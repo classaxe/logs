@@ -27,17 +27,6 @@ foreach ($qths as $name => $qth) {
     }
 }
 ?>
-<style>
-    #key span.nowrap {
-        white-space: nowrap;
-        padding-right: 0.25em;
-    }
-    #key img {
-        display: inline;
-        height: 20px;
-    }
-</style>
-
 <x-app-layout>
     @vite([
         'resources/css/summary.css'
@@ -61,7 +50,7 @@ foreach ($qths as $name => $qth) {
                             are situated within a radius of
                             <b>{{ round($qth_bounds['radius'] / 1000, 1) }} Km</b>
                             ({{ round(0.6213712 * ($qth_bounds['radius'] / 1000),1) }} Miles)
-                            - indicated by the <span style="color:green">green</span> circle.
+                            - indicated by the <strong style="color:green" class="toggleLayer" data-layer="ringLocs">green</strong> circle.
                             @if($park_10b)
                                 <br>{!! $park_10b === 1 ? '<b>One</b> park' : 'A total of <b>' . $park_10b . '</b> parks' !!}
                                 included logs on 10 or more bands, qualifying towards the <a
@@ -72,52 +61,49 @@ foreach ($qths as $name => $qth) {
                     @endif
     @if($isMain)
                         <p>Most QRZ awards require locations used to qualify be within 50 miles radius of a given point
-                            - indicated by the <span style="color:red">red</span> circle.
+                            - indicated by the <strong style="color:red" class="toggleLayer" data-layer="ring50">red</strong> circle.<br />
+                            Click the labels in the key below to toggle the visibility of the pins of that type on the map.
                         </p>
     @endif
                         <fieldset id="key">
                             <span class="nowrap">
     @if($home)
-                                <span class="nowrap">
+                                <span class="nowrap toggleLayer" data-layer="home">
                                     <img src="{{ asset('images/orange-pushpin.png') }}" alt="Home QTH" style="height: 30px">Home
                                 </span>
     @endif
     @if ($park_v)
-                                <span class="nowrap">
-                                    <img src="{{ asset('images/green-pushpin.png') }}" alt="Visited park with 1-9 bands worked">Activated Park:
+                                <span class="nowrap toggleLayer" data-layer="parkVisited">
+                                    <img src="{{ asset('images/green-pushpin.png') }}" alt="Visited park with 1-9 bands worked">Visited Park:
                                     <b>{{ $park_v - $park_10b }}</b>
                                 </span>
         @if ($park_10b)
-                                <span class="nowrap">
+                                <span class="nowrap toggleLayer" data-layer="parkN1cc">
                                     <img src="{{ asset('images/lightgreen-pushpin.png') }}" alt="Visited park with 10 bands worked">Park on 10 bands:
                                     <b>{{ $park_10b }}</b>
                                 </span>
         @endif
     @endif
     @if ($other)
-                                <span class="nowrap">
+                                <span class="nowrap toggleLayer" data-layer="other">
                                     <img src="{{ asset('images/yellow-pushpin.png') }}" alt="Other non-park location">Other QTH:
                                     <b>{{ $other }}</b>
                                 </span>
     @endif
                             </span>
     @if ($alt_locations)
-                            <span class="nowrap">
-                                <img src="{{ asset('images/grey-pushpin.png') }}" alt="Visited location worked with other callsign">Alt Callsign:
+                            <span class="nowrap toggleLayer" data-layer="otherCallsign">
+                                <img src="{{ asset('images/grey-pushpin.png') }}" alt="Visited location worked with other callsign">Other Callsign:
                                 <b>{{ $alt_locations }}</b>
                             </span>
     @endif
                             <span class="nowrap">
-                                <span class="nowrap">
-                                    <img src="{{ asset('images/red-pushpin.png') }}" alt="POTA Park - Unvisited">POTA Park
-                                </span>
-                                <span class="nowrap">
-                                    <img src="{{ asset('images/blue-pushpin.png') }}" alt="WWFF Park - Unvisited">WWFF Park
-                                    <i><a href="#" style="color:red" onclick="for (var i in layers.parkWwff) { layers.parkWwff[i].setMap(null); };return false;">(Hide)</a></i>
-                                </span>
-                                <span class="nowrap">
-                                    <img src="{{ asset('images/purple-pushpin.png') }}" alt="POTA and WWFF Park - Unvisited">Dual Park
-                                </span>
+                                <span class="nowrap toggleLayer" data-layer="parkPota"><img
+                                    src="{{ asset('images/red-pushpin.png') }}" alt="POTA Park - Unvisited">POTA Park</span>
+                                <span class="nowrap toggleLayer" data-layer="parkWwff"><img
+                                    src="{{ asset('images/blue-pushpin.png') }}" alt="WWFF Park - Unvisited">WWFF Park</span>
+                                <span class="nowrap toggleLayer" data-layer="parkBoth"><img
+                                    src="{{ asset('images/purple-pushpin.png') }}" alt="POTA and WWFF Park - Unvisited">Dual Park</span>
                             </span>
                             <span class="nowrap">
                                 <span id="currentLocation" style="display: none">
@@ -142,10 +128,17 @@ foreach ($qths as $name => $qth) {
         var gridOpacity = 0.75;
         var gsqs = [];
         var layers = {
+            home: [],
+            ring50: [],
+            ringLocs: [],
             grid: [],
-            locs: [],
-            potaU: [],
-            potaV: [],
+            other: [],
+            otherCallsign: [],
+            parkVisited: [],
+            parkN1cc: [],
+            parkPota: [],
+            parkWwff: [],
+            parkBoth: [],
             squares: [],
             squareLabels: []
         };

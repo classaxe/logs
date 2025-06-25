@@ -143,6 +143,13 @@ var LMap = {
             return false;
         });
 
+        $('.toggleLayer').click(event => {
+            let target = $(event.target);
+            let layer = target.data('layer');
+            LMap.setLayer(layer, target.hasClass('noShow'))
+            target.toggleClass('noShow');
+        });
+
         setInterval(function() { LMap.drawCurrentLocation() }, 10000); // every 10s
     },
 
@@ -244,6 +251,8 @@ var LMap = {
             radius: 1000 * (50 / 0.6213712),
             title: "50 mile ring"
         })
+        layers.ring50.push(ring50);
+
         let ringLocs = new google.maps.Circle({
             strokeColor: '#008000',
             strokeOpacity: 0.5,
@@ -254,9 +263,7 @@ var LMap = {
             center: new google.maps.LatLng(qthBounds.lat, qthBounds.lng),
             radius: qthBounds.radius
         })
-
-        layers.locs.push(ring50);
-        layers.locs.push(ringLocs);
+        layers.ringLocs.push(ringLocs);
         return ring50.getBounds();
     },
 
@@ -462,19 +469,25 @@ var LMap = {
     drawLocations: () => {
         $(locations).each(function(idx, l) {
             let icon = '';
+            let layer = '';
             if (!l.primary) {
                 icon = '/grey-pushpin.png';
+                layer = 'otherCallsign';
             } else {
                 if (l.pota !== '' || l.wwff !== '') {
                     if (l.pota !== '' && l.logBands >= 10) {
                         icon = '/lightgreen-pushpin.png';
+                        layer = 'parkN1cc';
                     } else {
                         icon = '/green-pushpin.png';
+                        layer = 'parkVisited';
                     }
                 } else if(l.home) {
-                    icon = '/orange-pushpin.png'
+                    icon = '/orange-pushpin.png';
+                    layer = 'home';
                 } else {
                     icon = '/yellow-pushpin.png';
+                    layer = 'other';
                 }
             }
             let a = new google.maps.Marker({
@@ -488,24 +501,14 @@ var LMap = {
                 zIndex: 100
             });
             if (l.pota || l.wwff) {
-                LMap.drawLocationParkVisited(l, a);
+                LMap.drawLocationParkVisited(l, a, layer);
             } else {
-                LMap.drawLocationOther(l, a);
+                LMap.drawLocationOther(l, a, layer);
             }
         });
-
-        $('#togglePota').click(function() {
-            let active, $this;
-            $this = $(this);
-            active = $this.prop('checked');
-            active = false;
-            console.log([active])
-            LMap.setLayer('parkPota', active ? LMap.map : null)
-        })
-
     },
 
-    drawLocationOther: (l, a) => {
+    drawLocationOther: (l, a, layer) => {
         a.addListener('click', function() {
             let i;
             let html =
@@ -537,10 +540,10 @@ var LMap = {
                 $('#close').focus();
             }, 10);
         });
-        layers.locs.push(a);
+        layers[layer].push(a);
     },
 
-    drawLocationParkVisited: (l, a) => {
+    drawLocationParkVisited: (l, a, layer) => {
         let bandInfo = [];
         let p = l.name.split(' ')[1];
         let n = l.name . substring(14);
@@ -582,7 +585,7 @@ var LMap = {
                 $('#close').focus();
             }, 10);
         });
-        layers.potaV.push(a);
+        layers[layer].push(a);
     },
 
     drawParksUnvisited: () => {
@@ -606,6 +609,10 @@ var LMap = {
         let lat1 = LMap.map.getBounds().getSouthWest().lat().toFixed(3);
         let lng1 = LMap.map.getBounds().getSouthWest().lng().toFixed(3);
         let url = `/parks/grid/${lat0}/${lng0}/${lat1}/${lng1}/0`;
+        let hidePota =  $('#key span.toggleLayer[data-layer="parkPota"]').hasClass('noShow');
+        let hideWwff =  $('#key span.toggleLayer[data-layer="parkWwff"]').hasClass('noShow');
+        let hideBoth =  $('#key span.toggleLayer[data-layer="parkBoth"]').hasClass('noShow');
+
         $.ajax({
             type: 'GET',
             url: url,
@@ -613,7 +620,7 @@ var LMap = {
             success: function (data) {
                 let c = data.features.length;
                 $(data.features).each(function (idx, feature) {
-                    let a, f, g, i, l, n, nFull, p, u, lat, lng;
+                    let a, f, g, i, l, m, n, nFull, p, u, lat, lng, hide;
                     f = feature;
                     p = f.properties;
                     for (i in locations) {
@@ -631,9 +638,20 @@ var LMap = {
                     lat = f.geometry.coordinates[1];
                     lng = f.geometry.coordinates[0];
                     g = LMap.convertDegGsq(lat, lng);
+                    switch(p.program) {
+                        case 'POTA':
+                            m = hidePota ? null : LMap.map;
+                            break;
+                        case 'WWFF':
+                            m = hideWwff ? null : LMap.map;
+                            break;
+                        case 'BOTH':
+                            m = hideBoth ? null : LMap.map;
+                            break;
+                    }
                     a = new google.maps.Marker({
                         position: {lat: lat, lng: lng},
-                        map: LMap.map,
+                        map: m,
                         icon: {
                             scaledSize: new google.maps.Size(20, 20),
                             url: base_image +
@@ -944,8 +962,8 @@ var LMap = {
 
     setLayer: (layer, state) => {
         let i;
-        for (i in layers.layer) {
-            layers.layer[i].setMap(state ? LMap.map : null);
+        for (i in layers[layer]) {
+            layers[layer][i].setMap(state ? LMap.map : null);
         }
     },
 
