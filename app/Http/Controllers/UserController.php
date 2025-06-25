@@ -220,14 +220,14 @@ class UserController extends Controller
             return redirect()->route('summaryMap', ['callsign' => $callsign]);
         }
 
-        $urlSummary = '<a class="btn b" target="_blank" href="'
+        $urlSummary = ($u['user']['log_count'] ? '<a class="btn b" target="_blank" href="'
             . route('summary', ['callsign' => str_replace('/', '-', $u['user']->call)]) . '">'
             . "Summary"
-            . "</a>";
-        $urlLogs = '<a class="btn g" target="_blank" href="'
+            . "</a>" : "");
+        $urlLogs = ($u['user']['log_count'] ? '<a class="btn g" target="_blank" href="'
             . route('logs.page', ['callsign' => str_replace('/', '-', $u['user']->call)]) . '">'
             . "Logs"
-            . "</a>";
+            . "</a>" : "");
         $title = sprintf("Location%s Map for %s - %s <div style='float:right;font-style: italic'>%s %s</div>",
             (count($u['qths']) > 1 ? 's' : ''),
             $u['user']->name,
