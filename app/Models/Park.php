@@ -12,21 +12,20 @@ class Park extends Model
     const URL_WWFF = 'https://wwff.co/wwff-data/wwff_directory.csv';
 
     const ISO3166_WWFF = [
-        'CA' => ['VEFF'],
-        'GB' => ['GFF', 'GDFF', 'GIFF', 'GJFF', 'GMFF', 'GUFF', 'GWFF'],
-        'MX' => ['XEFF'],
-        'PL' => ['SPFF'],
-        'PM' => ['FFF'], // Includes loads of islands beside Saint Pierre and Miquelon
-        'US' => ['KFF']
+        'BE' => 'ONFF',
+        'CA' => 'VEFF',
+        'GB' => 'GxFF',
+        'MX' => 'XEFF',
+        'PL' => 'SPFF',
+        'PM' => 'FFF', // Includes loads of islands beside Saint Pierre and Miquelon
+        'US' => 'KFF'
     ];
 
     public static function convertIsoToDxccPrefixes($prefixes) {
         $dxcc = [];
         foreach ($prefixes as $prefix) {
             if (isset(static::ISO3166_WWFF[$prefix])) {
-                foreach (static::ISO3166_WWFF[$prefix] as $entry) {
-                    $dxcc[] = $entry;
-                }
+                $dxcc[] = static::ISO3166_WWFF[$prefix];
             }
         }
         sort($dxcc);
@@ -75,10 +74,16 @@ class Park extends Model
     }
 
     public static function formatProgramPrefixCount($program, $prefix) {
-        $count = Park::where([
-            ['prefix', $prefix],
-            ['program', $program]
-        ])->count();
+        if ($prefix === 'GxFF') {
+            $count = Park::where('program', $program)
+                ->whereIn('prefix', ['GFF','GDFF','GIFF','GJFF','GMFF','GUFF','GWFF'])
+                ->count();
+        } else {
+            $count = Park::where([
+                ['prefix', $prefix],
+                ['program', $program]
+            ])->count();
+        }
         return $program . ' '
             . str_pad($prefix . ':', 5, ' ') . ' '
             . str_pad($count, 5, ' ', STR_PAD_LEFT)
@@ -86,7 +91,7 @@ class Park extends Model
     }
 
     public static function getParkById($id) {
-        $park = Park::where('reference', $id)->first();
+        //$park = Park::where('reference', $id)->first();
         $park = DB::select(
             DB::raw("SELECT
                 `p1`.*,
@@ -212,10 +217,16 @@ class Park extends Model
         }
         DB::beginTransaction();
             foreach($dxcc as $prefix) {
-                Park::where([
-                    ['prefix', $prefix],
-                    ['program', $program]
-                ])->delete();
+                if ($prefix === 'GxFF') {
+                    Park::where('program', $program)
+                        ->whereIn('prefix', ['GFF','GDFF','GIFF','GJFF','GMFF','GUFF','GWFF'])
+                        ->delete();
+                } else {
+                    Park::where([
+                        ['prefix', $prefix],
+                        ['program', $program]
+                    ])->delete();
+                }
             }
             foreach($parks as $park) {
                 if (!in_array($park->program, $dxcc)) {
