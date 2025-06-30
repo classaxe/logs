@@ -12,18 +12,21 @@ class Park extends Model
     const URL_WWFF = 'https://wwff.co/wwff-data/wwff_directory.csv';
 
     const ISO3166_WWFF = [
-        'CA' => 'VEFF',
-        'MX' => 'XEFF',
-        'PL' => 'SPFF',
-        'PM' => 'FFF', // Includes loads of islands beside Saint Pierre and Miquelon
-        'US' => 'KFF'
+        'CA' => ['VEFF'],
+        'GB' => ['GFF', 'GDFF', 'GIFF', 'GJFF', 'GMFF', 'GUFF', 'GWFF'],
+        'MX' => ['XEFF'],
+        'PL' => ['SPFF'],
+        'PM' => ['FFF'], // Includes loads of islands beside Saint Pierre and Miquelon
+        'US' => ['KFF']
     ];
 
     public static function convertIsoToDxccPrefixes($prefixes) {
         $dxcc = [];
         foreach ($prefixes as $prefix) {
             if (isset(static::ISO3166_WWFF[$prefix])) {
-                $dxcc[] = static::ISO3166_WWFF[$prefix];
+                foreach (static::ISO3166_WWFF[$prefix] as $entry) {
+                    $dxcc[] = $entry;
+                }
             }
         }
         sort($dxcc);
