@@ -476,7 +476,9 @@ class Log extends Model
                 ),
                 DB::raw("
                     (SELECT
-                        GROUP_CONCAT(CONCAT(' * ', `date`, ' ', `time`, ' ', `call`, ' ', `band`, '\n    SP:', `sp`, ' ITU:', `itu`, ' County:', county) SEPARATOR '\n\n')
+                        GROUP_CONCAT(
+                            CONCAT(' * ', `date`, ' ', `time`, ' ', `call`, ' ', `band`, '\n    SP:', `sp`, ' ITU:', `itu`, ' County:', county, '\n    Fixable? ', IF(LENGTH(myGsq)<=8, 'Yes', 'No (myGsq too long for QRZ.com edits)')
+                        ) SEPARATOR '\n\n')
                     FROM
                         `logs` `l`
                     WHERE
